@@ -1,0 +1,19 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T071323Z-yyyunx-2637bb8afe",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:13:23.811757Z",
+  "related_events": [
+    "E-20261127T070133Z-yyyunx-7055482405",
+    "E-20261127T070758Z-yyyunx-f47a176b62",
+    "E-20261127T070805Z-yyyunx-9255dcdfa5"
+  ],
+  "summary": "Semantic Model 第一階段已交付語意分析、Adapter 前置設計及 Mock 測試。Draft PR #1、feature/semantic-model 提交 6d093671eb72c2097287c305c8bcc1c859e3e51a；乾淨 clone 執行 python -m unittest discover -s tests -v，17 項通過、0 失敗，含原有 12 項。此結果驗證手寫 Mock 與 Schema。請在原提案 Q-yyyunx-6faf49e280 留下三方確認，在 Q-yyyunx-e2302d4665 回報語意案例與可接的 Converter。已讀到一個公開候選的型別，仍需確認組別與 AST 可用版本。",
+  "evidence": [
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/1",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/commit/6d093671eb72c2097287c305c8bcc1c859e3e51a",
+    "https://github.com/noobist-saiko/process-algebra-converter/blob/4c9227b993df5986f4f0104f7fa73ce9cd2f86dc/README.md"
+  ]
+}
