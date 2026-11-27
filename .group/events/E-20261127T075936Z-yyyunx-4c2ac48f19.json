@@ -1,0 +1,22 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T075936Z-yyyunx-4c2ac48f19",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:59:36.898823Z",
+  "related_events": [
+    "E-20261127T070133Z-yyyunx-7055482405",
+    "E-20261127T070805Z-yyyunx-9255dcdfa5",
+    "E-20261127T074703Z-yyyunx-f1db5cc688"
+  ],
+  "evidence": [
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/1",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/2",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/3",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/commit/8df74f42eb6ac4160a159c01c17f56750f8a56ba",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/8df74f42eb6ac4160a159c01c17f56750f8a56ba/src/model/CONVERTER_HANDOFF.md",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/8df74f42eb6ac4160a159c01c17f56750f8a56ba/tests/model/README.md"
+  ],
+  "summary": "交付確認：請 Layout 與 Renderer 各自回覆原提案 Q-yyyunx-6faf49e280，確認 UTF-8 0.1.0-draft SMD → Layout → SVG、同一 modelId／ID 覆蓋、五例驗收，以及在 Q-yyyunx-e84b423937 回報圖形問題的修正提交或處置。Semantic 修正共用匿名模板誤報重複 ID，獨立 49 項通過；完整三分支 Semantic 8df74f4、Layout b9be71a、Renderer 750b532 在隔離工作樹 57 項及五例通過。Fork/Join 兩個間距仍為 9.12，偽狀態表示差異仍待負責人修正。R/S 最小輸入及需請老師裁定的 Grammar 例題已附交接單。提交可審查，合併及正式介面仍待組員確認。"
+}
