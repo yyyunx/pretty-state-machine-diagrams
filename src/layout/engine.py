@@ -5,9 +5,10 @@ from dataclasses import dataclass
 from itertools import pairwise
 import math
 
-from src.geometry import behavior_lines, box, outline_boxes, point, rect, stroke_box, text_lines, text_width, transition_text
+from src.geometry import SIDES, behavior_lines, box, outline_boxes, point, rect, stroke_box, text_lines, text_width, transition_text
 
 from . import legacy, routing
+from .spatial import Occupancy, SpatialIndex
 from .topology import layers
 
 
@@ -37,6 +38,16 @@ class LayoutOptions:
                 raise LayoutError(f"{key} must be a finite number from {low} to 500")
 
 
+@dataclass(frozen=True)
+class PlacementProfile:
+    order: str = "mean"
+    reverse_sweep: bool = False
+    split_cycles: bool = False
+    route_order: str = "model"
+    extra_channels: bool = False
+    reroutes: int = 0
+
+
 def _connection(vertex):
     return vertex.get("pseudostateKind") in ("entryPoint", "exitPoint")
 
@@ -47,13 +58,15 @@ def _label_size(name, size=12):
 
 
 class _Placement:
-    def __init__(self, model, options):
+    def __init__(self, model, options, profile=None, budget=None):
         self.model, self.options = model, options
+        self.profile, self.budget = profile, budget
         self.horizontal = options.direction == "horizontal"
         self.nodes, self.regions, self.edges = {}, {}, {}
         self.vertices, self.ancestors, self.representatives = {}, {}, defaultdict(dict)
         self.transitions = []
         self.vertex_sizes, self.region_sizes, self.region_layers = {}, {}, {}
+        self.names, self.behaviors, self.boundary_ports = {}, {}, {}
         self.index(model["regions"])
 
     def index(self, regions, containers=(), ancestor_regions=()):
@@ -74,8 +87,8 @@ class _Placement:
             return self.vertex_sizes[vertex_id]
         vertex = self.vertices[vertex_id]
         name = vertex.get("displayName")
-        label_w, label_h = _label_size(name) if name else (0, 0)
-        lines = behavior_lines(vertex)
+        label_w, label_h = self.names[vertex_id] = _label_size(name) if name else (0, 0)
+        lines = self.behaviors[vertex_id] = behavior_lines(vertex)
         behavior_w = max((text_width(line, 9.5) + 20 for line in lines), default=0)
         if vertex["kind"] == "composite":
             regions = [self.size_region(child, True) for child in vertex["regions"]]
@@ -95,9 +108,8 @@ class _Placement:
         return result
 
     def header(self, vertex):
-        return 34 + 13 * len(behavior_lines(vertex)) + (
-            max(0, _label_size(vertex["displayName"])[1]-20) if "displayName" in vertex else 0
-        )
+        identifier = vertex["id"]
+        return 34 + 13 * len(self.behaviors[identifier]) + max(0,self.names[identifier][1]-20)
 
     @staticmethod
     def symbol_size(vertex):
@@ -117,8 +129,11 @@ class _Placement:
         ids = [v["id"] for v in region["vertices"] if not (nested and _connection(v))]
         owners = self.representatives[region_id]
         local = set(ids)
-        projected = [(owners.get(edge["sourceId"]), owners.get(edge["targetId"])) for edge in self.transitions]
-        ranks = layers(ids, [(a, b) for a, b in projected if a in local and b in local])
+        projected = ((owners.get(edge["sourceId"]), owners.get(edge["targetId"]))
+                     for edge in self.transitions)
+        profile = self.profile or PlacementProfile()
+        ranks = layers(ids, ((a,b) for a,b in projected if a in local and b in local),
+                       order=profile.order, reverse_sweep=profile.reverse_sweep, split_cycles=profile.split_cycles)
         extents = []
         for column in ranks:
             sizes = [self.size_vertex(node) for node in column]
@@ -193,6 +208,8 @@ class _Placement:
                 else:
                     cx, cy = x+w*fraction, (py if kind == "entryPoint" else py+ph)
                 vw, vh = self.symbol_size(self.vertices[vertex_id])
+                sides = ("left","right") if self.horizontal else ("top","bottom")
+                self.boundary_ports[vertex_id] = sides if kind == "entryPoint" else sides[::-1]
                 self.place_vertex(vertex_id, cx-vw/2, cy-vh/2, vw, vh, boundary=True)
 
     def place_vertex(self, vertex_id, x, y, w, h, boundary=False):
@@ -203,16 +220,20 @@ class _Placement:
             bx, by = x + (w-glyph_w)/2, y
             placement = {"bounds": box(bx, by, glyph_w, glyph_h)}
             if name:
-                lw, lh = _label_size(name)
+                if vertex_id not in self.names:  # boundary vertices skip rank sizing
+                    self.size_vertex(vertex_id)
+                lw, lh = self.names[vertex_id]
                 nx, ny = bx+(glyph_w-lw)/2, by+glyph_h+4
                 if boundary and self.horizontal:
                     nx = bx-lw-7 if vertex["pseudostateKind"] == "entryPoint" else bx+glyph_w+7
                     ny = by+(glyph_h-lh)/2
+                elif boundary and self.profile is not None and vertex["pseudostateKind"] == "entryPoint":
+                    ny = by-lh-4
                 placement["labelBounds"] = box(nx, ny, lw, lh)
         else:
             placement = {"bounds": box(x, y, w, h)}
             if name:
-                lw, lh = _label_size(name)
+                lw, lh = self.names[vertex_id]
                 label_y = y - lh/2 if kind == "composite" else y+5
                 placement["labelBounds"] = box(x+(w-lw)/2, label_y, lw, lh)
         self.nodes[vertex_id] = placement
@@ -234,43 +255,119 @@ class _Placement:
                 self.place_region(child, rx, y+split, rw, h-split-18, index>0, (x,y,w,h))
                 rx += rw
 
+    def _allowed(self, edge):
+        src, dst = edge["sourceId"], edge["targetId"]
+        return {src,dst,*self.ancestors[src],*self.ancestors[dst]}
+
+    def _boundary_side(self, node, other):
+        if node not in self.boundary_ports:
+            return SIDES
+        outside, inside = self.boundary_ports[node]
+        owner = self.ancestors[node][-1]
+        return (inside if owner == other or owner in self.ancestors[other] else outside,)
+
+    def _route(self, edge, lane, used, index=None, occupancy=None):
+        src, dst = edge["sourceId"], edge["targetId"]
+        allowed = self._allowed(edge)
+        obstacles = [] if index is not None else [
+            part["bounds"] for key,part in self.nodes.items() if key not in allowed]
+        try:
+            return routing.route(
+                self.vertices[src], self.vertices[dst], self.nodes[src]["bounds"], self.nodes[dst]["bounds"],
+                obstacles, clearance=self.options.edge_clearance, bend_penalty=self.options.bend_penalty,
+                crossing_penalty=self.options.crossing_penalty, lane=lane, self_loop=src==dst,
+                inward=(src in self.ancestors[dst],dst in self.ancestors[src]), used=used,
+                budget=self.budget,index=index,allowed=allowed,occupancy=occupancy,edge_id=edge["id"],
+                boundary_sides=(self._boundary_side(src,dst),self._boundary_side(dst,src))
+                if index is not None else (SIDES,SIDES),
+                extra_channels=self.profile.extra_channels if self.profile is not None else False,
+            )
+        except routing.RoutingError as exc:
+            raise LayoutError(f"Transition {edge['id']!r}: {exc}") from exc
+
+    def _label(self, edge, points, occupied, dividers, occupancy=None):
+        src, dst = edge["sourceId"], edge["targetId"]
+        allowed = self._allowed(edge)
+        obstacles = [part["bounds"] for key,part in self.nodes.items() if key not in allowed]
+        borders = [border for parent in allowed-{src,dst}
+                   for border in outline_boxes(self.nodes[parent]["bounds"])]
+        headers = [box(bounds["x"],bounds["y"],bounds["width"],self.header(self.vertices[parent]))
+                   for parent in allowed-{src,dst} if self.behaviors[parent]
+                   for bounds in (self.nodes[parent]["bounds"],)]
+        return routing.label_position(
+            points, transition_text(edge),
+            [*obstacles,self.nodes[src]["bounds"],self.nodes[dst]["bounds"],*occupied,*dividers,*borders,*headers],
+            self.options.label_clearance,occupancy=occupancy)
+
+    @staticmethod
+    def _segments(points):
+        return pairwise((p["x"],p["y"]) for p in points)
+
+    def _rip_up(self, occupancy, index, lanes, paths):
+        def score(identifier, points):
+            crossings, shared, length = 0, 0.0, 0.0
+            for a,b in self._segments(points):
+                length += routing.manhattan(a,b)
+                for c,d in occupancy.nearby(a,b,ignore=identifier):
+                    cross, overlap = routing.segment_conflict(a,b,c,d)
+                    crossings += cross
+                    shared += overlap
+            return crossings, round(shared,7), length + self.options.bend_penalty * (len(points)-2)
+
+        congested = sorted(self.transitions, key=lambda edge: score(edge["id"],paths[edge["id"]]), reverse=True)
+        for edge in congested[:self.profile.reroutes]:
+            identifier = edge["id"]
+            before = score(identifier, paths[identifier])
+            if before[:2] == (0,0):
+                break
+            for lane in (lanes[identifier]+1, lanes[identifier]+3):
+                try:
+                    trial = self._route(edge,lane,(),index,occupancy)
+                except LayoutError:
+                    continue
+                after = score(identifier, trial)
+                if after < before:
+                    paths[identifier], before = trial, after
+                    occupancy.add(identifier,self._segments(trial))
+
     def connect(self):
-        used, lanes = [], defaultdict(int)
-        occupied = [part["labelBounds"] for part in (*self.nodes.values(), *self.regions.values())
+        used, paths, lanes, counts = [], {}, {}, defaultdict(int)
+        advanced = self.profile is not None
+        index, occupancy = (SpatialIndex(),Occupancy()) if advanced else (None,None)
+        if advanced:
+            for key,part in self.nodes.items():
+                bounds = rect(part["bounds"])
+                index.add(bounds,(key,bounds))
+        for edge in self.transitions:
+            key = tuple(sorted((edge["sourceId"],edge["targetId"])))
+            lanes[edge["id"]] = counts[key]
+            counts[key] += 1
+        order = self.transitions
+        if advanced and self.profile.route_order != "model":
+            def length(edge):
+                a,b = (self.nodes[edge[key]]["bounds"] for key in ("sourceId","targetId"))
+                return abs(a["x"]-b["x"])+abs(a["y"]-b["y"])
+            order = sorted(order,key=length,reverse=self.profile.route_order=="long")
+        for edge in order:
+            identifier = edge["id"]
+            points = paths[identifier] = self._route(edge,lanes[identifier],used,index,occupancy)
+            if advanced:
+                occupancy.add(identifier,self._segments(points))
+            else:
+                used.extend(self._segments(points))
+        if advanced and self.profile.reroutes:
+            self._rip_up(occupancy,index,lanes,paths)
+        occupied = [part["labelBounds"] for part in (*self.nodes.values(),*self.regions.values())
                     if "labelBounds" in part]
         dividers = [stroke_box(a,b) for part in self.regions.values()
                     for a,b in part.get("separatorSegments", ())]
         for edge in self.transitions:
-            src, dst = edge["sourceId"], edge["targetId"]
-            allowed = {src, dst, *self.ancestors[src], *self.ancestors[dst]}
-            obstacles = [placement["bounds"] for key, placement in self.nodes.items() if key not in allowed]
-            key = tuple(sorted((src, dst)))
-            lane = lanes[key]
-            lanes[key] += 1
-            a, b = self.nodes[src]["bounds"], self.nodes[dst]["bounds"]
-            try:
-                points = routing.route(
-                    self.vertices[src], self.vertices[dst], a, b, obstacles,
-                    clearance=self.options.edge_clearance, bend_penalty=self.options.bend_penalty,
-                    crossing_penalty=self.options.crossing_penalty, lane=lane, self_loop=src == dst,
-                    inward=(src in self.ancestors[dst], dst in self.ancestors[src]), used=used,
-                )
-            except routing.RoutingError as exc:
-                raise LayoutError(f"Transition {edge['id']!r}: {exc}") from exc
-            used.extend(pairwise((p["x"], p["y"]) for p in points))
-            geometry = {"points": points}
-            text = transition_text(edge)
-            if text:
-                borders = [border for parent in allowed - {src, dst}
-                           for border in outline_boxes(self.nodes[parent]["bounds"])]
-                headers = [box(bounds["x"], bounds["y"], bounds["width"], self.header(self.vertices[parent]))
-                           for parent in allowed - {src, dst} if behavior_lines(self.vertices[parent])
-                           for bounds in (self.nodes[parent]["bounds"],)]
-                geometry["labelBounds"] = routing.label_position(
-                    points, text, [*obstacles, a, b, *occupied, *dividers, *borders, *headers],
-                    self.options.label_clearance)
+            identifier = edge["id"]
+            geometry = {"points": paths[identifier]}
+            if transition_text(edge):
+                geometry["labelBounds"] = self._label(edge,paths[identifier],occupied,dividers,occupancy)
                 occupied.append(geometry["labelBounds"])
-            self.edges[edge["id"]] = geometry
+            self.edges[identifier] = geometry
 
     def run(self):
         roots = self.model["regions"]
@@ -295,14 +392,23 @@ class _Placement:
                     regions=self.regions, edges=self.edges)
 
 
-def layout(model, options=None, *, algorithm="topology"):
+def layout(model, options=None, *, algorithm="topology", mode="balanced", timeout=None, allow_rotate=False):
     """Compute a Layout JSON object without mutating the model."""
     if algorithm == "legacy":
         return legacy.layout(model)
-    if algorithm != "topology":
+    if algorithm not in ("topology","advanced"):
         raise LayoutError(f"Unknown layout algorithm {algorithm!r}")
     if options is None:
         options = LayoutOptions()
     if not isinstance(options, LayoutOptions):
         raise LayoutError("Expected LayoutOptions or None")
+    if algorithm == "advanced":
+        from .advanced import optimize
+        return optimize(model, options, mode=mode, timeout=timeout, allow_rotate=allow_rotate).layout
+    if timeout is not None:
+        from .budget import SearchBudget
+        budget = SearchBudget(4_000_000,timeout)
+        result = _Placement(model,options,budget=budget).run()
+        budget.check()
+        return result
     return _Placement(model, options).run()

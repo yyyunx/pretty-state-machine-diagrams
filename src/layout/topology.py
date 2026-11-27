@@ -1,10 +1,12 @@
 """Stable SCC condensation, longest-path ranks and barycentric ordering."""
 
-from collections import defaultdict
+from collections import defaultdict, deque
 from heapq import heappop, heappush
+from math import ceil, sqrt
+from statistics import median
 
 
-def layers(ids, edges):
+def layers(ids, edges, *, order="mean", split_cycles=False, reverse_sweep=False):
     index = {node: position for position, node in enumerate(ids)}
     successors = {node: [] for node in ids}
     predecessors = {node: [] for node in ids}
@@ -54,6 +56,30 @@ def layers(ids, edges):
             if a != b and b not in outgoing[a]:
                 outgoing[a].add(b)
                 indegree[b] += 1
+    offsets = dict.fromkeys(ids, 0)
+    widths = [1] * len(components)
+    if split_cycles:
+        for component, nodes in enumerate(components):
+            if len(nodes) < 3:
+                continue
+            # Spread a strongly connected component along the directed BFS order.
+            # Back edges remain directed exactly as in the model.
+            gate = min(nodes, key=lambda node: (
+                -sum(owner[p] != component for p in predecessors[node]), index[node]))
+            queue = deque([gate])
+            visited = {gate}
+            order_in_component = []
+            while queue:
+                current = queue.popleft()
+                order_in_component.append(current)
+                for child in successors[current]:
+                    if owner[child] == component and child not in visited:
+                        visited.add(child)
+                        queue.append(child)
+            capacity = ceil(sqrt(len(nodes)))
+            for position,node in enumerate(order_in_component):
+                offsets[node] = position // capacity
+            widths[component] = ceil(len(nodes) / capacity)
     pending, rank = [], [0] * len(components)
     for component, count in enumerate(indegree):
         if not count:
@@ -61,17 +87,18 @@ def layers(ids, edges):
     while pending:
         component = heappop(pending)
         for target in sorted(outgoing[component]):
-            rank[target] = max(rank[target], rank[component] + 1)
+            rank[target] = max(rank[target], rank[component] + widths[component])
             indegree[target] -= 1
             if indegree[target] == 0:
                 heappush(pending, target)
     columns = defaultdict(list)
+    node_rank = {node:rank[owner[node]]+offsets[node] for node in ids}
     for node in ids:
-        columns[rank[owner[node]]].append(node)
+        columns[node_rank[node]].append(node)
 
     ranks = sorted(columns)
     for sweep in range(4):
-        inbound = sweep % 2 == 0
+        inbound = (sweep % 2 == 0) != reverse_sweep
         neighbors = predecessors if inbound else successors
         positions = {node: index for column in columns.values() for index, node in enumerate(column)}
         for level in ranks if inbound else reversed(ranks):
@@ -79,8 +106,10 @@ def layers(ids, edges):
 
             def score(node):
                 adjacent = [positions[other] for other in neighbors[node]
-                            if (rank[owner[other]] < level if inbound else rank[owner[other]] > level)]
-                return (sum(adjacent) / len(adjacent) if adjacent else positions[node], index[node])
+                            if (node_rank[other] < level if inbound else node_rank[other] > level)]
+                if not adjacent:
+                    return positions[node], index[node]
+                return (median(adjacent) if order=="median" else sum(adjacent)/len(adjacent), index[node])
 
             column.sort(key=score)
             positions.update({node: i for i, node in enumerate(column)})

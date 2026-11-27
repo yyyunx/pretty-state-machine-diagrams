@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UML State Machine Diagram" viewBox="-42.73 16 266.57 1576" width="266.57" height="1576">
+<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<g data-layer="containers">
+</g>
+<g data-layer="regions">
+</g>
+<g data-layer="edges">
+<polyline data-edge-id="transition-1" tabindex="0" points="63.72,180 55.72,180 55.72,852 69.92,852" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-2" tabindex="0" points="169.92,852 187.84,852 187.84,468 169.92,468" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-3" tabindex="0" points="169.92,468 184.12,468 184.12,756 176.12,756" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-4" tabindex="0" points="176.12,756 187.84,756 187.84,1428 169.92,1428" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-5" tabindex="0" points="69.92,1428 52,1428 52,564 69.92,564" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-6" tabindex="0" points="69.92,564 61.92,564 61.92,276 55.72,276 63.72,276" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-7" tabindex="0" points="63.72,276 52,276 52,1524 69.92,1524" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-8" tabindex="0" points="169.92,1524 187.84,1524 187.84,660 169.92,660" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-9" tabindex="0" points="119.92,684 119.92,692 52,692 52,1332 63.72,1332" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-10" tabindex="0" points="119.92,1308 119.92,1268 119.92,1268 119.92,1260" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-11" tabindex="0" points="69.92,1236 61.92,1236 61.92,1044 69.92,1044" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-12" tabindex="0" points="119.92,1020 119.92,1012 187.84,1012 187.84,84 179.84,84" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-13" tabindex="0" points="60,84 52,84 52,1108 119.92,1108 119.92,1116" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-14" tabindex="0" points="169.92,1140 187.84,1140 187.84,372 169.92,372" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-15" tabindex="0" points="69.92,372 61.92,372 61.92,660 52,660 52,948 60,948" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-16" tabindex="0" points="60,948 52,948 53.86,948 53.86,180 63.72,180" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-17" tabindex="0" points="176.12,180 187.84,180 187.84,1108 119.92,1108 119.92,1116" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-18" tabindex="0" points="119.92,1404 119.92,1396 187.84,1396 187.84,1172 119.92,1172 119.92,1164" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-19" tabindex="0" points="119.92,684 119.92,692 187.84,692 187.84,1204 119.92,1204 119.92,1212" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-20" tabindex="0" points="179.84,84 187.84,84 187.84,372 177.92,372 177.92,660 169.92,660" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g data-layer="symbols">
+<g data-node-id="s12" data-kind="state" tabindex="0">
+<rect x="60" y="60" width="119.84" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s0" data-kind="state" tabindex="0">
+<rect x="63.72" y="156" width="112.4" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s6" data-kind="state" tabindex="0">
+<rect x="63.72" y="252" width="112.4" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s14" data-kind="state" tabindex="0">
+<rect x="69.92" y="348" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s2" data-kind="state" tabindex="0">
+<rect x="69.92" y="444" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s5" data-kind="state" tabindex="0">
+<rect x="69.92" y="540" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s8" data-kind="state" tabindex="0">
+<rect x="69.92" y="636" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s3" data-kind="state" tabindex="0">
+<rect x="63.72" y="732" width="112.4" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s1" data-kind="state" tabindex="0">
+<rect x="69.92" y="828" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s15" data-kind="state" tabindex="0">
+<rect x="60" y="924" width="119.84" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s11" data-kind="state" tabindex="0">
+<rect x="69.92" y="1020" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s13" data-kind="state" tabindex="0">
+<rect x="69.92" y="1116" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s10" data-kind="state" tabindex="0">
+<rect x="69.92" y="1212" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s9" data-kind="state" tabindex="0">
+<rect x="63.72" y="1308" width="112.4" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s4" data-kind="state" tabindex="0">
+<rect x="69.92" y="1404" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="s7" data-kind="state" tabindex="0">
+<rect x="69.92" y="1500" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+</g>
+<g data-layer="node-labels">
+<text xml:space="preserve" x="119.92" y="78" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="119.92" dy="0">節點 12 / State</tspan>
+</text>
+<text xml:space="preserve" x="119.92" y="174" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="119.92" dy="0">節點 0 / State</tspan>
+</text>
+<text xml:space="preserve" x="119.92" y="270" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="119.92" dy="0">節點 6 / State</tspan>
+</text>
+<text xml:space="preserve" x="119.92" y="750" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="119.92" dy="0">節點 3 / State</tspan>
+</text>
+<text xml:space="preserve" x="119.92" y="942" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="119.92" dy="0">節點 15 / State</tspan>
+</text>
+<text xml:space="preserve" x="119.92" y="1326" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="119.92" dy="0">節點 9 / State</tspan>
+</text>
+</g>
+<g data-layer="region-labels">
+</g>
+<g data-layer="edge-labels">
+<g data-edge-id="transition-1">
+<rect x="63.72" y="507" width="62.08" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="94.76" y="519" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="94.76" dy="0">signal 0</tspan>
+</text>
+</g>
+<g data-edge-id="transition-6">
+<rect x="69.92" y="411" width="62.08" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="100.96" y="423" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="100.96" dy="0">signal 5</tspan>
+</text>
+</g>
+<g data-edge-id="transition-11">
+<rect x="-14.67" y="1131" width="68.59" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="19.625" y="1143" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="19.625" dy="0">signal 10</tspan>
+</text>
+</g>
+<g data-edge-id="transition-16">
+<rect x="-22.73" y="555" width="68.59" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="11.565" y="567" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="11.565" dy="0">signal 15</tspan>
+</text>
+</g>
+</g>
+</svg>

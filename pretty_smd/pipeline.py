@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from time import perf_counter
 
+from src.layout.advanced import optimize
 from src.layout.engine import LayoutOptions, layout
 from src.layout.quality import evaluate, model_index
 from src.model import MockConverterAdapter, transform_model, validate_model
@@ -89,7 +90,7 @@ def read_json(path):
 
 
 def prepare_model(document, *, input_format="auto", case=None, adapter=None, uml=True,
-                  max_vertices=200, max_edges=400):
+                  max_vertices=500, max_edges=2400):
     _bounded(document)
     if case is not None:
         if not isinstance(document, dict) or case not in document:
@@ -124,7 +125,7 @@ class GenerationResult:
 
 
 def generate(document, *, input_format="auto", case=None, adapter=None, options=None, algorithm="topology",
-             uml=True, max_vertices=200, max_edges=400):
+             uml=True, max_vertices=500, max_edges=2400, mode="balanced", timeout=None, allow_rotate=False):
     """Generate SVG, SMD, Layout Data and a quality report from the same model."""
     start = perf_counter()
     model, warnings = prepare_model(
@@ -133,12 +134,21 @@ def generate(document, *, input_format="auto", case=None, adapter=None, options=
     )
     original_model = deepcopy(model)
     started_layout = perf_counter()
-    geometry = layout(model, options, algorithm=algorithm)
+    optimization = None
+    if algorithm == "advanced":
+        optimization = optimize(model,options,mode=mode,timeout=timeout,allow_rotate=allow_rotate)
+        geometry = optimization.layout
+    else:
+        geometry = layout(model,options,algorithm=algorithm,timeout=timeout)
     layout_ms = 1000 * (perf_counter() - started_layout)
     started_render = perf_counter()
     svg = render(model, geometry)
     render_ms = 1000 * (perf_counter() - started_render)
-    quality = evaluate(model, geometry, original_model=original_model, execution_ms=round(layout_ms, 3))
+    quality = (dict(optimization.metrics) if optimization is not None
+               else evaluate(model,geometry,original_model=original_model))
+    quality["execution_ms"] = round(layout_ms,3)
+    if optimization is not None:
+        quality["optimization"] = optimization.search
     quality["render_ms"] = round(render_ms, 3)
     quality["pipeline_ms"] = round(1000 * (perf_counter() - start), 3)
     return GenerationResult(model, geometry, svg, quality, warnings)

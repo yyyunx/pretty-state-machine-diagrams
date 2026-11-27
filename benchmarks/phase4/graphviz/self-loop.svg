@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UML State Machine Diagram" viewBox="-20 -20 360 153" width="360" height="153">
+<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<g data-layer="containers">
+</g>
+<g data-layer="regions">
+</g>
+<g data-layer="edges">
+<polyline data-edge-id="transition-1" tabindex="0" points="30.6732,65 30.6732,56.1836 29.4828,47.8772 29.6092,40.0146 31.0525,32.9 32.2681,29.7181 33.813,26.8372 35.6873,24.2953 37.8909,22.1303 40.424,20.3803 43.2865,19.0832 46.4785,18.2771 50,18 52.9657,18.1944 55.7014,18.7626 58.2071,19.6826 60.4828,20.9322 64.3441,24.3313 67.285,28.7825 69.3053,34.1084 70.4047,40.1316 70.583,46.6746 70.583,65" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-2" tabindex="0" points="100,89 220,89" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-3" tabindex="0" points="250.673,65 250.673,56.1836 249.483,47.8772 249.609,40.0146 251.053,32.9 252.268,29.7181 253.813,26.8372 255.687,24.2953 257.891,22.1303 260.424,20.3803 263.287,19.0832 266.479,18.2771 270,18 272.966,18.1944 275.701,18.7626 278.207,19.6826 280.483,20.9322 284.344,24.3313 287.285,28.7825 289.305,34.1084 290.405,40.1316 290.583,46.6746 290.583,65" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g data-layer="symbols">
+<g data-node-id="v0" data-kind="state" tabindex="0">
+<rect x="0" y="65" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="v1" data-kind="state" tabindex="0">
+<rect x="220" y="65" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+</g>
+<g data-layer="node-labels">
+<text xml:space="preserve" x="50" y="83" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="50" dy="0">State 0</tspan>
+</text>
+<text xml:space="preserve" x="270" y="83" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="270" dy="0">State 1</tspan>
+</text>
+</g>
+<g data-layer="region-labels">
+</g>
+<g data-layer="edge-labels">
+<g data-edge-id="transition-1">
+<rect x="22.215" y="0" width="55.57" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="50" y="12" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="50" dy="0">event_0</tspan>
+</text>
+</g>
+<g data-edge-id="transition-2">
+<rect x="132.215" y="71" width="55.57" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="160" y="83" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="160" dy="0">event_1</tspan>
+</text>
+</g>
+<g data-edge-id="transition-3">
+<rect x="242.215" y="0" width="55.57" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="270" y="12" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="270" dy="0">event_2</tspan>
+</text>
+</g>
+</g>
+</svg>
