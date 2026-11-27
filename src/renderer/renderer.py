@@ -8,7 +8,7 @@ from __future__ import annotations
 import html
 import json
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 
 class RenderError(ValueError):
@@ -265,7 +265,9 @@ class _SVG:
 
     def render_nodes(self) -> None:
         # Model traversal order keeps parent composites before their descendants.
-        for region in self.regions.values():
+        # Start only at top-level regions; composite rendering recursively draws
+        # descendants exactly once.
+        for region in self.model.get("regions", []):
             for vertex in region.get("vertices", []):
                 self.render_vertex(vertex["id"])
 
