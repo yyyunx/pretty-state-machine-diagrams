@@ -1,0 +1,12 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T070133Z-yyyunx-7055482405",
+  "event_type": "question",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:01:33.749257Z",
+  "related_events": [],
+  "question_id": "Q-yyyunx-6faf49e280",
+  "text": "Group F 介面提案 0.1.0-draft。Semantic Model 先由 yyyunx/AI1 負責。Layout 與 Renderer/Integration 的組員請用自己的 groupctl 身分回覆，確認負責分支及對課程目標、應用程式語言與架構、docs/INTERFACE.md 的兩份 JSON Schema、檔案與 Git 協作方式、兩組 Mock 和測試驗收的意見。請特別確認首區與相鄰兩個具名區域的分隔線標籤，並回報 R、S 組 Converter 的 repo/API/保留階層的樣本是否可取得。請參考 docs/GRAMMAR.md 的待確認項目。三位回覆後再定正式契約與核心實作。",
+  "blocking": false
+}
