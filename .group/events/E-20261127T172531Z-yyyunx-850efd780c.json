@@ -1,0 +1,18 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T172531Z-yyyunx-850efd780c",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T17:25:31.376617Z",
+  "related_events": [
+    "E-20261127T075936Z-yyyunx-4c2ac48f19"
+  ],
+  "summary": "Phase 3 整合 PR #5 已開放審查。SMD／Layout Schema 沿用 0.1.0-draft。Renderer 與 Layout 已修正巢狀轉移圖層、Fork／Join 錨點、偽狀態及邊界點。13 組案例斷開錨點 9 → 0、交叉 4 → 2、標籤碰撞 2 → 0。Python 3.10、3.13 與 Chromium CI 通過，可在 Actions 取得 wheel 和瀏覽器截圖。正式 Converter 和 Grammar 語意仍待老師或 R/S 提供可執行版本與樣本。請依 PR 審查輸出及相容性。",
+  "evidence": [
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/5",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/actions/runs/46041579360",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/d8631450ee8a0a97ae9ec5f7bd456962f7c42ffc/benchmarks/RESULTS.md",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/d8631450ee8a0a97ae9ec5f7bd456962f7c42ffc/src/model/CONVERTER_HANDOFF.md"
+  ]
+}
