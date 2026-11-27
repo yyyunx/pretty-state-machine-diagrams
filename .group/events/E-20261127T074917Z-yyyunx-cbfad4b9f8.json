@@ -1,0 +1,18 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T074917Z-yyyunx-cbfad4b9f8",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:49:17.513741Z",
+  "related_events": [
+    "E-20261127T074654Z-yyyunx-1340b26469",
+    "E-20261127T074703Z-yyyunx-f1db5cc688"
+  ],
+  "summary": "補充最終交接：Renderer 在整合期間更新至 750b532，已用隔離工作樹和 Layout b9be71a 重跑五例全部通過。最新保存的 SVG 在 02971a5，nested/orthogonal/pseudostates 已更新 Composite 標題，linear/resolvedBranch 相同。48 項測試通過，五份保存 SVG 逐檔核對。問題 Q-yyyunx-e84b423937 在新版本仍可重現：兩個錨點差 9.12 SVG 單位，Entry/Exit Point 仍是 E/X。重現指令已更新成 Renderer 750b532。",
+  "evidence": [
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/tree/02971a5921602d339e444313dbd0f8379c0f683a/src/model/generated/svg",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/02971a5921602d339e444313dbd0f8379c0f683a/tests/model/README.md",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/1"
+  ]
+}
