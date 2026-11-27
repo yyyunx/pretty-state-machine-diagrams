@@ -63,3 +63,41 @@ class WebTests(unittest.TestCase):
         issue = json.loads(data)["diagnostics"][0]
         self.assertEqual(issue["path"], "/operator")
         self.assertEqual(issue["source_text"], "ref Missing")
+
+    def test_advanced_comparison_uses_one_model(self):
+        source = (ROOT/"examples/basic.smd.json").read_text(encoding="utf-8")
+        status,_,data = self.request("POST","/api/generate",{
+            "source":source,"algorithm":"advanced","mode":"fast","compare":True})
+        self.assertEqual(status,200,data)
+        body = json.loads(data)
+        self.assertEqual(body["quality"]["optimization"]["mode"],"fast")
+        self.assertEqual(body["baseline"]["layout"]["modelId"],body["model"]["id"])
+        self.assertEqual(set(body["baseline"]["layout"]["edges"]),set(body["layout"]["edges"]))
+
+    def test_benchmark_inputs_and_layout_deadline(self):
+        status,_,data = self.request("GET","/api/examples")
+        self.assertEqual(status,200)
+        model = json.loads(data)["benchmark-sparse"]
+        self.assertEqual(len(model["regions"][0]["vertices"]),50)
+        previous = self.app.layout_timeout
+        try:
+            self.app.layout_timeout = 1e-9
+            status,_,data = self.request("POST","/api/generate",{
+                "source":json.dumps(model),"algorithm":"advanced","mode":"fast"})
+            self.assertEqual(status,504)
+            self.assertEqual(json.loads(data)["diagnostics"][0]["code"],"layout-timeout")
+        finally:
+            self.app.layout_timeout = previous
+
+    def test_overloaded_server_rejects_with_retry(self):
+        held = 0
+        try:
+            for _ in range(4):
+                self.assertTrue(self.app.slots.acquire(timeout=2))
+                held += 1
+            status,_,data = self.request("GET","/")
+            self.assertEqual(status,503)
+            self.assertEqual(json.loads(data)["diagnostics"][0]["code"],"busy")
+        finally:
+            for _ in range(held):
+                self.app.slots.release()

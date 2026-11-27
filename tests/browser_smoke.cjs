@@ -12,14 +12,16 @@ const output = path.resolve(process.argv[2] || "integration-output/browser");
 const base = "http://127.0.0.1:" + (process.env.PRETTY_SMD_TEST_PORT || "8765");
 const artifacts = process.env.PRETTY_SMD_BENCHMARK || path.join(root, "benchmarks");
 
-async function start() {
-  const child = spawn(process.env.PYTHON || "python", ["-m", "pretty_smd", "serve", "--port", new URL(base).port],
+async function start(args,address) {
+  const child = spawn(process.env.PYTHON || "python", args,
     {cwd: root, windowsHide: true, stdio: "inherit"});
   try {
     for (let attempt = 0; attempt < 80; attempt++) {
       if (child.exitCode !== null) throw new Error("Local server exited.");
       try {
-        if ((await fetch(base + "/api/examples")).ok) return child;
+        const response = await fetch(address);
+        await response.arrayBuffer();
+        if (response.ok) return child;
       } catch {}
       await new Promise(resolve => setTimeout(resolve, 100));
     }
@@ -27,6 +29,33 @@ async function start() {
   } catch (error) {
     child.kill();
     throw error;
+  }
+}
+
+async function checkGallery(browser,directory) {
+  const port = Number(new URL(base).port)+1;
+  const address = "http://127.0.0.1:" + port;
+  const server = await start(["-m","http.server",String(port),"--bind","127.0.0.1",
+    "--directory",path.resolve(directory)],address);
+  const page = await browser.newPage({viewport:{width:1440,height:1050}});
+  try {
+    await page.goto(address);
+    await page.waitForFunction(() => Array.from(document.images).every(img => img.complete && img.naturalWidth>0));
+    await page.waitForFunction(() => document.querySelector("#bench-status").textContent.includes("量測"));
+    await page.locator("#case").selectOption("self-loop");
+    await page.waitForFunction(() => Array.from(document.querySelectorAll("#figures img")).every(
+      img => img.src.endsWith("/self-loop.svg") && img.complete && img.naturalWidth>0));
+    await page.locator("#zoom").evaluate(field => {
+      field.value = 200;
+      field.dispatchEvent(new Event("input"));
+    });
+    assert.equal(await page.locator("#zoom-value").textContent(),"200%");
+    await page.locator("#reset").click();
+    assert.equal(await page.locator("#zoom-value").textContent(),"100%");
+    await page.screenshot({path:path.join(output,"gallery.png"),fullPage:true});
+  } finally {
+    await page.close();
+    server.kill();
   }
 }
 
@@ -99,6 +128,60 @@ async function checkApp(browser) {
   await page.close();
 }
 
+async function checkAdvanced(browser) {
+  const page = await browser.newPage({viewport:{width:1440,height:1080},acceptDownloads:true});
+  const errors = [];
+  page.on("pageerror",error => errors.push(error.message));
+  await page.goto(base);
+  await page.locator("#drawing svg").waitFor();
+  await page.locator("#example").selectOption("pseudostates");
+  await page.locator("#algorithm").selectOption("advanced");
+  await page.locator("#mode").selectOption("balanced");
+  const [response] = await Promise.all([
+    page.waitForResponse(response => response.url().endsWith("/api/generate")),
+    page.locator("#generate").click(),
+  ]);
+  const result = await response.json();
+  assert.equal(response.status(),200,JSON.stringify(result.diagnostics));
+  await page.locator("#comparison").waitFor();
+  assert.equal(result.baseline.quality.edge_crossings,2);
+  assert.equal(result.quality.edge_crossings,1);
+  await page.locator("#before").click();
+  assert.equal(await page.locator("#before").getAttribute("aria-pressed"),"true");
+  const [download] = await Promise.all([page.waitForEvent("download"),page.locator("#download").click()]);
+  assert.equal(await fs.readFile(await download.path(),"utf8"),result.baseline.svg);
+  await page.locator("#after").click();
+  await page.locator("#hierarchy > summary").click();
+  await page.locator("#search").fill("Active");
+  await page.locator("#tree").getByRole("button",{name:"Active",exact:true}).click();
+  assert.match(await page.locator("#item").textContent(),/Active/);
+  assert(await page.locator("#drawing polyline.related-edge").count() > 0);
+  await page.screenshot({path:path.join(output,"advanced-app.png"),fullPage:true});
+  await page.locator("#settings > summary").click();
+  const [settings] = await Promise.all([page.waitForEvent("download"),page.locator("#save-settings").click()]);
+  const backup = await fs.readFile(await settings.path());
+  assert.equal(JSON.parse(backup).mode,"balanced");
+  await page.locator("#mode").selectOption("quality");
+  await page.locator("#load-settings").setInputFiles({name:"settings.json",mimeType:"application/json",buffer:backup});
+  await page.waitForFunction(() => document.querySelector("#mode").value==="balanced");
+
+  await page.locator("#example").selectOption("benchmark-sparse");
+  await page.locator("#mode").selectOption("fast");
+  await page.locator("#compare").uncheck();
+  await page.locator("#generate").click();
+  await page.locator("#minimap").waitFor();
+  const window = page.locator("#mini-window");
+  const before = await window.getAttribute("x");
+  await page.locator("#mini-svg").click({position:{x:15,y:28}});
+  assert.notEqual(await window.getAttribute("x"),before);
+  await page.locator("#mini-fit").click();
+  assert.equal(await window.getAttribute("x"),before);
+  await page.setViewportSize({width:390,height:844});
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  assert.deepEqual(errors,[]);
+  await page.close();
+}
+
 function inside(node, x, y) {
   const box = node.bounds || node;
   return x >= box.x-5 && x <= box.x+box.width+5 && y >= box.y-5 && y <= box.y+box.height+5;
@@ -159,17 +242,19 @@ async function inspectSvg(browser, folder, sample) {
 
 async function main() {
   await fs.mkdir(output,{recursive:true});
-  const server = await start();
+  const server = await start(["-m","pretty_smd","serve","--port",new URL(base).port],base+"/api/examples");
   let browser;
   try {
     browser = await chromium.launch({executablePath:process.env.CHROME || undefined, headless:true});
     await checkApp(browser);
+    await checkAdvanced(browser);
     const before = await inspectSvg(browser,"baseline","nested");
     const after = await inspectSvg(browser,"after","nested");
     assert(before !== null && after !== null && after > 0.7 && after > before + 0.5,
       "Inner transition raster visibility: baseline=" + before + ", topology=" + after);
     await inspectSvg(browser,"after","orthogonal");
     await inspectSvg(browser,"after","synthetic-48");
+    if (process.env.PRETTY_SMD_GALLERY) await checkGallery(browser,process.env.PRETTY_SMD_GALLERY);
     console.log("Browser and downloads passed. Nested arrow pixel coverage:", before, "→", after);
   } finally {
     if (browser) await browser.close();

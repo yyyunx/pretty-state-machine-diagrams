@@ -45,6 +45,29 @@ details { border-top:1px solid var(--line);padding:.65rem 0 .1rem;margin-top:.75
 #drawing svg {display:block;max-width:none;user-select:none;}
 #drawing [data-node-id],#drawing [data-edge-id] {cursor:pointer;}
 #drawing polyline:hover,#drawing polyline:focus {stroke:#286cce;stroke-width:3;}
+#drawing polyline.related-edge {stroke:#1964bb;stroke-width:3;}
+#drawing g.related-edge text {fill:#1454ad;font-weight:700;}
+#drawing g.selected-node :is(rect,circle,path,line) {stroke:#1964bb;stroke-width:3;}
+.checks {display:flex;flex-wrap:wrap;gap:.2rem .8rem;}
+.checks input {width:auto;min-height:0;vertical-align:middle;margin-right:.35rem;}
+.settings-files {margin-top:.65rem;}
+.settings-files label {width:100%;}
+.settings-files input {display:block;margin:.25rem 0;}
+.comparison:not([hidden]) {display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin-top:.65rem;}
+.comparison p {margin:0;color:var(--sub);font-size:.88rem;font-variant-numeric:tabular-nums;}
+.comparison button[aria-pressed=true] {background:var(--accent);color:var(--accent-fg);}
+#minimap {position:absolute;right:.65rem;bottom:.65rem;width:min(190px,38%);padding:.35rem;
+  background:var(--surface);border:1px solid var(--line);border-radius:8px;cursor:default;}
+#mini-svg {display:block;width:100%;height:72px;background:var(--code);cursor:crosshair;}
+.mini-node {fill:var(--line);}
+.mini-window {fill:#6699db40;stroke:var(--accent);stroke-width:1.25;vector-effect:non-scaling-stroke;}
+#mini-fit {width:100%;min-height:1.9rem;margin-top:.25rem;padding:.13rem .25rem;font-size:.8rem;}
+#tree {max-height:13rem;overflow:auto;margin:.4rem 0;padding-left:1.25rem;}
+#tree ul {list-style:none;margin:.2rem 0;padding-left:.9rem;}
+#tree li {margin:.2rem 0;}
+#tree button {text-align:left;min-height:1.9rem;max-width:100%;overflow-wrap:anywhere;}
+#tree details {border:0;margin:0;padding:.15rem 0;}
+#search {width:100%;}
 #empty {margin:0;padding:2.5rem 1rem;text-align:center;color:var(--sub);}
 #time,#status,.notice {font-size:.89rem;color:var(--sub);margin:.55rem 0 0;}
 .notice {color:var(--error);}

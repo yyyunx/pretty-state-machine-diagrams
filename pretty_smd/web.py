@@ -6,11 +6,13 @@ from importlib.resources import files
 import json
 from threading import BoundedSemaphore
 
+from src.layout.budget import BudgetExceeded
 from src.layout.engine import LayoutOptions
 from src.model import ModelError
 
 from .benchmark import resource
 from .pipeline import InputError, MAX_INPUT_BYTES, generate, load_json
+from .stress import generated_case
 
 ASSETS = {
     "/": ("index.html", "text/html; charset=utf-8"),
@@ -24,8 +26,9 @@ CSP = ("default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'se
 class AppServer(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, port):
+    def __init__(self, port, *, layout_timeout=5.0):
         self.slots = BoundedSemaphore(4)
+        self.layout_timeout = layout_timeout
         super().__init__(("127.0.0.1", port), Handler)
 
     def get_request(self):
@@ -35,7 +38,16 @@ class AppServer(ThreadingHTTPServer):
 
     def process_request(self, request, address):
         if not self.slots.acquire(blocking=False):
-            self.shutdown_request(request)
+            try:
+                body = b'{"diagnostics":[{"severity":"error","code":"busy","path":"","message":"Server is busy. Retry in a moment."}]}'
+                request.settimeout(.2)
+                request.sendall(b"HTTP/1.0 503 Service Unavailable\r\nContent-Type: application/json\r\n"
+                                b"Retry-After: 1\r\nConnection: close\r\nContent-Length: "
+                                + str(len(body)).encode() + b"\r\n\r\n" + body)
+            except OSError:
+                pass
+            finally:
+                self.shutdown_request(request)
             return
         try:
             super().process_request(request, address)
@@ -67,8 +79,8 @@ class Handler(BaseHTTPRequestHandler):
         self._send(status, "application/json; charset=utf-8",
                    json.dumps(body, ensure_ascii=True, allow_nan=False).encode("ascii"))
 
-    def _error(self, status, message):
-        self._json(status, {"diagnostics": [{"severity": "error", "code": "input-error",
+    def _error(self, status, message, *, code="input-error"):
+        self._json(status, {"diagnostics": [{"severity": "error", "code": code,
                                             "path": "", "message": message}]})
 
     def _local(self):
@@ -89,6 +101,9 @@ class Handler(BaseHTTPRequestHandler):
             for version in ("p1", "p2"):
                 samples.update({k: v for k, v in json.loads(
                     resource(f"mock-converter-{version}.json")).items() if isinstance(v, dict)})
+            samples["benchmark-sparse"] = generated_case("sparse",50)
+            samples["benchmark-cycles"] = generated_case("cycles",25)
+            samples["benchmark-loops"] = generated_case("loops",25)
             self._json(200, samples)
         elif self.path in ASSETS:
             filename, media = ASSETS[self.path]
@@ -119,14 +134,32 @@ class Handler(BaseHTTPRequestHandler):
             config = request.get("options", {})
             if not isinstance(config, dict) or set(config) - set(vars(LayoutOptions())):
                 raise InputError("Unknown or invalid layout settings.")
-            result = generate(load_json(request["source"]), input_format=input_format,
-                              options=LayoutOptions(**config), algorithm=request.get("algorithm", "topology"),
-                              max_vertices=48, max_edges=96)
-            self._json(200, {"svg": result.svg, "model": result.model, "layout": result.layout,
-                             "quality": result.quality,
-                             "diagnostics": [asdict(item) for item in result.warnings]})
+            algorithm, mode = request.get("algorithm","topology"), request.get("mode","balanced")
+            compare, rotate = request.get("compare",False),request.get("allowRotate",False)
+            if (algorithm not in ("topology","legacy","advanced") or mode not in ("fast","balanced","quality")
+                    or type(compare) is not bool or type(rotate) is not bool):
+                raise InputError("Unknown layout algorithm, mode or comparison setting.")
+            options = LayoutOptions(**config)
+            vertices, edges = (48,96) if algorithm=="legacy" else (120,300)
+            result = generate(load_json(request["source"]), input_format=input_format,options=options,
+                              algorithm=algorithm,mode=mode,allow_rotate=rotate,timeout=self.server.layout_timeout,
+                              max_vertices=vertices,max_edges=edges)
+            response = {"svg":result.svg,"model":result.model,"layout":result.layout,
+                        "quality":result.quality,"diagnostics":[asdict(item) for item in result.warnings]}
+            if compare and algorithm=="advanced":
+                try:
+                    baseline = generate(result.model,input_format="smd",options=options,algorithm="topology",
+                                        timeout=self.server.layout_timeout,max_vertices=vertices,max_edges=edges)
+                    response["baseline"] = {"svg":baseline.svg,"layout":baseline.layout,"quality":baseline.quality}
+                except ValueError as error:
+                    response["diagnostics"].append({"severity":"warning","code":"baseline-failed",
+                                                    "path":"","message":str(error)})
+            self._json(200,response)
         except ModelError as error:
             self._json(422, {"diagnostics": [asdict(item) for item in error.diagnostics]})
+        except BudgetExceeded as error:
+            code = "layout-timeout" if "time limit" in str(error) else "layout-work-limit"
+            self._error(504 if code=="layout-timeout" else 422,str(error),code=code)
         except TimeoutError:
             self._error(408, "Request timed out.")
         except (ValueError, UnicodeError, RecursionError) as error:

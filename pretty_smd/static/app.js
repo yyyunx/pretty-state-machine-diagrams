@@ -9,10 +9,14 @@ const reportNames = {
   disconnected_anchors: "斷開錨點", edge_bends: "轉折數", total_edge_length: "連線總長",
   diagram_area: "圖面面積", execution_ms: "排版時間（ms）", render_ms: "繪圖時間（ms）",
   pipeline_ms: "完整管線（ms）", semantic_preservation: "語意資料與 ID 完整",
+  label_path_intersections: "標籤遮住轉移", broken_paths: "無效路徑",
 };
 const caseNames = {
   linear: "線性序列", resolvedBranch: "守衛分支", nested: "巢狀複合狀態",
   orthogonal: "正交區域", pseudostates: "偽狀態與邊界點",
+  "benchmark-sparse": "Benchmark · 50 節點稀疏圖",
+  "benchmark-cycles": "Benchmark · 25 節點循環",
+  "benchmark-loops": "Benchmark · 25 節點自迴圈",
 };
 const allowedSvg = new Set(["svg", "title", "desc", "defs", "marker", "path", "rect", "g",
   "line", "circle", "text", "tspan", "polyline"]);
@@ -21,6 +25,9 @@ let current = null;
 let view = {x: 0, y: 0, scale: 1, width: 1, height: 1};
 let drag = null;
 let busy = false;
+let displayed = null;
+let focused = null;
+const ns = "http://www.w3.org/2000/svg";
 
 function status(message) {
   el("status").textContent = message;
@@ -29,6 +36,7 @@ function status(message) {
 function formatControls() {
   const unavailable = el("format").value === "pa";
   const legacy = el("algorithm").value === "legacy";
+  el("advanced-options").hidden = el("algorithm").value !== "advanced";
   el("pa-note").hidden = !unavailable;
   el("generate").disabled = busy || unavailable;
   el("direction").disabled = legacy;
@@ -49,6 +57,14 @@ function diagnostics(items) {
 
 function updateView() {
   drawing.style.transform = "translate(" + view.x + "px," + view.y + "px) scale(" + view.scale + ")";
+  const window = el("mini-window");
+  if (window && displayed) {
+    const bounds = displayed.layout.viewport;
+    window.setAttribute("x",bounds.x-view.x/view.scale);
+    window.setAttribute("y",bounds.y-view.y/view.scale);
+    window.setAttribute("width",canvas.clientWidth/view.scale);
+    window.setAttribute("height",canvas.clientHeight/view.scale);
+  }
 }
 
 function fit() {
@@ -80,15 +96,36 @@ function mount(svg) {
 }
 
 function show(result) {
-  mount(result.svg);
   current = result;
+  focused = null;
+  el("comparison").hidden = !result.baseline;
+  if (result.baseline) {
+    const b = result.baseline.quality, a = result.quality;
+    el("delta").textContent = "交叉 " + b.edge_crossings + " → " + a.edge_crossings
+      + "　轉折 " + b.edge_bends + " → " + a.edge_bends
+      + "　排版時間 " + b.execution_ms + " → " + a.execution_ms + " ms";
+  }
+  tree();
+  diagnostics(result.diagnostics);
+  showVersion(false);
+}
+
+function showVersion(before) {
+  const result = before ? current.baseline : current;
+  if (!result) return;
+  mount(result.svg);
+  displayed = result;
+  el("before").setAttribute("aria-pressed",String(before));
+  el("after").setAttribute("aria-pressed",String(!before));
   const viewport = result.layout.viewport;
   view.width = viewport.width;
   view.height = viewport.height;
   el("empty").hidden = true;
   el("download").disabled = false;
-  el("item").textContent = "點選狀態或轉移查看資料。";
-  el("time").textContent = "完整管線 " + result.quality.pipeline_ms + " ms";
+  if (!focused) el("item").textContent = "點選狀態或轉移查看資料。";
+  const optimization = result.quality.optimization;
+  el("time").textContent = "完整管線 " + result.quality.pipeline_ms + " ms" + (optimization
+    ? " · " + optimization.mode + " · " + optimization.candidates.length + " 個候選" : "");
   const list = el("quality-list");
   list.replaceChildren();
   for (const [key, label] of Object.entries(reportNames)) {
@@ -99,7 +136,8 @@ function show(result) {
       (result.quality[key] ? "通過" : "失敗") : String(result.quality[key] ?? "—");
     list.append(term, value);
   }
-  diagnostics(result.diagnostics);
+  minimap();
+  highlight();
   fit();
 }
 
@@ -122,7 +160,8 @@ async function generate() {
   status("正在驗證及生成圖形…");
   try {
     const response = await fetch("/api/generate", {method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({source, format: el("format").value, algorithm: el("algorithm").value, options})});
+      body: JSON.stringify({source, format: el("format").value, algorithm: el("algorithm").value, options,
+        mode:el("mode").value, allowRotate:el("rotate").checked, compare:el("compare").checked})});
     const result = await response.json();
     if (!response.ok) {
       diagnostics(result.diagnostics || []);
@@ -156,8 +195,14 @@ function inspect(target) {
   const element = target.closest("[data-node-id], [data-edge-id]");
   if (!element) return;
   const edge = element.dataset.edgeId;
-  const item = findInRegions(current.model.regions, edge || element.dataset.nodeId, edge ? "transitions" : "vertices");
+  selectItem(edge || element.dataset.nodeId, edge ? "transitions" : "vertices");
+}
+
+function selectItem(id, field) {
+  const edge = field === "transitions";
+  const item = findInRegions(current.model.regions,id,field);
   if (!item) return;
+  focused = {id,edge,item};
   const details = edge ? {
     Trigger: item.triggers || [], Guard: item.guard ?? null, Effect: item.effect ?? null,
     "互動原文": item.sourceText ?? null,
@@ -167,16 +212,167 @@ function inspect(target) {
   };
   el("item").textContent = JSON.stringify(details, null, 2);
   el("inspector").open = true;
+  highlight();
+}
+
+function highlight() {
+  for (const node of drawing.querySelectorAll("[data-node-id]")) {
+    node.classList.toggle("selected-node", !!(focused && !focused.edge && node.dataset.nodeId === focused.id));
+  }
+  for (const edge of drawing.querySelectorAll("[data-edge-id]")) {
+    const id = edge.dataset.edgeId;
+    const transition = focused && !focused.edge
+      ? findInRegions(current.model.regions,id,"transitions") : null;
+    const related = focused && (focused.edge ? id===focused.id
+      : transition && (transition.sourceId===focused.id || transition.targetId===focused.id));
+    edge.classList.toggle("related-edge",!!related);
+  }
+}
+
+function tree() {
+  const root = el("tree");
+  root.replaceChildren();
+  if (!current) return;
+  const query = el("search").value.toLocaleLowerCase().trim();
+  function button(text,id,field) {
+    const item = document.createElement("li");
+    const control = document.createElement("button");
+    control.type = "button";
+    control.textContent = text;
+    control.addEventListener("click",() => selectItem(id,field));
+    item.append(control);
+    return item;
+  }
+  for (const region of current.model.regions) walk(region,root);
+  if (!root.children.length) {
+    const empty = document.createElement("li");
+    empty.textContent = "沒有相符的狀態或轉移。";
+    root.append(empty);
+  }
+  function walk(region,list) {
+    const branch = document.createElement("ul");
+    for (const node of region.vertices) {
+      const text = node.displayName || ("未命名 · " + (node.pseudostateKind || node.kind));
+      const children = document.createElement("ul");
+      for (const nested of node.regions || []) walk(nested,children);
+      if (!query || text.toLocaleLowerCase().includes(query) || children.children.length) {
+        const item = button(text,node.id,"vertices");
+        if (children.children.length) item.append(children);
+        branch.append(item);
+      }
+    }
+    if (query) {
+      for (const edge of region.transitions) {
+        const fields = [...(edge.triggers||[]),edge.guard,edge.effect,edge.sourceText].filter(Boolean);
+        if (fields.join(" ").toLocaleLowerCase().includes(query)) {
+          branch.append(button(edge.sourceText ?? fields.join(" "),edge.id,"transitions"));
+        }
+      }
+    }
+    if (!branch.children.length) return;
+    const item = document.createElement("li");
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
+    summary.textContent = region.displayName || "未命名區域";
+    details.open = true;
+    details.append(summary,branch);
+    item.append(details);
+    list.append(item);
+  }
+}
+
+function minimap() {
+  const map = el("mini-svg");
+  map.replaceChildren();
+  const geometry = displayed.layout;
+  el("minimap").hidden = Object.keys(geometry.nodes).length < 18;
+  if (el("minimap").hidden) return;
+  const v = geometry.viewport;
+  map.setAttribute("viewBox",[v.x,v.y,v.width,v.height].join(" "));
+  const box = (b,css) => {
+    const r = document.createElementNS(ns,"rect");
+    for (const key of ["x","y","width","height"]) r.setAttribute(key,b[key]);
+    r.setAttribute("class",css);
+    map.append(r);
+    return r;
+  };
+  for (const part of Object.values(geometry.nodes)) box(part.bounds,"mini-node");
+  box(v,"mini-window").id = "mini-window";
 }
 
 el("generate").addEventListener("click", generate);
 el("format").addEventListener("change", formatControls);
 el("algorithm").addEventListener("change", formatControls);
+el("before").addEventListener("click",() => showVersion(true));
+el("after").addEventListener("click",() => showVersion(false));
+el("search").addEventListener("input",tree);
+el("mini-fit").addEventListener("click",fit);
+function saveFile(contents,type,name) {
+  const url = URL.createObjectURL(new Blob([contents],{type}));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url),500);
+}
+el("save-settings").addEventListener("click",() => {
+  const settings = {version:1,algorithm:el("algorithm").value,mode:el("mode").value,
+    direction:el("direction").value,allowRotate:el("rotate").checked,options:{}};
+  for (const field of document.querySelectorAll("[data-option]")) {
+    if (field.value!=="" && !field.checkValidity()) {
+      field.reportValidity();
+      return;
+    }
+    if (field.value!=="") settings.options[field.dataset.option] = field.valueAsNumber;
+  }
+  saveFile(JSON.stringify(settings,null,2)+"\n","application/json","pretty-smd.settings.json");
+});
+el("load-settings").addEventListener("change",async event => {
+  try {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size>16384) throw new Error("設定檔超過 16 KiB。");
+    const settings = JSON.parse(await file.text());
+    if (settings?.version!==1 || !["topology","legacy","advanced"].includes(settings.algorithm) ||
+        !["fast","balanced","quality"].includes(settings.mode) ||
+        !["horizontal","vertical"].includes(settings.direction) ||
+        typeof settings.allowRotate!=="boolean" || !settings.options ||
+        typeof settings.options!=="object" || Array.isArray(settings.options)) throw new Error("設定格式無效。");
+    const fields = new Map(Array.from(document.querySelectorAll("[data-option]"), field => [field.dataset.option,field]));
+    for (const [key,val] of Object.entries(settings.options)) {
+      const field = fields.get(key);
+      if (!field || typeof val!=="number" || !Number.isFinite(val) || val<Number(field.min) || val>Number(field.max)) {
+        throw new Error("排版參數無效。");
+      }
+    }
+    for (const [key,field] of fields) field.value = settings.options[key] ?? "";
+    el("algorithm").value = settings.algorithm;
+    el("mode").value = settings.mode;
+    el("direction").value = settings.direction;
+    el("rotate").checked = settings.allowRotate;
+    formatControls();
+    status("已載入排版設定。按生成可更新預覽。");
+  } catch (error) {
+    status(error.message);
+  } finally {
+    event.target.value = "";
+  }
+});
+el("mini-svg").addEventListener("click",event => {
+  const map = el("mini-svg");
+  const matrix = map.getScreenCTM();
+  if (!matrix || !displayed) return;
+  const point = new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());
+  const bounds = displayed.layout.viewport;
+  view.x = canvas.clientWidth/2-(point.x-bounds.x)*view.scale;
+  view.y = canvas.clientHeight/2-(point.y-bounds.y)*view.scale;
+  updateView();
+});
 el("example").addEventListener("change", () => {
   const sample = samples[el("example").value];
   if (!sample) return;
   el("source").value = JSON.stringify(sample, null, 2);
-  el("format").value = "mock";
+  el("format").value = sample.schemaVersion ? "smd" : "mock";
   formatControls();
 });
 el("file").addEventListener("change", async event => {
@@ -219,7 +415,8 @@ canvas.addEventListener("wheel", event => {
   zoom(event.deltaY < 0 ? 1.13 : .89, event.clientX-rect.left, event.clientY-rect.top);
 }, {passive: false});
 canvas.addEventListener("pointerdown", event => {
-  if (current && event.button === 0) drag = {x:event.clientX, y:event.clientY, vx:view.x, vy:view.y, moved:false};
+  if (current && event.button === 0 && !event.target.closest("#minimap"))
+    drag = {x:event.clientX, y:event.clientY, vx:view.x, vy:view.y, moved:false};
 });
 canvas.addEventListener("pointermove", event => {
   if (!drag) return;
@@ -239,16 +436,11 @@ canvas.addEventListener("keydown", event => {
   if (event.key === "Enter" || event.key === " ") { event.preventDefault(); inspect(event.target); }
 });
 el("download").addEventListener("click", () => {
-  if (!current) return;
+  if (!displayed) return;
   const kind = el("export").value;
   const svg = kind === "svg";
-  const contents = svg ? current.svg : JSON.stringify(current[kind], null, 2) + "\n";
-  const url = URL.createObjectURL(new Blob([contents], {type: svg ? "image/svg+xml" : "application/json"}));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = svg ? "diagram.svg" : "diagram." + kind + ".json";
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 500);
+  const contents = svg ? displayed.svg : JSON.stringify(kind==="model" ? current.model : displayed[kind],null,2) + "\n";
+  saveFile(contents,svg ? "image/svg+xml" : "application/json",svg ? "diagram.svg" : "diagram." + kind + ".json");
 });
 
 fetch("/api/examples").then(response => {
