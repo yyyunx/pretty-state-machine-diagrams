@@ -58,13 +58,23 @@ def main(argv=None):
     make.add_argument("--layout-output", type=Path)
     make.add_argument("--quality-output", type=Path)
     make.add_argument("--direction", choices=("horizontal", "vertical"), default="horizontal")
-    make.add_argument("--algorithm", choices=("topology", "legacy"), default="topology")
+    make.add_argument("--algorithm", choices=("topology","legacy","advanced"), default="topology")
+    make.add_argument("--mode", choices=("fast","balanced","quality"), default="balanced")
+    make.add_argument("--timeout",type=float,help="Cancel advanced or topology search after this many seconds.")
+    make.add_argument("--allow-rotate",action="store_true",help="Let advanced search test the other direction.")
     make.add_argument("--set", type=_set_option, action="append", default=[], metavar="OPTION=NUMBER")
     _input_args(commands.add_parser("validate", help="Validate a document and report diagnostics."))
     bench = commands.add_parser("benchmark", help="Run the same dataset through the two layout engines.")
     bench.add_argument("--output-dir", type=Path, default=Path("benchmark-output"))
     bench.add_argument("--repeats", type=int, default=1)
     bench.add_argument("--memory", action="store_true")
+    large = commands.add_parser("benchmark-advanced",help="Run isolated reference and stress workloads.")
+    large.add_argument("--output-dir",type=Path,default=Path("benchmark-output/advanced"))
+    large.add_argument("--suite",choices=("all","reference","stress"),default="all")
+    large.add_argument("--timeout",type=float,default=6)
+    large.add_argument("--repeats",type=int,default=1)
+    large.add_argument("--dot",help="Path to an optional Graphviz dot executable.")
+    large.add_argument("--case",action="append",help="Select one or more benchmark cases.")
     web = commands.add_parser("serve", help="Run the local web app.")
     web.add_argument("--port", type=int, default=8000)
     args = parser.parse_args(argv)
@@ -75,6 +85,12 @@ def main(argv=None):
         elif args.command == "benchmark":
             rows = run_benchmark(args.output_dir, repeats=args.repeats, memory=args.memory)
             print(f"Saved {len(rows)} runs to {args.output_dir}")
+        elif args.command == "benchmark-advanced":
+            from .phase4_benchmark import run
+            rows = run(args.output_dir,suite=args.suite,timeout=args.timeout,dot=args.dot,
+                       repeats=args.repeats,case_filter=args.case,
+                       on_row=lambda row:print(row["case"],row["algorithm"],row["status"],flush=True))
+            print(f"Saved {len(rows)} runs to {args.output_dir}")
         else:
             source = read_json(args.input)
             options = dict(input_format=args.format, case=args.case, uml=not args.structural)
@@ -84,6 +100,7 @@ def main(argv=None):
                 return 0
             result = generate(
                 source, options=LayoutOptions(direction=args.direction, **dict(args.set)), algorithm=args.algorithm,
+                mode=args.mode, timeout=args.timeout, allow_rotate=args.allow_rotate,
                 **options,
             )
             _save_outputs(args.input, (
