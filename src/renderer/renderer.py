@@ -250,7 +250,18 @@ class _SVG:
             lb = placement.get("labelBounds")
             if lb:
                 lx, ly, lw, lh = _box(lb, f"node {vertex_id} label")
+                # The label is a title over the composite boundary, not a
+                # generated identifier or a caption inside its contents.
+                if is_composite:
+                    self.rect(lx, ly, lw, lh, fill="white", stroke="none", sw=0)
                 self.text(lx + lw/2, ly + lh*.72, name, size=12, weight="600")
+            elif is_composite:
+                # Fallback to the upper edge when the draft layout omits an
+                # explicit title box; keep the caption on the boundary.
+                label_w, label_h = max(42, len(name) * 8 + 14), 20
+                label_x, label_y = x + (w-label_w)/2, y-label_h/2
+                self.rect(label_x, label_y, label_w, label_h, fill="white", stroke="none", sw=0)
+                self.text(label_x + label_w/2, label_y + label_h*.72, name, size=12, weight="600")
             else:
                 self.text(x+w/2, y+19, name, size=12, weight="600")
         if behavior_lines:
