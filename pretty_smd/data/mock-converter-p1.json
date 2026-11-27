@@ -1,0 +1,66 @@
+{
+  "linear": {
+    "kind": "linear",
+    "sourceText": "i1 . i2 . ◉",
+    "steps": [
+      {
+        "sourceState": {
+          "displayName": "待機",
+          "behaviors": { "entry": ["prepare()"], "defer": ["cancel(jobId)"] }
+        },
+        "interaction": {
+          "sourceInteractionId": "i1",
+          "triggers": ["start(jobId)"],
+          "guard": "ready  && hasJob(jobId)",
+          "effect": "notify(\"開始\")",
+          "sourceText": "start(jobId) [ready  && hasJob(jobId)] / notify(\"開始\")"
+        }
+      },
+      {
+        "interaction": {
+          "sourceInteractionId": "i2",
+          "triggers": ["done(jobId)"],
+          "effect": "record(jobId)",
+          "sourceText": "done(jobId) / record(jobId)"
+        }
+      }
+    ],
+    "terminal": { "token": "◉", "resolvedKind": "final" }
+  },
+  "resolvedBranch": {
+    "kind": "resolvedBranch",
+    "sourceState": { "kind": "state", "displayName": "待審查" },
+    "alternatives": [
+      {
+        "targetState": { "displayName": "通過" },
+        "interaction": {
+          "sourceInteractionId": "approved",
+          "triggers": ["submit(score)"],
+          "guard": "score >= 60",
+          "effect": "emit(\"通過\")"
+        }
+      },
+      {
+        "targetState": {},
+        "interaction": {
+          "sourceInteractionId": "declined",
+          "triggers": ["submit(score)"],
+          "guard": "score < 60",
+          "effect": "emit(\"退回\")"
+        }
+      }
+    ]
+  },
+  "unresolvedOperators": [
+    { "kind": "unresolved", "operator": "alt", "sourceText": "(i1 . C) alt [x, y] (i2 . C) alt (i3 . C)" },
+    { "kind": "unresolved", "operator": "par", "sourceText": "(i1 . C) par (i2 . C)" },
+    { "kind": "unresolved", "operator": "seq", "sourceText": "i1 seq i2 . ◉" },
+    { "kind": "unresolved", "operator": "ref", "sourceText": "ref A" },
+    { "kind": "unresolved", "operator": "loop", "sourceText": "(loop [ok] : i1 . C)" },
+    { "kind": "unresolved", "operator": ">>", "sourceText": "(i1 . C) >> (i2 . ◉)" },
+    { "kind": "unresolved", "operator": "0", "sourceText": "0" },
+    { "kind": "unresolved", "operator": "◉", "sourceText": "◉" },
+    { "kind": "unresolved", "operator": "C", "sourceText": "C" },
+    { "kind": "unresolved", "operator": "©", "sourceText": "©" }
+  ]
+}

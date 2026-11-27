@@ -1,0 +1,58 @@
+:root {
+  color-scheme:light;
+  --bg:#f1f5fa;--surface:#fff;--line:#c6d4e3;--text:#14253b;--sub:#455c74;--accent:#1454ad;
+  --accent-fg:#fff;--code:#f4f7fb;--error:#9d2837;--dot:#cad8ea;
+  font-family:Inter,"Segoe UI","Noto Sans TC",sans-serif;
+}
+:root[data-theme=dark] {
+  color-scheme:dark;--bg:#101a2c;--surface:#172438;--line:#38516d;--text:#ebf3fe;
+  --sub:#bacde5;--accent:#80b5ff;--accent-fg:#10203a;--code:#101b2d;--error:#ffc0c8;--dot:#39506b;
+}
+* { box-sizing:border-box; }
+body { margin:0;background:var(--bg);color:var(--text);font-size:1rem;line-height:1.5; }
+.banner { padding:1.05rem clamp(1rem,3vw,3rem);display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  background:var(--surface);border-bottom:1px solid var(--line); }
+.course { color:var(--accent);font-weight:700;font-size:.86rem;margin:0;letter-spacing:.04em; }
+h1 { font-size:clamp(1.2rem,2.5vw,2rem);line-height:1.18;letter-spacing:-.025em;margin:.2rem 0 0; }
+h2 { font-size:1.05rem;margin:0 0 .7rem; }
+.workspace { display:grid;grid-template-columns:minmax(270px,365px) minmax(0,1fr);gap:1rem;
+  max-width:1720px;margin:auto;padding:1rem clamp(.8rem,2vw,2rem);align-items:start; }
+.panel { border:1px solid var(--line);border-radius:12px;background:var(--surface);min-width:0;padding:1rem; }
+label,summary { font-size:.9rem;font-weight:650; }
+label:not(.actions label) {display:block;margin:.45rem 0 .2rem;}
+button,select,input,textarea { font:inherit;color:var(--text); }
+button,select,input { border:1px solid var(--line);border-radius:7px;background:var(--surface);
+  min-height:2.35rem;padding:.35rem .6rem;font-size:.9rem; }
+button,summary { cursor:pointer; }
+button:hover:not(:disabled) { border-color:var(--accent); }
+button:disabled { opacity:.5;cursor:not-allowed; }
+:focus-visible { outline:2px solid var(--accent);outline-offset:2px; }
+.editor select,.editor input,.editor textarea {width:100%;min-width:0;}
+.editor textarea {resize:vertical;min-height:17rem;display:block;background:var(--code);border:1px solid var(--line);
+  border-radius:8px;padding:.75rem;font: .89rem/1.5 ui-monospace,Consolas,monospace; }
+.paired,.parameters {display:grid;grid-template-columns:1fr 1fr;gap:.55rem;}
+.primary {width:100%;margin-top:.85rem;background:var(--accent);color:var(--accent-fg);font-weight:700;}
+details { border-top:1px solid var(--line);padding:.65rem 0 .1rem;margin-top:.75rem; }
+.viewer-head,.viewer-bottom {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.35rem;}
+.viewer-head h2 {margin:0;}
+.viewer-bottom { margin-top:.65rem; }
+.actions {display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;}
+.canvas { margin-top:.75rem;height:clamp(390px,62vh,900px);overflow:hidden;position:relative;touch-action:none;
+  border:1px solid var(--line);border-radius:9px;cursor:grab;
+  background:radial-gradient(circle,var(--dot) 1px,transparent 1.25px) var(--bg) 0 0 / 18px 18px; }
+.canvas.dragging {cursor:grabbing;}
+#drawing { position:absolute;top:0;left:0;transform-origin:0 0; }
+#drawing svg {display:block;max-width:none;user-select:none;}
+#drawing [data-node-id],#drawing [data-edge-id] {cursor:pointer;}
+#drawing polyline:hover,#drawing polyline:focus {stroke:#286cce;stroke-width:3;}
+#empty {margin:0;padding:2.5rem 1rem;text-align:center;color:var(--sub);}
+#time,#status,.notice {font-size:.89rem;color:var(--sub);margin:.55rem 0 0;}
+.notice {color:var(--error);}
+#diagnostic-list {overflow-wrap:anywhere;padding-left:1.3rem;}
+#diagnostic-list li.error {color:var(--error);}
+dl {display:grid;grid-template-columns:1fr minmax(5rem,auto);gap:.25rem .7rem;font-size:.88rem;}
+dd {margin:0;text-align:right;font-variant-numeric:tabular-nums;}
+pre {white-space:pre-wrap;overflow-wrap:anywhere;font-size:.9rem;background:var(--code);padding:.6rem;}
+.viewer:fullscreen {overflow:auto;border-radius:0;}
+.viewer:fullscreen .canvas {height:calc(100vh - 9rem);}
+@media(max-width:860px){.workspace{grid-template-columns:1fr}.canvas{height:55vh;min-height:320px}.editor textarea{min-height:12rem}}
