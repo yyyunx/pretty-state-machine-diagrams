@@ -6,7 +6,7 @@ pretty-smd generate examples/basic.smd.json --algorithm advanced --mode quality 
 pretty-smd benchmark-advanced --suite all --timeout 4 --dot /path/to/dot --output-dir benchmark-output/phase4
 ~~~
 
-`topology` 是預設，也就是 Phase 3 放置與路由。13 份 Phase 3 Layout JSON 在測試中逐一檢查相等。Legacy 仍可使用 `--algorithm legacy`。Advanced 是實驗選項，適合想交換時間換取更少交叉或較短線長時使用。
+`topology` 是預設，也就是 Phase 3 放置與路由。13 份 Phase 3 Layout JSON 的欄位與路徑結構逐一核對，跨 Python 版本的座標容差為 10⁻⁷ SVG 單位。Legacy 仍可使用 `--algorithm legacy`。Advanced 是實驗選項，適合想交換時間換取更少交叉或較短線長時使用。
 
 | 模式 | 候選分配 | 搜尋工量上限 |
 | --- | --- | ---: |
@@ -33,4 +33,4 @@ python -m http.server 8000 --bind 127.0.0.1 --directory dist
 
 ## 第三方元件
 
-Python 套件沿用 jsonschema。此環境的 jsonschema、attrs、jsonschema-specifications、referencing、rpds-py 發行中繼資料標示 MIT。Graphviz 16.1.2 為外部比較執行檔，Playwright 用於 Chromium 驗證，Matplotlib 用於獨立 Figs 建置。這三者都由其各自發行來源安裝。 [Graphviz EPL-2.0](https://graphviz.org/license/) · [Playwright Apache-2.0](https://github.com/microsoft/playwright/blob/main/LICENSE) · [Matplotlib 授權](https://matplotlib.org/stable/project/license.html)
+Python 套件沿用 jsonschema。此環境的 jsonschema、attrs、jsonschema-specifications、referencing、rpds-py 發行中繼資料標示 MIT。Graphviz 16.1.2 為外部比較執行檔，Playwright 用於 Chromium 驗證，Matplotlib 用於生成效能曲線。這三者都由其各自發行來源安裝。 [Graphviz EPL-2.0](https://graphviz.org/license/) · [Playwright Apache-2.0](https://github.com/microsoft/playwright/blob/main/LICENSE) · [Matplotlib 授權](https://matplotlib.org/stable/project/license.html)

@@ -19,11 +19,27 @@ XML_NS = {"s":"http://www.w3.org/2000/svg"}
 
 
 class AdvancedTests(unittest.TestCase):
-    def test_phase3_reference_remains_identical(self):
+    def assert_same_geometry(self, actual, expected, location=""):
+        if isinstance(expected,dict):
+            self.assertIsInstance(actual,dict,location)
+            self.assertEqual(set(actual),set(expected),location)
+            for key in expected:
+                self.assert_same_geometry(actual[key],expected[key],f"{location}/{key}")
+        elif isinstance(expected,list):
+            self.assertIsInstance(actual,list,location)
+            self.assertEqual(len(actual),len(expected),location)
+            for index,(a,b) in enumerate(zip(actual,expected)):
+                self.assert_same_geometry(a,b,f"{location}/{index}")
+        elif isinstance(expected,(int,float)):
+            self.assertAlmostEqual(actual,expected,delta=1e-7,msg=location)
+        else:
+            self.assertEqual(actual,expected,location)
+
+    def test_phase3_reference_remains_geometrically_identical(self):
         for name,model in cases():
             with self.subTest(name=name):
                 saved = json.loads((ROOT/"benchmarks/after"/f"{name}.layout.json").read_bytes())
-                self.assertEqual(layout(model),saved)
+                self.assert_same_geometry(layout(model),saved)
 
     def test_seeded_models_preserve_geometry_names_and_behavior(self):
         rng = Random(9107)

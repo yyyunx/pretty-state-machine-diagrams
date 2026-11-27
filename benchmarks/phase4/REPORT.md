@@ -1,6 +1,6 @@
 # Phase 4 演算法與效能報告
 
-基準為 Phase 3 `d863145`。Legacy 是最初整合版的放置及路由。三種內建引擎共用現在的 SVG Renderer 及同一版品質指標；測試核對全部 13 份 Phase 3 Layout JSON 分別仍與基準相等。
+基準為 Phase 3 `d863145`。Legacy 是最初整合版的放置及路由。三種內建引擎共用現在的 SVG Renderer 及同一版品質指標；測試核對全部 13 份 Phase 3 Layout JSON 的欄位、路徑結構及座標，跨 Python 版本允許 10⁻⁷ SVG 單位的浮點誤差。
 
 [完整 CSV](comparison.csv) · [量測環境及 JSON](comparison.json) · [本機 Web App 畫面](advanced-app.png) · [介面與操作](../../docs/ADVANCED.md)
 
