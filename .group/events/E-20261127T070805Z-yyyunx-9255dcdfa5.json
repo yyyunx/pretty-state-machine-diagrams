@@ -1,0 +1,12 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T070805Z-yyyunx-9255dcdfa5",
+  "event_type": "question",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:08:05.851218Z",
+  "related_events": [],
+  "question_id": "Q-yyyunx-e2302d4665",
+  "text": "Semantic Model 語意查證（接續 Q-yyyunx-6faf49e280）：請協助取得老師或 R、S 組確認的最小例子與預期行為：(1) 0、◉、C、© 單獨出現及在 >> 左端時各自如何結束或接續；(2) 帶兩條件標註的 alt 遇到第三分支時，guard 如何配對；(3) 如何區分純 par、明確正交區域及 fork/join，同時保留具名與未命名巢狀容器；(4) Converter 可用版本、保留階層和原始 interaction 欄位的輸出樣本。若有 seq、ref、loop 範例，也請提供可比對的執行次序或診斷。",
+  "blocking": false
+}
