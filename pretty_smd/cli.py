@@ -75,6 +75,8 @@ def main(argv=None):
     large.add_argument("--repeats",type=int,default=1)
     large.add_argument("--dot",help="Path to an optional Graphviz dot executable.")
     large.add_argument("--case",action="append",help="Select one or more benchmark cases.")
+    large.add_argument("--engine",action="append",
+                       choices=("legacy","topology","advanced-fast","advanced-balanced","advanced-quality","graphviz"))
     web = commands.add_parser("serve", help="Run the local web app.")
     web.add_argument("--port", type=int, default=8000)
     args = parser.parse_args(argv)
@@ -88,7 +90,7 @@ def main(argv=None):
         elif args.command == "benchmark-advanced":
             from .phase4_benchmark import run
             rows = run(args.output_dir,suite=args.suite,timeout=args.timeout,dot=args.dot,
-                       repeats=args.repeats,case_filter=args.case,
+                       repeats=args.repeats,case_filter=args.case,engines=args.engine,
                        on_row=lambda row:print(row["case"],row["algorithm"],row["status"],flush=True))
             print(f"Saved {len(rows)} runs to {args.output_dir}")
         else:

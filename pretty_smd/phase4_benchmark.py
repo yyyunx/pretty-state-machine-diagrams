@@ -114,7 +114,7 @@ def _run(model,algorithm,timeout,dot,repeats,artifacts):
     return json.loads(process.stdout)
 
 
-def run(output, *, suite="all", timeout=6.0, dot=None, repeats=1, case_filter=None, on_row=None):
+def run(output, *, suite="all", timeout=6.0, dot=None, repeats=1, case_filter=None, engines=None, on_row=None):
     if not isfinite(timeout) or not .01<=timeout<=120 or not 1<=repeats<=5:
         raise ValueError("Use a timeout from .01 to 120 seconds and one to five repetitions.")
     output = Path(output)
@@ -140,6 +140,8 @@ def run(output, *, suite="all", timeout=6.0, dot=None, repeats=1, case_filter=No
                 continue
             vertices,_,_,transitions = model_index(model)
             for algorithm in (*algorithms,*(("graphviz",) if dot and group!="stress" else ())):
+                if engines and algorithm not in engines:
+                    continue
                 export = group!="stress" and name in (
                     "pseudostates","self-loop","synthetic-48","orthogonal","nested","holdout-cycles-16")
                 data = _run(model,algorithm,timeout,dot,repeats,export)

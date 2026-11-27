@@ -13,6 +13,25 @@ class UnsupportedDot(ValueError):
     pass
 
 
+def _flatten_cubic(a,b,c,d,depth=0):
+    dx,dy = d[0]-a[0],d[1]-a[1]
+    length = math.hypot(dx,dy)
+    flat = length and all(
+        abs(dx*(p[1]-a[1])-dy*(p[0]-a[0])) <= .25*length and
+        0 <= dx*(p[0]-a[0])+dy*(p[1]-a[1]) <= length*length+1e-7 for p in (b,c)
+    )
+    if flat or depth==7:
+        yield d
+        return
+    def middle(p,q):
+        return ((p[0]+q[0])/2,(p[1]+q[1])/2)
+    ab,bc,cd = middle(a,b),middle(b,c),middle(c,d)
+    l,r = middle(ab,bc),middle(bc,cd)
+    center = middle(l,r)
+    yield from _flatten_cubic(a,ab,l,center,depth+1)
+    yield from _flatten_cubic(center,r,cd,d,depth+1)
+
+
 # Fixed sizes and reserved label boxes use the same measurements as the UML engine.
 def graphviz_layout(model, executable, *, timeout=8):
     vertices, _, _, edges = model_index(model)
@@ -90,11 +109,17 @@ def graphviz_layout(model, executable, *, timeout=8):
     for placed in data.get("edges",()):
         key = edge_keys[placed["id"]]
         edge = edges[key]
-        pieces = [path["points"] for path in placed.get("_draw_",()) if path["op"] in ("b","L")]
         route = []
-        for piece in pieces:
-            # dot's polyline mode supplies collinear cubic control points per straight leg.
-            route.extend(coords(p) for p in piece)
+        for path in placed.get("_draw_",()):
+            if path["op"] not in ("b","L"):
+                continue
+            points = [coords(p) for p in path["points"]]
+            route.append(points[0])
+            if path["op"]=="L":
+                route.extend(points[1:])
+            else:
+                for i in range(0,len(points)-3,3):
+                    route.extend(_flatten_cubic(*points[i:i+4]))
         if len(route)<2:
             raise ValueError(f"dot omitted the path for transition {key!r}.")
         route[0] = snapped(edge["sourceId"],route[1])
