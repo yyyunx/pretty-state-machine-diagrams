@@ -5,6 +5,7 @@ import math
 
 from src.geometry import bar_bounds, corner_radius, outline_boxes, rect, stroke_box, symbol
 from .routing import EPSILON, overlap
+from .spatial import SpatialIndex, segment_bounds
 
 
 def model_index(model):
@@ -97,7 +98,7 @@ def _crosses_interior(a, b, bounds):
     return True
 
 
-def evaluate(model, layout, *, original_model=None, execution_ms=None):
+def evaluate(model, layout, *, original_model=None, execution_ms=None, budget=None):
     """Return metrics; contact at a shared logical vertex is excluded."""
     vertices, parents, region_owners, transitions = model_index(model)
     preservation = (
@@ -108,10 +109,14 @@ def evaluate(model, layout, *, original_model=None, execution_ms=None):
         and all(edge["sourceId"] in vertices and edge["targetId"] in vertices for edge in transitions.values())
     )
     node_boxes = {i: part["bounds"] for i, part in layout["nodes"].items() if i in vertices}
-    node_overlaps = sum(
-        overlap(node_boxes[a], node_boxes[b])
-        for a,b in combinations(node_boxes, 2) if a not in parents[b] and b not in parents[a]
-    )
+    index = SpatialIndex()
+    node_overlaps = 0
+    for node,bounds in node_boxes.items():
+        rectangle = rect(bounds)
+        node_overlaps += sum(overlap(bounds,node_boxes[other])
+                             for other in index.query(rectangle)
+                             if node not in parents[other] and other not in parents[node])
+        index.add(rectangle,node)
     labels = []
     dividers = [stroke_box(a,b) for part in layout["regions"].values()
                 for a,b in part.get("separatorSegments", ())]
@@ -134,10 +139,12 @@ def evaluate(model, layout, *, original_model=None, execution_ms=None):
                 continue
             labels.append((part["labelBounds"], legal))
     label_collisions = edge_label_collisions + sum(overlap(a,b) for (a,_),(b,_) in combinations(labels,2))
-    label_collisions += sum(overlap(label, bounds) for label, legal in labels
-                            for node, bounds in node_boxes.items() if node not in legal)
-    paths, edge_node, anchors, bends, length = {}, 0, 0, 0, 0.0
+    label_collisions += sum(overlap(label,node_boxes[node]) for label,legal in labels
+                            for node in index.query(rect(label)) if node not in legal)
+    paths, edge_node, anchors, bends, length, broken_paths = {}, 0, 0, 0, 0.0, 0
     for identifier, edge in transitions.items():
+        if budget is not None:
+            budget.step()
         if identifier not in layout["edges"] or not all(edge[k] in node_boxes for k in ("sourceId", "targetId")):
             continue
         path = []  # retain repeated nonconsecutive points in loops
@@ -145,7 +152,8 @@ def evaluate(model, layout, *, original_model=None, execution_ms=None):
             candidate = point["x"], point["y"]
             if not path or candidate != path[-1]:
                 path.append(candidate)
-        if not path:
+        if len(path) < 2:
+            broken_paths += 1
             continue
         paths[identifier] = path
         start, end = edge["sourceId"], edge["targetId"]
@@ -153,31 +161,40 @@ def evaluate(model, layout, *, original_model=None, execution_ms=None):
         anchors += int(anchor_gap(vertices[end], node_boxes[end], path[-1]) > .05)
         segments = list(pairwise(path))
         length += sum(math.dist(a,b) for a,b in segments)
-        bends += sum(abs(_cross((b[0]-a[0],b[1]-a[1]),(c[0]-b[0],c[1]-b[1]))) > EPSILON
-                     for (a,b),(_,c) in pairwise(segments))
+        for (a,b),(_,c) in pairwise(segments):
+            u = (b[0]-a[0],b[1]-a[1])
+            v = (c[0]-b[0],c[1]-b[1])
+            bends += abs(_cross(u,v)) > EPSILON or u[0]*v[0]+u[1]*v[1] < 0
         legal = {start, end, *parents[start], *parents[end]}
-        edge_node += sum(any(_crosses_interior(a,b,bounds) for a,b in segments)
-                         for node,bounds in node_boxes.items() if node not in legal)
-    crossings, shared_length = 0, 0.0
-    for left, right in combinations(paths, 2):
-        p, q = paths[left], paths[right]
-        le, re = transitions[left], transitions[right]
-        endpoints = ((p[0],le["sourceId"]),(p[-1],le["targetId"]))
-        other = ((q[0],re["sourceId"]),(q[-1],re["targetId"]))
-        allowed = {pos for pos,node in endpoints for pos2,node2 in other if pos == pos2 and node == node2}
-        touched = set()
-        for a,b in pairwise(p):
-            for c,d in pairwise(q):
+        edge_node += len({node for a,b in segments for node in index.query(segment_bounds(a,b))
+                          if node not in legal and _crosses_interior(a,b,node_boxes[node])})
+    edge_index, touched, shared_length = SpatialIndex(), set(), 0.0
+    for identifier,path in paths.items():
+        edge = transitions[identifier]
+        endpoints = ((path[0],edge["sourceId"]),(path[-1],edge["targetId"]))
+        segments = list(pairwise(path))
+        for a,b in segments:
+            bounds = segment_bounds(a,b,EPSILON)
+            for other,c,d,other_endpoints in edge_index.query(bounds):
+                if budget is not None:
+                    budget.step()
                 contact, shared = _contact(a,b,c,d)
-                if contact is not None and contact not in allowed:
-                    # Ignore any endpoint touching exactly the other path's endpoint only.
-                    if not (contact in (p[0],p[-1]) and contact in (q[0],q[-1])):
-                        touched.add(tuple(round(coordinate,7) for coordinate in contact))
+                if contact is not None and not any(
+                    pos == pos2 and node == node2 and math.dist(contact,pos) < EPSILON
+                    for pos,node in endpoints for pos2,node2 in other_endpoints
+                ):
+                    touched.add((identifier,other,round(contact[0],7),round(contact[1],7)))
                 shared_length += shared
-        crossings += len(touched)
+        for a,b in segments:
+            edge_index.add(segment_bounds(a,b),(identifier,a,b,endpoints))
+    label_path_intersections = sum(
+        len({edge for edge,a,b,_ in edge_index.query(rect(label)) if _crosses_interior(a,b,label)})
+        for label,_ in labels
+    )
     viewport = layout["viewport"]
     return {
-        "node_overlaps": node_overlaps, "label_collisions": label_collisions, "edge_crossings": crossings,
+        "node_overlaps": node_overlaps, "label_collisions": label_collisions, "edge_crossings": len(touched),
+        "label_path_intersections": label_path_intersections, "broken_paths": broken_paths,
         "edge_node_intersections": edge_node, "edge_overlap_length": round(shared_length,3),
         "disconnected_anchors": anchors, "edge_bends": bends, "total_edge_length": round(length,3),
         "diagram_area": round(viewport["width"]*viewport["height"],3), "execution_ms": execution_ms,

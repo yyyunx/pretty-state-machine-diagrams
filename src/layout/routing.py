@@ -1,9 +1,12 @@
 """Shape-aware orthogonal routing with deterministic obstacle-aware fallback."""
 
 import heapq
+from functools import lru_cache
 from itertools import pairwise
 
-from src.geometry import NORMALS, SIDES, anchor, point, rect, text_lines, text_width
+from src.geometry import NORMALS, SIDES, anchor, bar_bounds, point, rect, text_lines, text_width
+
+from .spatial import segment_bounds
 
 EPSILON = 1e-7
 
@@ -63,6 +66,11 @@ def segment_conflict(a, b, c, d):
     return 0, 0.0
 
 
+def _turns_back(a,b,c):
+    return (a[0]-b[0])*(c[0]-b[0]) + (a[1]-b[1])*(c[1]-b[1]) > EPSILON and (
+        a[0] == b[0] == c[0] or a[1] == b[1] == c[1])
+
+
 def simplify(path):
     result = []
     for p in path:
@@ -82,12 +90,19 @@ def _grow(bounds, padding):
     return x-padding, y-padding, r+padding, b+padding
 
 
-def _ports(vertex, bounds, clearance, lane, inward):
+def _ports(vertex, bounds, clearance, lane, inward, *, sides=SIDES, fraction=None, advanced=False):
     fractions = (.5, .34, .66, .22, .78, .42, .58)
-    fraction = fractions[lane % len(fractions)]
+    if fraction is None:
+        fraction = fractions[lane % len(fractions)]
     x, y, r, b = rect(bounds)
-    for side in SIDES:
+    for side in sides:
         ax, ay = anchor(vertex, bounds, side, fraction)
+        if advanced and vertex.get("pseudostateKind") in ("fork", "join"):
+            bx, by, br, bb = rect(bar_bounds(bounds))
+            if side in ("top", "bottom"):
+                ax = bx + (br-bx) * fraction
+            else:
+                ay = by + (bb-by) * fraction
         dx, dy = NORMALS[side]
         if inward:
             lead = (ax - dx*clearance, ay - dy*clearance)
@@ -97,7 +112,8 @@ def _ports(vertex, bounds, clearance, lane, inward):
         yield side, (ax, ay), lead
 
 
-def _grid_route(start, goal, blocks, segment_cost, bend_penalty, start_axis, goal_axis):
+def _grid_route(start, goal, blocks, segment_cost, bend_penalty, start_axis, goal_axis, *,
+                blocked=None, budget=None):
     xs = sorted({start[0], goal[0], *(q for x, _, r, _ in blocks for q in (x, r))})
     ys = sorted({start[1], goal[1], *(q for _, y, _, b in blocks for q in (y, b))})
     if len(xs) * len(ys) > 45000:
@@ -107,6 +123,8 @@ def _grid_route(start, goal, blocks, segment_cost, bend_penalty, start_axis, goa
     queue, distance, prev = [(manhattan(start, goal), 0, initial)], {initial: 0}, {}
     best, result = float("inf"), None
     while queue:
+        if budget is not None:
+            budget.step()
         estimate, value, state = heapq.heappop(queue)
         if estimate >= best:
             break
@@ -115,14 +133,15 @@ def _grid_route(start, goal, blocks, segment_cost, bend_penalty, start_axis, goa
         ix, iy, axis = state
         p = xs[ix], ys[iy]
         if p == goal:
-            best = value + bend_penalty * (axis != goal_axis)
-            result = state
+            score = value + bend_penalty * (axis != goal_axis)
+            if score < best:
+                best, result = score, state
             continue
         for jx, jy, direction in ((ix, iy-1, 1), (ix, iy+1, 1), (ix-1, iy, 2), (ix+1, iy, 2)):
             if not 0 <= jx < len(xs) or not 0 <= jy < len(ys):
                 continue
             q = xs[jx], ys[jy]
-            if any(hits_box(p, q, box) for box in blocks):
+            if blocked(p,q) if blocked is not None else any(hits_box(p,q,box) for box in blocks):
                 continue
             next_state = jx, jy, direction
             alt = value + segment_cost(p, q) + bend_penalty * (axis != direction)
@@ -139,32 +158,66 @@ def _grid_route(start, goal, blocks, segment_cost, bend_penalty, start_axis, goa
 
 
 def route(source, target, a, b, obstacles, *, clearance, bend_penalty, crossing_penalty,
-          lane=0, self_loop=False, inward=(False, False), used=()):
+          lane=0, self_loop=False, inward=(False, False), used=(), budget=None,
+          index=None, allowed=(), occupancy=None, edge_id=None, boundary_sides=(SIDES, SIDES),
+          extra_channels=False, fallback_limit=3):
     """Return a valid polyline or raise RoutingError rather than draw through a node."""
+    advanced = index is not None
     padded = [_grow(rect(box), clearance) for box in obstacles]
     exact = [rect(box) for box in obstacles]
     endpoint_blocks = [rect(bounds) for bounds, skip in zip((a, b), inward) if not skip]
 
     def segment_cost(p, q):
+        if budget is not None:
+            budget.step()
         value = manhattan(p, q)
-        for v, w in used:
+        occupied = occupancy.nearby(p,q,ignore=edge_id) if advanced else used
+        for v, w in occupied:
             cross, shared = segment_conflict(p, q, v, w)
-            value += cross * crossing_penalty + shared * .8
+            value += cross * crossing_penalty + shared * (2.0 if advanced else .8)
         return value
 
-    def clear(path, blocks):
-        return all(p == q or not any(hits_box(p, q, block) for block in blocks) for p, q in pairwise(path))
+    if advanced:
+        segment_cost = lru_cache(maxsize=2048)(segment_cost)
 
-    for obstacles in (padded, exact):
+    for obstacles, padding in ((padded, clearance), (exact, 0)):
         blocks = [*obstacles, *endpoint_blocks]
+        def intersects(p,q, check_endpoints=True):
+            if budget is not None:
+                budget.step()
+            if advanced:
+                nearby = index.query(segment_bounds(p,q,padding+EPSILON))
+                return (any(key not in allowed and hits_box(p,q,_grow(bounds,padding))
+                            for key,bounds in nearby) or
+                        (check_endpoints and any(hits_box(p,q,bounds) for bounds in endpoint_blocks)))
+            return any(hits_box(p,q,block) for block in (blocks if check_endpoints else obstacles))
+
+        if advanced:
+            intersects = lru_cache(maxsize=2048)(intersects)
+
+        def clear(path, check_endpoints=True):
+            return all(p == q or not intersects(p,q,check_endpoints) for p,q in pairwise(path))
+
+        def inside(p):
+            if advanced:
+                nearby = index.query((p[0]-padding,p[1]-padding,p[0]+padding,p[1]+padding))
+                return any(inside_box(p,_grow(bounds,padding)) for key,bounds in nearby if key not in allowed)
+            return any(inside_box(p,block) for block in blocks)
+
         alternatives, fallback = [], []
-        for side, actual, start in _ports(source, a, clearance, lane, inward[0]):
-            if not clear((actual, start), obstacles):
+        loop = advanced and self_loop and source["kind"] in ("state", "composite")
+        port_clearance = clearance + (min(lane,7)*4 if loop else 0)
+        starts = _ports(source,a,port_clearance,lane,inward[0],sides=boundary_sides[0],
+                        fraction=.29 if loop else None,advanced=advanced)
+        ends = list(_ports(target,b,port_clearance,lane,inward[1],sides=boundary_sides[1],
+                           fraction=.71 if loop else None,advanced=advanced))
+        for side, actual, start in starts:
+            if not clear((actual,start), False) or inside(start):
                 continue
-            for end_side, end_actual, end in _ports(target, b, clearance, lane, inward[1]):
-                if (self_loop and side == end_side) or not clear((end, end_actual), obstacles):
+            for end_side, end_actual, end in ends:
+                if (self_loop and not loop and side == end_side) or not clear((end,end_actual), False):
                     continue
-                if any(inside_box(start, block) or inside_box(end, block) for block in blocks):
+                if actual == end_actual or inside(end):
                     continue
                 fallback.append((manhattan(start, end), actual, start, end, end_actual))
                 sx, sy = start
@@ -174,32 +227,55 @@ def route(source, target, a, b, obstacles, *, clearance, bend_penalty, crossing_
                 candidates = [(start, (sx, ey), end), (start, (ex, sy), end),
                               (start, (dx, sy), (dx, ey), end),
                               (start, (sx, dy), (ex, dy), end)]
-                if blocks:
+                if advanced:
+                    # Try exterior lanes close to the endpoints before a grid search.
+                    for xx in (min(sx,ex)-clearance, max(sx,ex)+clearance):
+                        candidates.append((start,(xx,sy),(xx,ey),end))
+                    for yy in (min(sy,ey)-clearance, max(sy,ey)+clearance):
+                        candidates.append((start,(sx,yy),(ex,yy),end))
+                    if extra_channels:
+                        # In a congested graph, look for a channel along nearby obstacle sides.
+                        window = segment_bounds(start,end,clearance*2)
+                        for _, other in list(index.query(window))[:6]:
+                            ox,oy,rx,by = _grow(other, padding)
+                            candidates.extend((start,(x,sy),(x,ey),end) for x in (ox,rx))
+                            candidates.extend((start,(sx,y),(ex,y),end) for y in (oy,by))
+                elif blocks:
                     for xx in (min(box[0] for box in blocks), max(box[2] for box in blocks)):
                         candidates.append((start, (xx, sy), (xx, ey), end))
                     for yy in (min(box[1] for box in blocks), max(box[3] for box in blocks)):
                         candidates.append((start, (sx, yy), (ex, yy), end))
                 for candidate in candidates:
                     path = simplify([actual, *candidate, end_actual])
-                    if len(path) < 2 or not clear(candidate, blocks):
+                    if len(path) < 2 or not clear(candidate):
+                        continue
+                    if advanced and any(_turns_back(p,q,r) for p,q,r in zip(path,path[1:],path[2:])):
                         continue
                     cost = sum(segment_cost(p, q) for p, q in pairwise(path)) + bend_penalty * (len(path) - 2)
                     alternatives.append((cost, path))
         if alternatives:
             return [point(*p) for p in min(alternatives)[1]]
-        for _, actual, start, end, end_actual in sorted(fallback):
-            path = _grid_route(start, end, blocks, segment_cost, bend_penalty,
-                               orientation(actual, start), orientation(end, end_actual))
+        attempts = sorted(fallback)
+        for _, actual, start, end, end_actual in (attempts[:fallback_limit] if advanced else attempts):
+            search = blocks
+            if advanced:
+                window = segment_bounds(start,end,max(128,manhattan(start,end)*.3))
+                search = [*endpoint_blocks, *(_grow(bounds,padding) for key,bounds in index.query(window)
+                                               if key not in allowed)]
+            path = _grid_route(start, end, search, segment_cost, bend_penalty,
+                               orientation(actual, start), orientation(end, end_actual),
+                               blocked=intersects if advanced else None,budget=budget)
             if path is not None:
                 return [point(*p) for p in simplify([actual, *path, end_actual])]
     raise RoutingError("No obstacle-free orthogonal route between the selected vertex outlines")
 
 
-def label_position(points, text, obstacles, clearance):
+def label_position(points, text, obstacles, clearance, *, occupancy=None):
     lines = text_lines(text)
     w, h = max(20, max(text_width(line, 10.5) for line in lines) + 10), 12 * len(lines) + 6
     segments = sorted(pairwise(points), key=lambda pair: -manhattan(
         (pair[0]["x"], pair[0]["y"]), (pair[1]["x"], pair[1]["y"])))
+    best = None
     for offset in (clearance, clearance + 12, clearance + 24, clearance + 48, clearance + 80):
         for a, b in segments:
             x, y = (a["x"]+b["x"])/2, (a["y"]+b["y"])/2
@@ -207,6 +283,15 @@ def label_position(points, text, obstacles, clearance):
                            (x+offset, y-h/2), (x-w-offset, y-h/2)):
                 candidate = dict(x=lx, y=ly, width=w, height=h)
                 if not any(overlap(candidate, obstacle) for obstacle in obstacles):
-                    return candidate
+                    if occupancy is None:
+                        return candidate
+                    bounds = rect(candidate)
+                    hits = sum(hits_box(p,q,bounds) for p,q in occupancy.in_box(bounds))
+                    if not hits:
+                        return candidate
+                    if best is None or hits < best[0]:
+                        best = hits,candidate
+    if best is not None:
+        return best[1]
     bottom = max((box["y"]+box["height"] for box in obstacles), default=0)
     return dict(x=points[0]["x"], y=bottom+clearance, width=w, height=h)
