@@ -1,0 +1,177 @@
+{
+  "id": "synthetic-12",
+  "regions": [
+    {
+      "id": "region-1",
+      "transitions": [
+        {
+          "id": "transition-1",
+          "sourceId": "v0",
+          "targetId": "v1",
+          "triggers": [
+            "event_0"
+          ]
+        },
+        {
+          "id": "transition-2",
+          "sourceId": "v1",
+          "targetId": "v2",
+          "triggers": [
+            "event_1"
+          ]
+        },
+        {
+          "id": "transition-3",
+          "sourceId": "v2",
+          "targetId": "v3",
+          "triggers": [
+            "event_2"
+          ]
+        },
+        {
+          "id": "transition-4",
+          "sourceId": "v3",
+          "targetId": "v4",
+          "triggers": [
+            "event_3"
+          ]
+        },
+        {
+          "id": "transition-5",
+          "sourceId": "v4",
+          "targetId": "v5",
+          "triggers": [
+            "event_4"
+          ]
+        },
+        {
+          "id": "transition-6",
+          "sourceId": "v5",
+          "targetId": "v6",
+          "triggers": [
+            "event_5"
+          ]
+        },
+        {
+          "id": "transition-7",
+          "sourceId": "v6",
+          "targetId": "v7",
+          "triggers": [
+            "event_6"
+          ]
+        },
+        {
+          "id": "transition-8",
+          "sourceId": "v7",
+          "targetId": "v8",
+          "triggers": [
+            "event_7"
+          ]
+        },
+        {
+          "id": "transition-9",
+          "sourceId": "v8",
+          "targetId": "v9",
+          "triggers": [
+            "event_8"
+          ]
+        },
+        {
+          "id": "transition-10",
+          "sourceId": "v9",
+          "targetId": "v10",
+          "triggers": [
+            "event_9"
+          ]
+        },
+        {
+          "id": "transition-11",
+          "sourceId": "v10",
+          "targetId": "v11",
+          "triggers": [
+            "event_10"
+          ]
+        },
+        {
+          "id": "transition-12",
+          "sourceId": "v0",
+          "targetId": "v3",
+          "triggers": [
+            "event_11"
+          ]
+        },
+        {
+          "id": "transition-13",
+          "sourceId": "v5",
+          "targetId": "v8",
+          "triggers": [
+            "event_12"
+          ]
+        }
+      ],
+      "vertices": [
+        {
+          "displayName": "State 0",
+          "id": "v0",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 1",
+          "id": "v1",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 2",
+          "id": "v2",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 3",
+          "id": "v3",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 4",
+          "id": "v4",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 5",
+          "id": "v5",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 6",
+          "id": "v6",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 7",
+          "id": "v7",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 8",
+          "id": "v8",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 9",
+          "id": "v9",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 10",
+          "id": "v10",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 11",
+          "id": "v11",
+          "kind": "state"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "0.1.0-draft"
+}

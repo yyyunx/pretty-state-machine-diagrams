@@ -1,0 +1,32 @@
+{
+  "id": "multilingual",
+  "regions": [
+    {
+      "id": "region-1",
+      "transitions": [
+        {
+          "id": "transition-1",
+          "sourceId": "v0",
+          "sourceText": "verify(payload) [輸入資料已驗證 ∧ payload.isReady()] / 記錄處理結果並保留稽核資訊 saveValidatedResult(payload); 記錄處理結果並保留稽核資訊 saveValidatedResult(payload); 記錄處理結果並保留稽核資訊 saveValidatedResult(payload); 記錄處理結果並保留稽核資訊 saveValidatedResult(payload); 記錄處理結果並保留稽核資訊 saveValidatedResult(payload); ",
+          "targetId": "v1",
+          "triggers": [
+            "event_0"
+          ]
+        }
+      ],
+      "vertices": [
+        {
+          "displayName": "待審核 Reviewing αβ",
+          "id": "v0",
+          "kind": "state"
+        },
+        {
+          "displayName": "完成 Completion",
+          "id": "v1",
+          "kind": "state"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "0.1.0-draft"
+}

@@ -1,0 +1,68 @@
+{
+  "id": "bidirectional",
+  "regions": [
+    {
+      "id": "region-1",
+      "transitions": [
+        {
+          "id": "transition-1",
+          "sourceId": "v0",
+          "targetId": "v1",
+          "triggers": [
+            "event_0"
+          ]
+        },
+        {
+          "id": "transition-2",
+          "sourceId": "v1",
+          "targetId": "v0",
+          "triggers": [
+            "event_1"
+          ]
+        },
+        {
+          "id": "transition-3",
+          "sourceId": "v1",
+          "targetId": "v2",
+          "triggers": [
+            "event_2"
+          ]
+        },
+        {
+          "id": "transition-4",
+          "sourceId": "v2",
+          "targetId": "v1",
+          "triggers": [
+            "event_3"
+          ]
+        },
+        {
+          "id": "transition-5",
+          "sourceId": "v0",
+          "targetId": "v1",
+          "triggers": [
+            "event_4"
+          ]
+        }
+      ],
+      "vertices": [
+        {
+          "displayName": "State 0",
+          "id": "v0",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 1",
+          "id": "v1",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 2",
+          "id": "v2",
+          "kind": "state"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "0.1.0-draft"
+}

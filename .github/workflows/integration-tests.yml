@@ -8,15 +8,41 @@ on:
 jobs:
   integration:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.10', '3.13']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - run: python -m pip install -r requirements-dev.txt
+          python-version: ${{ matrix.python }}
+      - run: python -m pip wheel --no-deps --wheel-dir integration-output/wheels .
+      - run: python -m pip install integration-output/wheels/*.whl
       - run: python -m unittest discover -s tests -v
-      - run: python -m tests.model.run_end_to_end --output-dir integration-output
+      - run: python -m tests.model.run_end_to_end --output-dir integration-output/suite
+      - run: |
+          cd integration-output
+          pretty-smd generate ../examples/basic.smd.json --output cli.svg --smd-output cli.smd.json --layout-output cli.layout.json --quality-output cli.quality.json
+          pretty-smd validate cli.smd.json
       - uses: actions/upload-artifact@v4
         with:
-          name: group-f-integration-diagrams
+          name: group-f-integration-python-${{ matrix.python }}
           path: integration-output/
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install .
+      - run: npm install --no-save --no-package-lock playwright@1.61.1
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/browser_smoke.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: group-f-browser-diagrams
+          path: integration-output/browser/
