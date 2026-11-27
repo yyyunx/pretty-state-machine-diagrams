@@ -1,0 +1,19 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T073053Z-yyyunx-2062c0bb29",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:30:53.572684Z",
+  "related_events": [
+    "E-20261127T072341Z-yyyunx-2312c0b35f",
+    "E-20261127T070805Z-yyyunx-9255dcdfa5"
+  ],
+  "evidence": [
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/1",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/commit/3359139291181e3f829c9f94fe2a2d5604a254fd",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/3359139291181e3f829c9f94fe2a2d5604a254fd/src/model/generated/linear.smd.json",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/3359139291181e3f829c9f94fe2a2d5604a254fd/src/model/generated/resolvedBranch.smd.json"
+  ],
+  "summary": "Layout、Renderer 交接：Semantic Model 原型已在 feature/semantic-model 的 3359139291181e3f829c9f94fe2a2d5604a254fd，可直接使用下列線性與守衛分支 SMD JSON，既有 0.1.0-draft 契約適用。Python API 為 build_model(draft)、validate_model(model)、serialize_model(model)、transform_model(source, adapter)，命令列 python -m src.model transform tests/model/cases/mock-converter-p1.json --case linear。乾淨 clone 的 unittest 全部 34 項通過，含原本 17 項及接上核心程式的六個驗收案例。以 Layout b9be71a 驗證生成的兩份模型及雙層正交模型，三份 Layout Data 都通過 Schema 和跨檔 ID 核對。Mock Adapter 支援已解析線性和普通狀態分支；未決 Grammar 會回傳帶位置的診斷，正式 Converter 契約與三方共識仍待確認。請在 groupctl 回報試用結果。"
+}
