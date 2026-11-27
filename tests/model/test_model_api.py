@@ -76,6 +76,22 @@ class ModelTests(unittest.TestCase):
         with self.assertRaisesRegex(ModelError, "invalid-display-name at /regions/0/vertices/1/displayName"):
             serialize_model(model)
 
+    def test_builder_assigns_separate_ids_to_a_reused_anonymous_template(self):
+        anonymous = {"kind": "state"}
+        draft = {"regions": [
+            {"vertices": [anonymous], "transitions": []},
+            {"vertices": [anonymous], "transitions": []},
+        ]}
+        model = build_model(draft)
+        first, second = (region["vertices"][0] for region in model["regions"])
+        self.assertNotEqual(first["id"], second["id"])
+        self.assertEqual(model, build_model(json.loads(json.dumps(draft))))
+        self.assertEqual(anonymous, {"kind": "state"})
+
+        anonymous["id"] = "explicit"
+        with self.assertRaisesRegex(ModelError, "duplicate-id"):
+            build_model(draft)
+
     def test_builder_reports_circular_containment(self):
         model = {"regions": []}
         model["regions"].append({"vertices": [model], "transitions": []})

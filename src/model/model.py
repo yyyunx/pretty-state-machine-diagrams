@@ -189,6 +189,23 @@ def validate_model(model: object, *, uml: bool = False) -> tuple[Diagnostic, ...
         raise ModelError(Diagnostic.at("invalid-hierarchy", (), "Model nesting exceeds Python's limit.")) from error
 
 
+def _copy_draft(value: object, path: PathParts, active: set[int]) -> Any:
+    # JSON containers have value semantics. A reused Python template is one
+    # independent occurrence per position, unless an explicit ID says otherwise.
+    if not isinstance(value, (dict, list)):
+        return deepcopy(value)
+    identity = id(value)
+    if identity in active:
+        raise ModelError(Diagnostic.at("invalid-hierarchy", path, "Circular model containment."))
+    active.add(identity)
+    try:
+        if isinstance(value, dict):
+            return {key: _copy_draft(child, (*path, str(key)), active) for key, child in value.items()}
+        return [_copy_draft(child, (*path, index), active) for index, child in enumerate(value)]
+    finally:
+        active.remove(identity)
+
+
 def build_model(draft: object) -> Model:
     """Copy an authored draft, assign missing IDs, and return the validated model.
 
@@ -196,7 +213,7 @@ def build_model(draft: object) -> Model:
     endpoint text avoids binding a misspelled endpoint to a generated ID.
     """
     try:
-        model = deepcopy(draft)
+        model = _copy_draft(draft, (), set())
         if not isinstance(model, dict):
             validate_model(model)
         model.setdefault("schemaVersion", SCHEMA_VERSION)
