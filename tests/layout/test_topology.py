@@ -18,6 +18,12 @@ def fixture(case):
 
 
 class TopologyTests(unittest.TestCase):
+    def test_transition_labels_do_not_cover_container_borders_or_dividers(self):
+        for case in ("nested", "orthogonal", "pseudostates"):
+            with self.subTest(case=case):
+                model = fixture(case)
+                self.assertEqual(evaluate(model, layout(model))["label_collisions"], 0)
+
     def test_chain_uses_transition_topology_in_both_directions(self):
         draft = {"regions": [{"vertices": [{"id": x, "kind": "state"} for x in ("c", "a", "b")],
                               "transitions": [{"sourceId": a, "targetId": b} for a, b in (("a","b"),("b","c"))]}]}

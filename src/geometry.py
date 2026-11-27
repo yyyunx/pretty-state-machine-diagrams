@@ -22,6 +22,17 @@ def rect(bounds):
     return x, y, x + bounds["width"], y + bounds["height"]
 
 
+def stroke_box(a, b, margin=1):
+    x, y = min(a["x"], b["x"]), min(a["y"], b["y"])
+    return box(x-margin, y-margin, abs(a["x"]-b["x"])+2*margin, abs(a["y"]-b["y"])+2*margin)
+
+
+def outline_boxes(bounds):
+    x, y, r, b = rect(bounds)
+    corners = (point(x,y), point(r,y), point(r,b), point(x,b))
+    return [stroke_box(a,b) for a,b in zip(corners, (*corners[1:], corners[0]))]
+
+
 def bar_bounds(bounds):
     x, y, r, b = rect(bounds)
     w, h = r - x, b - y

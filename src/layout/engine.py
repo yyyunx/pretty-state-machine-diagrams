@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from itertools import pairwise
 import math
 
-from src.geometry import behavior_lines, box, point, rect, text_lines, text_width, transition_text
+from src.geometry import behavior_lines, box, outline_boxes, point, rect, stroke_box, text_lines, text_width, transition_text
 
 from . import legacy, routing
 from .topology import layers
@@ -19,8 +19,8 @@ class LayoutError(ValueError):
 class LayoutOptions:
     direction: str = "horizontal"
     node_spacing: float = 48
-    layer_spacing: float = 84
-    region_padding: float = 28
+    layer_spacing: float = 64
+    region_padding: float = 24
     edge_clearance: float = 8
     crossing_penalty: float = 85
     bend_penalty: float = 22
@@ -238,6 +238,8 @@ class _Placement:
         used, lanes = [], defaultdict(int)
         occupied = [part["labelBounds"] for part in (*self.nodes.values(), *self.regions.values())
                     if "labelBounds" in part]
+        dividers = [stroke_box(a,b) for part in self.regions.values()
+                    for a,b in part.get("separatorSegments", ())]
         for edge in self.transitions:
             src, dst = edge["sourceId"], edge["targetId"]
             allowed = {src, dst, *self.ancestors[src], *self.ancestors[dst]}
@@ -259,8 +261,14 @@ class _Placement:
             geometry = {"points": points}
             text = transition_text(edge)
             if text:
+                borders = [border for parent in allowed - {src, dst}
+                           for border in outline_boxes(self.nodes[parent]["bounds"])]
+                headers = [box(bounds["x"], bounds["y"], bounds["width"], self.header(self.vertices[parent]))
+                           for parent in allowed - {src, dst} if behavior_lines(self.vertices[parent])
+                           for bounds in (self.nodes[parent]["bounds"],)]
                 geometry["labelBounds"] = routing.label_position(
-                    points, text, [*obstacles, a, b, *occupied], self.options.label_clearance)
+                    points, text, [*obstacles, a, b, *occupied, *dividers, *borders, *headers],
+                    self.options.label_clearance)
                 occupied.append(geometry["labelBounds"])
             self.edges[edge["id"]] = geometry
 

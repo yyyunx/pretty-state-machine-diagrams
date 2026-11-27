@@ -3,7 +3,7 @@
 from itertools import combinations, pairwise
 import math
 
-from src.geometry import bar_bounds, corner_radius, rect, symbol
+from src.geometry import bar_bounds, corner_radius, outline_boxes, rect, stroke_box, symbol
 from .routing import EPSILON, overlap
 
 
@@ -113,6 +113,9 @@ def evaluate(model, layout, *, original_model=None, execution_ms=None):
         for a,b in combinations(node_boxes, 2) if a not in parents[b] and b not in parents[a]
     )
     labels = []
+    dividers = [stroke_box(a,b) for part in layout["regions"].values()
+                for a,b in part.get("separatorSegments", ())]
+    edge_label_collisions = 0
     for key in ("nodes", "regions", "edges"):
         for identifier, part in layout[key].items():
             if "labelBounds" not in part:
@@ -124,10 +127,13 @@ def evaluate(model, layout, *, original_model=None, execution_ms=None):
             elif key == "edges" and identifier in transitions:
                 edge = transitions[identifier]
                 legal = set(parents[edge["sourceId"]]) | set(parents[edge["targetId"]])
+                borders = [border for owner in legal if owner in node_boxes
+                           for border in outline_boxes(node_boxes[owner])]
+                edge_label_collisions += sum(overlap(part["labelBounds"], box) for box in (*dividers, *borders))
             else:
                 continue
             labels.append((part["labelBounds"], legal))
-    label_collisions = sum(overlap(a,b) for (a,_),(b,_) in combinations(labels,2))
+    label_collisions = edge_label_collisions + sum(overlap(a,b) for (a,_),(b,_) in combinations(labels,2))
     label_collisions += sum(overlap(label, bounds) for label, legal in labels
                             for node, bounds in node_boxes.items() if node not in legal)
     paths, edge_node, anchors, bends, length = {}, 0, 0, 0, 0.0
