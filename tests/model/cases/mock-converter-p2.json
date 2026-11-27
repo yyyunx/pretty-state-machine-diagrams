@@ -1,0 +1,199 @@
+{
+  "nested": {
+    "kind": "resolvedBehavior",
+    "id": "nested-workflow",
+    "displayName": "Nested workflow",
+    "regions": [{
+      "body": [{
+        "kind": "sequence",
+        "parts": [
+          { "kind": "pseudostate", "pseudostateKind": "initial" },
+          {
+            "kind": "composite",
+            "displayName": "Processing",
+            "behaviors": { "entry": ["openJob()"], "exit": ["archive()"], "invariant": "job != null" },
+            "regions": [{
+              "body": [{
+                "kind": "sequence",
+                "parts": [
+                  { "kind": "pseudostate", "pseudostateKind": "initial" },
+                  {
+                    "kind": "composite",
+                    "regions": [{
+                      "displayName": "Review",
+                      "body": [{
+                        "kind": "sequence",
+                        "parts": [
+                          { "kind": "pseudostate", "pseudostateKind": "initial" },
+                          {
+                            "kind": "branch",
+                            "source": {
+                              "kind": "state",
+                              "displayName": "Reviewing",
+                              "behaviors": { "do": ["check()"], "defer": ["cancel"] }
+                            },
+                            "alternatives": [
+                              {
+                                "interaction": {
+                                  "sourceInteractionId": "approve",
+                                  "triggers": ["submit(score)"],
+                                  "guard": "score >= 60",
+                                  "effect": "mark(\"通過\")",
+                                  "sourceText": "submit(score) [score >= 60] / mark(\"通過\")"
+                                },
+                                "body": {
+                                  "kind": "repeat",
+                                  "body": {
+                                    "kind": "sequence",
+                                    "parts": [{ "kind": "state", "displayName": "Checking" }, { "kind": "state" }],
+                                    "connect": [{ "triggers": ["checked"] }]
+                                  },
+                                  "backInteraction": { "triggers": ["retry"], "guard": "attempts < limit" }
+                                },
+                                "toExit": { "triggers": ["confirm"] }
+                              },
+                              {
+                                "interaction": { "triggers": ["submit(score)"], "guard": "score < 60", "effect": "returnJob()" },
+                                "body": { "kind": "state", "displayName": "Returned" },
+                                "toExit": { "triggers": ["close"] }
+                              }
+                            ],
+                            "exit": { "kind": "state", "displayName": "Closed" }
+                          },
+                          { "kind": "final" }
+                        ],
+                        "connect": [{}, { "triggers": ["archive"] }]
+                      }]
+                    }]
+                  },
+                  { "kind": "final" }
+                ],
+                "connect": [{}, {}]
+              }]
+            }]
+          },
+          { "kind": "final" }
+        ],
+        "connect": [{}, {}]
+      }]
+    }]
+  },
+  "orthogonal": {
+    "kind": "resolvedBehavior",
+    "id": "parallel-workflow",
+    "displayName": "Parallel workflow",
+    "regions": [{
+      "body": [
+        {
+          "kind": "sequence",
+          "parts": [
+            { "kind": "pseudostate", "pseudostateKind": "initial" },
+            { "kind": "state", "displayName": "Waiting" },
+            { "kind": "pseudostate", "pseudostateKind": "fork", "key": "fork" }
+          ],
+          "connect": [{}, { "triggers": ["begin"] }]
+        },
+        {
+          "kind": "composite",
+          "displayName": "Operating",
+          "regions": [
+            {
+              "body": [{
+                "kind": "sequence",
+                "parts": [
+                  { "kind": "state", "displayName": "Collecting", "key": "collect" },
+                  { "kind": "state", "displayName": "Collected", "key": "collected" }
+                ],
+                "connect": [{ "triggers": ["collected"] }]
+              }]
+            },
+            {
+              "displayName": "Monitoring",
+              "body": [{
+                "kind": "sequence",
+                "parts": [
+                  { "kind": "state", "key": "monitor", "behaviors": { "do": ["monitor()"] } },
+                  { "kind": "state", "displayName": "Monitored", "key": "monitored" }
+                ],
+                "connect": [{ "triggers": ["monitored"] }]
+              }]
+            }
+          ]
+        },
+        {
+          "kind": "sequence",
+          "parts": [
+            { "kind": "pseudostate", "pseudostateKind": "join", "key": "join" },
+            { "kind": "state", "displayName": "Ready", "key": "ready" },
+            { "kind": "reference", "target": "finished" }
+          ],
+          "connect": [{}, { "triggers": ["finish"] }]
+        },
+        { "kind": "final", "key": "finished" }
+      ],
+      "links": [
+        { "from": "fork", "to": "collect", "interaction": {} },
+        { "from": "fork", "to": "monitor", "interaction": {} },
+        { "from": "collected", "to": "join", "interaction": {} },
+        { "from": "monitored", "to": "join", "interaction": {} }
+      ]
+    }]
+  },
+  "pseudostates": {
+    "kind": "resolvedBehavior",
+    "id": "history-workflow",
+    "displayName": "History and connection points",
+    "regions": [{
+      "body": [
+        {
+          "kind": "sequence",
+          "parts": [
+            { "kind": "pseudostate", "pseudostateKind": "initial" },
+            { "kind": "state", "displayName": "Idle", "key": "idle" },
+            { "kind": "pseudostate", "pseudostateKind": "choice", "key": "choose" }
+          ],
+          "connect": [{}, { "triggers": ["start"] }]
+        },
+        {
+          "kind": "composite",
+          "displayName": "Session",
+          "regions": [{
+            "body": [
+              { "kind": "pseudostate", "pseudostateKind": "shallowHistory", "key": "shallow" },
+              { "kind": "pseudostate", "pseudostateKind": "deepHistory", "key": "deep" },
+              {
+                "kind": "sequence",
+                "parts": [
+                  { "kind": "pseudostate", "pseudostateKind": "entryPoint", "key": "enter" },
+                  { "kind": "state", "displayName": "Active", "key": "active" },
+                  { "kind": "pseudostate", "pseudostateKind": "exitPoint", "key": "leave" }
+                ],
+                "connect": [{}, { "triggers": ["stop"] }]
+              }
+            ],
+            "links": [
+              { "from": "shallow", "to": "active", "interaction": {} },
+              { "from": "deep", "to": "active", "interaction": {} }
+            ]
+          }]
+        },
+        {
+          "kind": "sequence",
+          "parts": [
+            { "kind": "pseudostate", "pseudostateKind": "junction", "key": "reject" },
+            { "kind": "pseudostate", "pseudostateKind": "terminate" }
+          ],
+          "connect": [{}]
+        },
+        { "kind": "final", "key": "closed" }
+      ],
+      "links": [
+        { "from": "choose", "to": "enter", "interaction": { "guard": "permitted" } },
+        { "from": "choose", "to": "reject", "interaction": { "guard": "!permitted" } },
+        { "from": "idle", "to": "shallow", "interaction": { "triggers": ["resume"] } },
+        { "from": "idle", "to": "deep", "interaction": { "triggers": ["restore"] } },
+        { "from": "leave", "to": "closed", "interaction": {} }
+      ]
+    }]
+  }
+}

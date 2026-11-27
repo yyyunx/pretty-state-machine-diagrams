@@ -6,7 +6,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Literal
 
 from jsonschema import Draft202012Validator
 
@@ -28,11 +28,16 @@ class Diagnostic:
     code: str
     path: str
     message: str
+    severity: Literal["error", "warning"] = "error"
+    source_text: str | None = None
 
     @classmethod
-    def at(cls, code: str, path: PathParts, message: str) -> "Diagnostic":
+    def at(
+        cls, code: str, path: PathParts, message: str, *,
+        severity: Literal["error", "warning"] = "error", source_text: str | None = None,
+    ) -> "Diagnostic":
         pointer = "".join("/" + str(part).replace("~", "~0").replace("/", "~1") for part in path)
-        return cls(code, pointer, message)
+        return cls(code, pointer, message, severity, source_text)
 
 
 class ModelError(ValueError):
@@ -164,10 +169,22 @@ def _validate(model: object, elements) -> None:
         raise ModelError(*diagnostics)
 
 
-def validate_model(model: object) -> None:
-    """Raise ModelError with schema or graph diagnostics for an invalid model."""
+def validate_model(model: object, *, uml: bool = False) -> tuple[Diagnostic, ...] | None:
+    """Validate the transport contract, optionally applying UML 2.5.1 checks.
+
+    With UML checks enabled, return warnings or raise ModelError containing
+    the UML errors and any accompanying warnings.
+    """
     try:
-        _validate(model, list(_elements(model)))
+        elements = list(_elements(model))
+        _validate(model, elements)
+        if uml:
+            from .uml import uml_diagnostics
+
+            diagnostics = uml_diagnostics(elements)
+            if any(item.severity == "error" for item in diagnostics):
+                raise ModelError(*diagnostics)
+            return diagnostics
     except RecursionError as error:
         raise ModelError(Diagnostic.at("invalid-hierarchy", (), "Model nesting exceeds Python's limit.")) from error
 
