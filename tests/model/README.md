@@ -28,4 +28,27 @@
 | 弱順序、引用、迴圈及續接 | 核對弱順序允許和排除的 trace。用有界迴圈、未解析引用、合法遞迴及各續接 token 在 `>>` 內外的案例測試互動次序和診斷。 |
 | 相容性與可重現性 | 每份成功模型都通過現有 Schema 和結構驗證。以同一來源重複建構，核對模型物件、ID、原始內容與陣列順序。若序列化格式承諾穩定，另外逐位元比較 JSON。 |
 
-正式輸入尚待 Converter 與組內確認。待確認後，可用 Adapter 替身餵入最小模型和雙層巢狀模型，並以已核准的真實輸出檔驗證介接。既有 12 項基礎測試維持原狀。
+正式輸入尚待 Converter 與組內確認。目前以模組內的 Mock Converter 輸入測試已解析行為。
+
+## 重跑端到端案例
+
+從 Semantic Model 分支根目錄執行。啟用已安裝 `requirements-dev.txt` 的 Python 環境。下列固定下游提交可重現收錄的五份 SVG。
+
+```powershell
+git fetch origin
+git worktree add --detach ../group-f-p2-e2e HEAD
+Push-Location ../group-f-p2-e2e
+git restore --source b9be71a41d3a8c895be614d8d97a1b50b4e40c5f --worktree -- src/layout
+git restore --source 8c3a5157063191e08dc06eaa4e247ddd85074980 --worktree -- src/renderer
+python -m tests.model.run_end_to_end --output-dir .venv/p2-evidence
+Pop-Location
+```
+
+在 Semantic Model 分支單獨重建第二階段模型：
+
+```powershell
+python -m src.model transform tests/model/cases/mock-converter-p2.json --case orthogonal --uml --output orthogonal.smd.json
+python -m unittest discover -s tests -v
+```
+
+SVG 樣本依實際下游程式生成，包含待修正的圖形細節。Fork 與 Join 的部分路徑在假想節點框上終止，與可見橫桿有間隔。Junction、Terminate、Entry Point、Exit Point 的符號或位置仍有 UML 表示差異。[OMG UML 2.5.1，第 14 章](https://www.omg.org/spec/UML/2.5.1/PDF)

@@ -23,7 +23,7 @@ def model_with(vertices, transitions):
 
 
 class UmlValidationTests(unittest.TestCase):
-    def test_rejects_multiple_initials_initial_guards_and_triggers_and_final_exit(self):
+    def test_rejects_multiple_initials_initial_guards_and_final_exit(self):
         model = model_with(
             [
                 vertex("start", "pseudostate", "initial"), vertex("another", "pseudostate", "initial"),
@@ -33,11 +33,27 @@ class UmlValidationTests(unittest.TestCase):
         )
         with self.assertRaises(ModelError) as captured:
             validate_model(model, uml=True)
-        self.assertEqual({issue.code for issue in captured.exception.diagnostics}, {
+        self.assertEqual({issue.code for issue in captured.exception.diagnostics if issue.severity == "error"}, {
             "uml-duplicate-region-pseudostate", "uml-pseudostate-outgoing", "uml-segment-guard",
-            "uml-pseudostate-trigger", "uml-final-outgoing",
+            "uml-final-outgoing",
         })
-        self.assertTrue(all(issue.severity == "error" for issue in captured.exception.diagnostics))
+        self.assertEqual(
+            [issue.code for issue in captured.exception.diagnostics if issue.severity == "warning"],
+            ["uml-initial-trigger-context"],
+        )
+
+    def test_initial_label_context_is_nonblocking_at_root_but_nested_trigger_is_invalid(self):
+        nodes = [vertex("start", "pseudostate", "initial"), vertex("active")]
+        transitions = [edge("start", "active", triggers=["create"])]
+        notes = validate_model(model_with(nodes, transitions), uml=True)
+        self.assertEqual([(note.code, note.severity) for note in notes], [
+            ("uml-initial-trigger-context", "warning"),
+        ])
+        nested = model_with([{"id": "parent", "kind": "composite", "regions": [{
+            "vertices": nodes, "transitions": transitions,
+        }]}], [])
+        with self.assertRaisesRegex(ModelError, "uml-pseudostate-trigger"):
+            validate_model(nested, uml=True)
 
     def test_accepts_an_effect_on_an_initial_segment(self):
         model = model_with(

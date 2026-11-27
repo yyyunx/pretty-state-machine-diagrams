@@ -40,7 +40,15 @@ def uml_diagnostics(elements: list[tuple[str, PathParts, Model]]) -> tuple[Diagn
         source_pseudo = source.get("pseudostateKind")
         target_pseudo = target.get("pseudostateKind")
         # §§14.5.6.7, 14.5.11.8
-        if source_pseudo and "triggers" in edge:
+        if source_pseudo == "initial" and "triggers" in edge and len(regions[start]) == 1:
+            # §14.2.4.6 describes a ClassifierBehavior creation-event label, but
+            # §14.5.6.7 forbids triggers. The SMD projection has no context to decide.
+            diagnostics.append(Diagnostic.at(
+                "uml-initial-trigger-context", (*path, "triggers"),
+                "Review whether this top-level initial label denotes a classifier creation event.",
+                severity="warning",
+            ))
+        elif source_pseudo and "triggers" in edge:
             diagnostics.append(Diagnostic.at(
                 "uml-pseudostate-trigger", (*path, "triggers"), "Outgoing pseudostate segments cannot have triggers.",
             ))

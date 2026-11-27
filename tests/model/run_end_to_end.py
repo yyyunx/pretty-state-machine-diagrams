@@ -50,7 +50,10 @@ def main():
         svg_tree = ElementTree.fromstring(svg)
         if svg_tree.tag != SVG + "svg":
             raise ValueError(f"{case}: renderer did not return SVG.")
-        labels = {label.text for label in svg_tree.iter(SVG + "text")}
+        labels = set()
+        for label in svg_tree.iter(SVG + "text"):
+            lines = label.findall(SVG + "tspan")
+            labels.add("\n".join(line.text or "" for line in lines) if lines else (label.text or ""))
         missing = set(expected_text) - labels
         if missing:
             raise ValueError(f"{case}: missing rendered text: {sorted(missing)!r}.")
