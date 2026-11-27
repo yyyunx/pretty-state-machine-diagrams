@@ -1,0 +1,19 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T074654Z-yyyunx-1340b26469",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:46:54.081824Z",
+  "related_events": [
+    "E-20261127T073053Z-yyyunx-2062c0bb29",
+    "E-20261127T070805Z-yyyunx-9255dcdfa5"
+  ],
+  "summary": "Semantic Model 第二階段交接。可用遞迴 Mock 的明確 sequence、branch、repeat、reference、Composite、Orthogonal Regions、十種 Pseudostates 和跨層 link 生成模型。原有 34 項測試保留，總計 48 項通過。隔離工作樹核對 Semantic 194e9d1、Layout b9be71a、Renderer 8c3a515 後跑五例全流程，五份 SMD JSON 與 SVG 均成功生成並和重跑一致。UML 檢查用 validate_model(model, uml=True)，區域擁有者建議列為 Warning。未解析的 Grammar 仍附位置與原文診斷，正式 Converter 的輸出格式與語意尚待確認。",
+  "evidence": [
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/1",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/commit/194e9d18e7de513456a01935baf00f86d9946bc4",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/tree/194e9d18e7de513456a01935baf00f86d9946bc4/src/model/generated",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/194e9d18e7de513456a01935baf00f86d9946bc4/tests/model/README.md"
+  ]
+}
