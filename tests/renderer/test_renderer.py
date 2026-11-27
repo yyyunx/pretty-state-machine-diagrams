@@ -51,6 +51,39 @@ class RendererTests(unittest.TestCase):
         with self.assertRaisesRegex(RenderError, "dangling"):
             render(model, layout)
 
+
+    def test_all_supported_pseudostate_shapes_render(self):
+        kinds = [
+            "initial", "choice", "junction", "fork", "join",
+            "shallowHistory", "deepHistory", "entryPoint", "exitPoint", "terminate",
+        ]
+        vertices = [
+            {"id": kind, "kind": "pseudostate", "pseudostateKind": kind}
+            for kind in kinds
+        ]
+        model = {
+            "schemaVersion": "0.1.0-draft",
+            "id": "pseudo-machine",
+            "regions": [{"id": "root", "vertices": vertices, "transitions": []}],
+        }
+        nodes = {
+            kind: {"bounds": {"x": 12 + i * 32, "y": 20, "width": 24, "height": 24}}
+            for i, kind in enumerate(kinds)
+        }
+        layout = {
+            "schemaVersion": "0.1.0-draft",
+            "modelId": "pseudo-machine",
+            "viewport": {"x": 0, "y": 0, "width": 360, "height": 70},
+            "nodes": nodes,
+            "regions": {"root": {"bounds": {"x": 4, "y": 4, "width": 350, "height": 60}}},
+            "edges": {},
+        }
+        svg = render(model, layout)
+        for marker in ("H", "H*", "E", "X"):
+            self.assertIn(marker, svg)
+        self.assertIn("<path", svg)
+        self.assertIn("<line", svg)
+
     def test_svg_escapes_untrusted_text(self):
         model, layout = fixture("basic.smd.json"), fixture("basic.layout.json")
         model["regions"][0]["vertices"][1]["displayName"] = "<script>alert(1)</script>"
