@@ -11,6 +11,7 @@
 ~~~sh
 python -m pip install .
 pretty-smd generate examples/basic.smd.json --output diagram.svg
+pretty-smd generate examples/basic.smd.json --algorithm advanced --mode balanced --output advanced.svg
 pretty-smd validate examples/basic.smd.json
 pretty-smd serve
 ~~~
@@ -50,7 +51,13 @@ Topology 排版先對每個 Region 的圖計算強連通分量及最長路徑分
 
 - SMD 支援一般與複合狀態、巢狀及正交 Region、Final，以及 Initial、Choice、Junction、Fork、Join、Shallow History、Deep History、Entry Point、Exit Point、Terminate。轉移與狀態行為保持原始內容。匿名狀態及 Region 保持無名。
 - 已解析 Mock 提供課堂例及測試用控制流。正式 R、S 組 Converter 仍待可執行版本與 Grammar 確認。原始 Process Algebra 文字暫無 CLI 或 Web 解析模式。Python 提供 [Adapter 接縫](docs/API.md)，外部所需資料與待決語意見 [交接提問單](src/model/CONVERTER_HANDOFF.md)。
-- 安裝包版本 0.1.0，Model 及 Layout 資料沿用 UTF-8 `0.1.0-draft`。本機 Web App 綁定 loopback。若使用 GitHub Pages，可展示 [預生成圖例](demo/index.html)，互動生成需要本機 Python。
+- 安裝包版本 0.2.0 Experimental，Model 及 Layout 資料採 UTF-8 `0.1.0-draft`。本機 Web App 綁定 loopback，另可建置 [靜態 Gallery](demo/index.html)。
+
+## Phase 4 進階排版
+
+Advanced 提供 Fast、Balanced、Quality，包括 SCC 內部排列、空間索引、不同端口與路由順序、有限重布線。Phase 3 Topology 保持預設。Web App 可即時比較版本、搜尋名稱或轉移、瀏覽階層、定位 minimap，並備份及載入排版設定。
+
+延續原 13 個案例、5 個獨立案例和 30 個固定種子的壓測模型。原 13 例中，Balanced 把交叉從 2 降為 1、共線長度從 1 降為 0；Quality 將總線長從 18,963.82 降為 16,868.04，搜尋需較久。完整資料保留逾時與外部工具不支援的結果。 [技術報告](benchmarks/phase4/REPORT.md) · [效能曲線](benchmarks/phase4/performance.svg) · [Advanced 操作](docs/ADVANCED.md) · [Web 實測](benchmarks/phase4/advanced-app.png)
 
 ## 實測比較
 

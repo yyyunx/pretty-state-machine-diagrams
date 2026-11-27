@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UML State Machine Diagram" viewBox="16 16 1040.86 340" width="1040.86" height="340">
+<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<g data-layer="containers">
+<rect x="371.6" y="60" width="329.66" height="252" rx="10" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-layer="regions">
+<line x1="385.6" y1="194" x2="490.33" y2="194" stroke="#68727d" stroke-width="1.2" stroke-dasharray="6 5"/>
+<line x1="582.53" y1="194" x2="687.26" y2="194" stroke="#68727d" stroke-width="1.2" stroke-dasharray="6 5"/>
+</g>
+<g data-layer="edges">
+<polyline data-edge-id="transition-1" tabindex="0" points="509.6,144 560.8,144" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-2" tabindex="0" points="512.06,244 563.26,244" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-3" tabindex="0" points="84,186 135.2,186" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-4" tabindex="0" points="235.2,186 286.4,186" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-5" tabindex="0" points="786.46,186 837.66,186" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-6" tabindex="0" points="937.66,186 989.34,186" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-7" tabindex="0" points="303.4,183.12 303.4,144 409.6,144" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-8" tabindex="0" points="303.4,188.88 303.4,244 409.6,244" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-9" tabindex="0" points="660.8,144 769.46,144 769.46,183.12" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-10" tabindex="0" points="663.26,244 769.46,244 769.46,188.88" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g data-layer="symbols">
+<g data-node-id="vertex-1" data-kind="initial" tabindex="0">
+<circle cx="72" cy="186" r="12" fill="#20252b" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-2" data-kind="state" tabindex="0">
+<rect x="135.2" y="162" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-3" data-kind="fork" tabindex="0">
+<rect x="286.4" y="183.12" width="34" height="5.76" rx="0" fill="#20252b" stroke="#20252b" stroke-width="0"/>
+</g>
+<g data-node-id="vertex-4" data-kind="composite" tabindex="0">
+<rect x="371.6" y="60" width="329.66" height="252" rx="10" fill="none" stroke="transparent" stroke-width="6"/>
+</g>
+<g data-node-id="vertex-5" data-kind="state" tabindex="0">
+<rect x="409.6" y="120" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-6" data-kind="state" tabindex="0">
+<rect x="560.8" y="120" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-7" data-kind="state" tabindex="0">
+<rect x="409.6" y="220" width="102.46" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-8" data-kind="state" tabindex="0">
+<rect x="563.26" y="220" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-9" data-kind="join" tabindex="0">
+<rect x="752.46" y="183.12" width="34" height="5.76" rx="0" fill="#20252b" stroke="#20252b" stroke-width="0"/>
+</g>
+<g data-node-id="vertex-10" data-kind="state" tabindex="0">
+<rect x="837.66" y="162" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-11" data-kind="final" tabindex="0">
+<circle cx="1000.86" cy="186" r="11.52" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<circle cx="1000.86" cy="186" r="7.44" fill="#20252b" stroke="#20252b" stroke-width="1.5"/>
+</g>
+</g>
+<g data-layer="node-labels">
+<text xml:space="preserve" x="185.2" y="180" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="185.2" dy="0">Waiting</tspan>
+</text>
+<rect x="495.95" y="50" width="80.96" height="20" rx="0" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="536.43" y="63" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="536.43" dy="0">Operating</tspan>
+</text>
+<text xml:space="preserve" x="459.6" y="138" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="459.6" dy="0">Collecting</tspan>
+</text>
+<text xml:space="preserve" x="610.8" y="138" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="610.8" dy="0">Collected</tspan>
+</text>
+<line x1="410.6" y1="228" x2="511.06" y2="228" stroke="#9aa2aa" stroke-width="1"/>
+<text x="417.6" y="242" text-anchor="start" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="9.5" font-weight="normal" fill="#20252b">do / monitor()</text>
+<text xml:space="preserve" x="613.26" y="238" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="613.26" dy="0">Monitored</tspan>
+</text>
+<text xml:space="preserve" x="887.66" y="180" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="887.66" dy="0">Ready</tspan>
+</text>
+</g>
+<g data-layer="region-labels">
+<rect x="495.33" y="184" width="82.2" height="20" rx="0" fill="white" stroke="none" stroke-width="0"/>
+<text x="536.43" y="198.4" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="11" font-weight="600" fill="#20252b">Monitoring</text>
+</g>
+<g data-layer="edge-labels">
+<g data-edge-id="transition-1">
+<rect x="500.905" y="94" width="68.59" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="535.2" y="106" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="535.2" dy="0">collected</tspan>
+</text>
+</g>
+<g data-edge-id="transition-2">
+<rect x="503.365" y="276" width="68.59" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="537.66" y="288" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="537.66" dy="0">monitored</tspan>
+</text>
+</g>
+<g data-edge-id="transition-4">
+<rect x="239.525" y="160" width="42.55" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="260.8" y="172" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="260.8" dy="0">begin</tspan>
+</text>
+</g>
+<g data-edge-id="transition-6">
+<rect x="938.97" y="160" width="49.06" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="963.5" y="172" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="963.5" dy="0">finish</tspan>
+</text>
+</g>
+</g>
+</svg>

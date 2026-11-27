@@ -3,40 +3,60 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pretty State Machine Diagrams | Group F 圖例</title>
-<style>
-  :root {font:16px/1.65 system-ui,sans-serif;color:#192b3e;background:#f3f6fa}
-  body {max-width:1200px;margin:0 auto;padding:clamp(16px,4vw,48px)}
-  h1 {font-size:clamp(1.8rem,4vw,2.9rem);line-height:1.15;margin:.3em 0}
-  a {color:#174b9d}
-  .grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,410px),1fr));gap:16px}
-  figure {margin:0;border:1px solid #cad6e4;border-radius:12px;background:white;overflow:hidden}
-  figure img {display:block;width:100%;height:auto}
-  figcaption {padding:12px 16px;border-bottom:1px solid #e1e8f0;font-weight:650}
-  nav {margin-top:18px;display:flex;gap:1em;flex-wrap:wrap}
-</style>
+<title>Pretty State Machine Diagrams · Group F</title>
+<link rel="stylesheet" href="gallery.css">
+<script src="gallery.js" defer></script>
 </head>
 <body>
 <header>
-  <p>NSYSU · Group F</p>
+  <p class="course">NSYSU · Group F</p>
   <h1>Pretty State Machine Diagrams</h1>
-  <p>這些 SVG 由 Python 管線預先產生。操作 JSON 編輯器、重新排版和匯出請在本機執行 <code>pretty-smd serve</code>。</p>
+  <p>比較相同 UML 狀態機在原始、Phase 3 拓樸及進階排版下的實際輸出。</p>
+  <nav aria-label="展示導覽"><a href="#gallery">圖形比較</a><a href="#measurements">效能與品質</a><a href="#local">本機操作</a></nav>
 </header>
 <main>
-  <h2>巢狀複合狀態</h2>
-  <div class="grid">
-    <figure><figcaption>整合基準</figcaption><a href="../benchmarks/baseline/nested.svg"><img alt="整合基準的巢狀圖" src="../benchmarks/baseline/nested.svg"></a></figure>
-    <figure><figcaption>拓樸排版與圖層修正</figcaption><a href="../benchmarks/after/nested.svg"><img alt="修正後的巢狀圖" src="../benchmarks/after/nested.svg"></a></figure>
-  </div>
-  <h2>正交區域與十種偽狀態</h2>
-  <div class="grid">
-    <figure><figcaption>Fork、Join 與正交區域</figcaption><a href="../benchmarks/after/orthogonal.svg"><img alt="兩個正交區域與同步轉移" src="../benchmarks/after/orthogonal.svg"></a></figure>
-    <figure><figcaption>偽狀態及容器邊界點</figcaption><a href="../benchmarks/after/pseudostates.svg"><img alt="各偽狀態及容器邊界點" src="../benchmarks/after/pseudostates.svg"></a></figure>
-  </div>
-  <nav aria-label="更多成果">
-    <a href="../benchmarks/comparison.csv">13 組案例比較</a>
-    <a href="../benchmarks/after/synthetic-48.svg">48 個頂點的大型圖</a>
-  </nav>
+  <section id="gallery" aria-labelledby="gallery-title">
+    <div class="toolbar">
+      <h2 id="gallery-title">可縮放圖例</h2>
+      <label>案例<select id="case">
+        <option value="pseudostates">偽狀態與邊界點</option>
+        <option value="self-loop">自迴圈</option>
+        <option value="nested">巢狀複合狀態</option>
+        <option value="orthogonal">正交區域</option>
+        <option value="synthetic-48">48 個頂點</option>
+        <option value="holdout-cycles-16">獨立循環案例</option>
+      </select></label>
+      <label>倍率 <output id="zoom-value">100%</output><input id="zoom" type="range" min="100" max="400" step="25" value="100"></label>
+      <button id="reset" type="button">重設倍率</button>
+    </div>
+    <div class="grid" id="figures">
+      <figure data-engine="legacy"><figcaption>Legacy</figcaption><div class="view"><img alt="Legacy 的 UML 排版"></div><p><a>開啟 SVG</a> <span></span></p></figure>
+      <figure data-engine="topology"><figcaption>Phase 3 Topology</figcaption><div class="view"><img alt="Phase 3 Topology 的 UML 排版"></div><p><a>開啟 SVG</a> <span></span></p></figure>
+      <figure data-engine="advanced-quality"><figcaption>Phase 4 Advanced Quality</figcaption><div class="view"><img alt="Phase 4 Advanced Quality 的 UML 排版"></div><p><a>開啟 SVG</a> <span></span></p></figure>
+    </div>
+    <noscript>啟用 JavaScript 可切換靜態 SVG 圖例，或直接下載下方資料。</noscript>
+  </section>
+  <section id="measurements" aria-labelledby="measure-title">
+    <h2 id="measure-title">基準與壓力測試</h2>
+    <p>比較同一批模型，記錄時間、幾何品質、記憶體與失敗狀態。</p>
+    <div id="curve"></div>
+    <p id="bench-status" role="status"></p>
+    <p class="links"><a id="csv">完整 CSV</a><a id="json">JSON 量測環境與結果</a><a href="https://github.com/yyyunx/pretty-state-machine-diagrams">原始碼與技術報告</a></p>
+  </section>
+  <section id="local" aria-labelledby="local-title">
+    <h2 id="local-title">本機 CLI、Python SDK 與 Web App</h2>
+    <p>此頁展示 Python 預先生成的 SVG。請在專案目錄使用 Python 3.10 以上執行以下指令。</p>
+    <pre><code>python -m pip install .
+pretty-smd generate examples/basic.smd.json --algorithm advanced --mode balanced --output diagram.svg
+pretty-smd serve</code></pre>
+    <p>執行服務後，打開 <a href="http://127.0.0.1:8000">本機 Web App</a>，可編輯 JSON、檢視階層、比較方案與匯出。</p>
+    <pre><code>from pretty_smd import generate, load_json
+from pathlib import Path
+
+model = load_json(Path("examples/basic.smd.json").read_bytes())
+result = generate(model, algorithm="advanced", mode="quality")
+Path("diagram.svg").write_text(result.svg, encoding="utf-8")</code></pre>
+  </section>
 </main>
 </body>
 </html>
