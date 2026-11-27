@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "id": "review-machine",
+  "regions": [
+    {
+      "id": "review-region",
+      "vertices": [
+        { "id": "start", "kind": "pseudostate", "pseudostateKind": "initial" },
+        { "id": "review", "kind": "state" },
+        { "id": "pass", "kind": "state", "displayName": "審查通過" },
+        { "id": "fail", "kind": "state", "displayName": "退回補件" },
+        { "id": "end", "kind": "final" }
+      ],
+      "transitions": [
+        { "id": "enter", "sourceId": "start", "targetId": "review" },
+        {
+          "id": "approve",
+          "sourceId": "review",
+          "targetId": "pass",
+          "triggers": ["submit(score)"],
+          "guard": "score >= 60",
+          "effect": "emit(\"通過\")",
+          "sourceText": "submit(score) [score >= 60] / emit(\"通過\")",
+          "sourceInteractionId": "approveInteraction"
+        },
+        {
+          "id": "decline",
+          "sourceId": "review",
+          "targetId": "fail",
+          "triggers": ["submit(score)"],
+          "guard": "score < 60",
+          "effect": "emit(\"退回\")",
+          "sourceText": "submit(score) [score < 60] / emit(\"退回\")",
+          "sourceInteractionId": "declineInteraction"
+        },
+        { "id": "close-pass", "sourceId": "pass", "targetId": "end", "triggers": ["close"] },
+        { "id": "close-fail", "sourceId": "fail", "targetId": "end", "triggers": ["close"] }
+      ]
+    }
+  ]
+}
