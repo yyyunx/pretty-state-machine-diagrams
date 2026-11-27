@@ -45,6 +45,7 @@
 <polyline points="1453,238 1453,84 1517,84" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <circle cx="68" cy="84" r="12" fill="#20252b" stroke="#20252b"/>
 <rect x="144" y="72" width="1309" height="332" rx="10" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<rect x="148" y="76" width="1301" height="20" rx="0" fill="white" stroke="none" stroke-width="0"/>
 <text x="798.5" y="90.4" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" font-weight="600" fill="#20252b">Processing</text>
 <line x1="145" y1="100" x2="1452" y2="100" stroke="#9aa2aa" stroke-width="1"/>
 <text x="152" y="115" text-anchor="start" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="9.5" font-weight="normal" fill="#20252b">entry / openJob()</text>

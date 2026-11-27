@@ -34,6 +34,7 @@
 <text x="194" y="90.4" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" font-weight="600" fill="#20252b">Waiting</text>
 <rect x="308" y="81.12" width="24" height="5.76" rx="0" fill="#20252b" stroke="#20252b" stroke-width="0"/>
 <rect x="396" y="72" width="390" height="312" rx="10" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<rect x="400" y="76" width="382" height="20" rx="0" fill="white" stroke="none" stroke-width="0"/>
 <text x="591" y="90.4" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" font-weight="600" fill="#20252b">Operating</text>
 <rect x="436" y="144" width="114" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
 <text x="493" y="162.4" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" font-weight="600" fill="#20252b">Collecting</text>

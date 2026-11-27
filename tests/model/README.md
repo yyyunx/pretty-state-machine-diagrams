@@ -39,7 +39,7 @@ git fetch origin
 git worktree add --detach ../group-f-p2-e2e HEAD
 Push-Location ../group-f-p2-e2e
 git restore --source b9be71a41d3a8c895be614d8d97a1b50b4e40c5f --worktree -- src/layout
-git restore --source 8c3a5157063191e08dc06eaa4e247ddd85074980 --worktree -- src/renderer
+git restore --source 750b53218199dfca30d95d897733fe482e35be0e --worktree -- src/renderer
 python -m tests.model.run_end_to_end --output-dir .venv/p2-evidence
 Pop-Location
 ```
