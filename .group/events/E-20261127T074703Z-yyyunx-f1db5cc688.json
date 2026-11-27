@@ -1,0 +1,12 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T074703Z-yyyunx-f1db5cc688",
+  "event_type": "question",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:47:03.400657Z",
+  "related_events": [],
+  "question_id": "Q-yyyunx-e84b423937",
+  "text": "請 Layout 與 Renderer 組員協調兩項已重現的 SVG 問題。從 Semantic 194e9d1 依 https://github.com/yyyunx/pretty-state-machine-diagrams/blob/194e9d18e7de513456a01935baf00f86d9946bc4/tests/model/README.md 建立隔離工作樹，使用 Layout b9be71a、Renderer 8c3a515 執行 python -m tests.model.run_end_to_end --output-dir .venv/p2-evidence。輸入為 tests/model/cases/mock-converter-p2.json 的 orthogonal 與 pseudostates。其一，orthogonal.layout.json 的 transition-4 終點與 transition-5 起點在 y=96，而 orthogonal.svg 的 Fork vertex-3、Join vertex-9 橫桿下緣是 y=86.88，各有 9.12 SVG 單位的間隔，請對齊實際圖形與路徑錨點。其二，pseudostates.svg 中 Junction 是空心、Terminate 有外圈，Entry／Exit Point 畫在 Region 內且以 E／X 表示；請依 OMG UML 2.5.1 §14.2.4.6 檢查實心 Junction、叉形 Terminate、邊界小圓與退出點圈內的叉。對應輸出 https://github.com/yyyunx/pretty-state-machine-diagrams/tree/194e9d18e7de513456a01935baf00f86d9946bc4/src/model/generated/svg 。",
+  "blocking": false
+}
