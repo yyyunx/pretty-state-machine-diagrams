@@ -283,9 +283,11 @@ class _SVG:
         self.add('<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>')
         self.add('<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>')
         self.add('<rect x="0" y="0" width="100%" height="100%" fill="white"/>')
-        self.render_regions()
         self.render_edges()
         self.render_nodes()
+        # Draw region separators after composite backgrounds and child vertices,
+        # so nested white state containers cannot erase their divider lines.
+        self.render_regions()
         self.add('</svg>')
         return "\n".join(self.out)
 
