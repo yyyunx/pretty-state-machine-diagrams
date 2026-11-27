@@ -1,0 +1,18 @@
+{
+  "protocol_version": "0.1",
+  "group_id": "F",
+  "canonical_branch": "main",
+  "assignment_file": ".group/assignment/assignment.md",
+  "remote": "origin",
+  "validation_commands": [
+    [
+      "{python}",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ]
+  ]
+}

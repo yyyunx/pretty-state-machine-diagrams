@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Group F SMD Model (draft)",
+  "type": "object",
+  "required": ["schemaVersion", "id", "regions"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "0.1.0-draft" },
+    "id": { "$ref": "#/$defs/id" },
+    "displayName": { "$ref": "#/$defs/displayName" },
+    "regions": { "$ref": "#/$defs/regions" }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "not": { "pattern": "\\s" } },
+    "displayName": { "type": "string", "pattern": "\\S" },
+    "rawText": { "type": "string", "minLength": 1 },
+    "rawItems": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/rawText" }
+    },
+    "regions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/region" }
+    },
+    "region": {
+      "type": "object",
+      "required": ["id", "vertices", "transitions"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "displayName": { "$ref": "#/$defs/displayName" },
+        "vertices": { "type": "array", "items": { "$ref": "#/$defs/vertex" } },
+        "transitions": { "type": "array", "items": { "$ref": "#/$defs/transition" } }
+      }
+    },
+    "vertex": {
+      "type": "object",
+      "required": ["id", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "displayName": { "$ref": "#/$defs/displayName" },
+        "kind": { "enum": ["state", "composite", "pseudostate", "final"] },
+        "regions": { "$ref": "#/$defs/regions" },
+        "pseudostateKind": {
+          "enum": ["initial", "choice", "junction", "fork", "join", "shallowHistory", "deepHistory", "entryPoint", "exitPoint", "terminate"]
+        },
+        "behaviors": { "$ref": "#/$defs/behaviors" }
+      },
+      "oneOf": [
+        {
+          "properties": { "kind": { "const": "state" }, "regions": false, "pseudostateKind": false }
+        },
+        {
+          "required": ["regions"],
+          "properties": { "kind": { "const": "composite" }, "pseudostateKind": false }
+        },
+        {
+          "required": ["pseudostateKind"],
+          "properties": { "kind": { "const": "pseudostate" }, "regions": false, "behaviors": false }
+        },
+        {
+          "properties": { "kind": { "const": "final" }, "pseudostateKind": false, "regions": false, "behaviors": false }
+        }
+      ]
+    },
+    "behaviors": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "entry": { "$ref": "#/$defs/rawItems" },
+        "exit": { "$ref": "#/$defs/rawItems" },
+        "do": { "$ref": "#/$defs/rawItems" },
+        "defer": { "$ref": "#/$defs/rawItems" },
+        "invariant": { "$ref": "#/$defs/rawText" }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "required": ["id", "sourceId", "targetId"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "sourceId": { "$ref": "#/$defs/id" },
+        "targetId": { "$ref": "#/$defs/id" },
+        "triggers": { "$ref": "#/$defs/rawItems" },
+        "guard": { "$ref": "#/$defs/rawText" },
+        "effect": { "$ref": "#/$defs/rawText" },
+        "sourceText": { "$ref": "#/$defs/rawText" },
+        "sourceInteractionId": { "$ref": "#/$defs/id" }
+      }
+    }
+  }
+}

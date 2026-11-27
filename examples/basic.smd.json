@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "id": "basic",
+  "regions": [
+    {
+      "id": "root",
+      "vertices": [
+        { "id": "start", "kind": "pseudostate", "pseudostateKind": "initial" },
+        { "id": "idle", "kind": "state", "displayName": "待機" },
+        { "id": "work", "kind": "state" },
+        { "id": "end", "kind": "final" }
+      ],
+      "transitions": [
+        { "id": "begin", "sourceId": "start", "targetId": "idle" },
+        {
+          "id": "run",
+          "sourceId": "idle",
+          "targetId": "work",
+          "triggers": ["start(jobId)"],
+          "guard": "ready && count < limit",
+          "effect": "log(\"started\"); count += 1",
+          "sourceText": "start(jobId) [ready && count < limit] / log(\"started\"); count += 1",
+          "sourceInteractionId": "i1"
+        },
+        { "id": "finish", "sourceId": "work", "targetId": "end", "triggers": ["done"] }
+      ]
+    }
+  ]
+}

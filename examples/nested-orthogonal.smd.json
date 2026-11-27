@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "id": "nested",
+  "regions": [
+    {
+      "id": "root",
+      "vertices": [
+        { "id": "start", "kind": "pseudostate", "pseudostateKind": "initial" },
+        {
+          "id": "operating",
+          "kind": "composite",
+          "displayName": "Operating",
+          "behaviors": { "entry": ["prepare()"], "exit": ["release()"], "invariant": "active == true" },
+          "regions": [
+            {
+              "id": "control-region",
+              "vertices": [
+                { "id": "control-start", "kind": "pseudostate", "pseudostateKind": "initial" },
+                {
+                  "id": "control",
+                  "kind": "composite",
+                  "regions": [
+                    {
+                      "id": "motion-region",
+                      "vertices": [
+                        { "id": "motion-start", "kind": "pseudostate", "pseudostateKind": "initial" },
+                        { "id": "move", "kind": "state", "displayName": "Move", "behaviors": { "do": ["step()"], "defer": ["pause", "inspect"] } },
+                        { "id": "motion-end", "kind": "final" }
+                      ],
+                      "transitions": [
+                        { "id": "motion-begin", "sourceId": "motion-start", "targetId": "move" },
+                        { "id": "motion-done", "sourceId": "move", "targetId": "motion-end", "triggers": ["done"] }
+                      ]
+                    },
+                    {
+                      "id": "calibration-region",
+                      "displayName": "Calibration",
+                      "vertices": [
+                        { "id": "calibration-start", "kind": "pseudostate", "pseudostateKind": "initial" },
+                        { "id": "calibrate", "kind": "state", "displayName": "Calibrate" },
+                        { "id": "calibration-end", "kind": "final" }
+                      ],
+                      "transitions": [
+                        { "id": "calibration-begin", "sourceId": "calibration-start", "targetId": "calibrate" },
+                        { "id": "calibration-done", "sourceId": "calibrate", "targetId": "calibration-end", "triggers": ["calibrated"] }
+                      ]
+                    }
+                  ]
+                },
+                { "id": "control-end", "kind": "final" }
+              ],
+              "transitions": [
+                { "id": "control-begin", "sourceId": "control-start", "targetId": "control" },
+                { "id": "control-done", "sourceId": "control", "targetId": "control-end" }
+              ]
+            },
+            {
+              "id": "monitor-region",
+              "displayName": "Monitoring",
+              "vertices": [
+                { "id": "monitor-start", "kind": "pseudostate", "pseudostateKind": "initial" },
+                { "id": "sample", "kind": "state" },
+                { "id": "monitor-end", "kind": "final" }
+              ],
+              "transitions": [
+                { "id": "monitor-begin", "sourceId": "monitor-start", "targetId": "sample" },
+                { "id": "monitor-stop", "sourceId": "sample", "targetId": "monitor-end", "triggers": ["done"], "guard": "ok", "effect": "flush()" }
+              ]
+            }
+          ]
+        },
+        { "id": "end", "kind": "final" }
+      ],
+      "transitions": [
+        { "id": "begin", "sourceId": "start", "targetId": "operating" },
+        { "id": "finish", "sourceId": "operating", "targetId": "end" }
+      ]
+    }
+  ]
+}

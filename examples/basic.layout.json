@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "modelId": "basic",
+  "viewport": { "x": 0, "y": 0, "width": 530, "height": 130 },
+  "nodes": {
+    "start": { "bounds": { "x": 34, "y": 59, "width": 12, "height": 12 } },
+    "idle": {
+      "bounds": { "x": 82, "y": 45, "width": 80, "height": 40 },
+      "labelBounds": { "x": 100, "y": 55, "width": 44, "height": 20 }
+    },
+    "work": { "bounds": { "x": 346, "y": 45, "width": 80, "height": 40 } },
+    "end": { "bounds": { "x": 480, "y": 57, "width": 16, "height": 16 } }
+  },
+  "regions": {
+    "root": { "bounds": { "x": 10, "y": 10, "width": 510, "height": 110 } }
+  },
+  "edges": {
+    "begin": { "points": [{ "x": 46, "y": 65 }, { "x": 82, "y": 65 }] },
+    "run": {
+      "points": [{ "x": 162, "y": 65 }, { "x": 346, "y": 65 }],
+      "labelBounds": { "x": 168, "y": 28, "width": 172, "height": 32 }
+    },
+    "finish": {
+      "points": [{ "x": 426, "y": 65 }, { "x": 480, "y": 65 }],
+      "labelBounds": { "x": 432, "y": 48, "width": 38, "height": 16 }
+    }
+  }
+}

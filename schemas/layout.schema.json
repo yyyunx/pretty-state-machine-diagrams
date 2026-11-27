@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Group F Layout Data (draft)",
+  "type": "object",
+  "required": ["schemaVersion", "modelId", "viewport", "nodes", "regions", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "0.1.0-draft" },
+    "modelId": { "$ref": "#/$defs/id" },
+    "viewport": { "$ref": "#/$defs/box" },
+    "nodes": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/id" },
+      "additionalProperties": { "$ref": "#/$defs/nodePlacement" }
+    },
+    "regions": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/id" },
+      "additionalProperties": { "$ref": "#/$defs/regionPlacement" }
+    },
+    "edges": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/id" },
+      "additionalProperties": { "$ref": "#/$defs/edgePlacement" }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "not": { "pattern": "\\s" } },
+    "point": {
+      "type": "object",
+      "required": ["x", "y"],
+      "additionalProperties": false,
+      "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+    },
+    "box": {
+      "type": "object",
+      "required": ["x", "y", "width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "nodePlacement": {
+      "type": "object",
+      "required": ["bounds"],
+      "additionalProperties": false,
+      "properties": {
+        "bounds": { "$ref": "#/$defs/box" },
+        "labelBounds": { "$ref": "#/$defs/box" }
+      }
+    },
+    "regionPlacement": {
+      "type": "object",
+      "required": ["bounds"],
+      "additionalProperties": false,
+      "properties": {
+        "bounds": { "$ref": "#/$defs/box" },
+        "labelBounds": { "$ref": "#/$defs/box" },
+        "separatorSegments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "$ref": "#/$defs/point" }
+          }
+        }
+      }
+    },
+    "edgePlacement": {
+      "type": "object",
+      "required": ["points"],
+      "additionalProperties": false,
+      "properties": {
+        "points": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/point" }
+        },
+        "labelBounds": { "$ref": "#/$defs/box" }
+      }
+    }
+  }
+}
