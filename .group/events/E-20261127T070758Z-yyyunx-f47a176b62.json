@@ -1,0 +1,16 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T070758Z-yyyunx-f47a176b62",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:07:58.271952Z",
+  "related_events": [
+    "E-20261127T070133Z-yyyunx-7055482405"
+  ],
+  "evidence": [
+    "README.md @ 4541d61",
+    "AGENTS.md @ 4541d61"
+  ],
+  "summary": "分工確認：yyyunx／AI1 負責 Semantic Model 與 Semantic Transformation，程式碼與測試範圍是 feature/semantic-model 的 src/model/、tests/model/。現階段先準備語意分析、模組測試設計與 Adapter 規劃。Q-yyyunx-6faf49e280 保持待其他兩位成員確認；此事件只代表 Semantic Model 的分工確認。"
+}
