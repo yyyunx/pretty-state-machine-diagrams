@@ -1,5 +1,6 @@
 """Initial deterministic recursive layout; geometry only, no model mutation."""
 from collections import defaultdict
+from .routing import route, label_position, text_width
 
 def box(x,y,w,h):
     return dict(x=x,y=y,width=w,height=h)
@@ -13,21 +14,21 @@ def layout(model):
     def measure(v):
         if v["kind"] == "composite":
             sizes = [region_size(r) for r in v["regions"]]
-            return max([160, len(v.get("displayName",""))*9+32]+[w for w,h in sizes])+32, sum(h for w,h in sizes)+48
+            return max([160, text_width(v.get("displayName",""))+32]+[w for w,h in sizes])+32, sum(h for w,h in sizes)+48
         if v["kind"] in ("pseudostate","final"):
             return 24,24
         lines = [v.get("displayName","")]
         for k, val in v.get("behaviors",{}).items():
             lines.extend(k+": "+s for s in (val if isinstance(val,list) else [val]))
-        return max(100,max(map(len,lines))*9+24), max(48,len(lines)*20+16)
+        return max(100,max(map(text_width,lines))+24), max(48,len(lines)*20+16)
     def region_size(r):
         sizes=[measure(v) for v in r["vertices"]]
-        return max(120,sum(w for w,h in sizes)+64*max(0,len(sizes)-1)+48), max([48]+[h for w,h in sizes])+80
+        return max(120,text_width(r.get("displayName",""))+48,sum(w for w,h in sizes)+64*max(0,len(sizes)-1)+48), max([48]+[h for w,h in sizes])+80
     def place_region(r,x,y,w,h,separator=False):
         p={"bounds":box(x,y,w,h)}
         name=r.get("displayName")
         if name:
-            lw=min(w-16,max(16,len(name)*9))
+            lw=min(w-16,max(16,text_width(name)))
             p["labelBounds"]=box(x+(w-lw)/2,y-10 if separator else y+4,lw,20)
         if separator:
             if name:
@@ -60,6 +61,10 @@ def layout(model):
         place_region(r,32,y,width,h,i>0)
         y+=h
     lanes=defaultdict(int)
+    occupied=[p["labelBounds"] for p in list(nodes.values())+list(regions.values()) if "labelBounds" in p]
+    def contains(a,b):
+        return a["x"]<=b["x"] and a["y"]<=b["y"] and a["x"]+a["width"]>=b["x"]+b["width"] and a["y"]+a["height"]>=b["y"]+b["height"]
+    used=[]
     for t in transitions:
         a=nodes[t["sourceId"]]["bounds"]
         b=nodes[t["targetId"]]["bounds"]
@@ -73,15 +78,20 @@ def layout(model):
             pts=[point(ax,ay),point(ax,ly),point(bx+16+lane*12,ly),point(bx+16+lane*12,by),point(bx,by)]
         else:
             pts=[point(ax,ay),point(ax,ly),point(bx,ly),point(bx,by)]
+        obstacles=[n["bounds"] for k,n in nodes.items() if k not in (t["sourceId"],t["targetId"]) and not contains(n["bounds"],a) and not contains(n["bounds"],b)]
+        pts=route(a,b,obstacles,lane,t["sourceId"]==t["targetId"],used)
+        used.extend(zip(pts,pts[1:]))
         e={"points":pts}
         label=t.get("sourceText") or " ".join(t.get("triggers",[])+[t.get("guard",""),t.get("effect","")]).strip()
         if label:
-            lw=max(16,len(label)*9)
-            e["labelBounds"]=box((ax+bx)/2-lw/2,ly-20,lw,18)
+            e["labelBounds"]=label_position(pts,label,[n["bounds"] for n in nodes.values() if not contains(n["bounds"],a) and not contains(n["bounds"],b)]+[a,b]+occupied)
+            occupied.append(e["labelBounds"])
         edges[t["id"]]=e
     all_boxes=[p[k] for group in (nodes,regions,edges) for p in group.values() for k in ("bounds","labelBounds") if k in p]
     all_points=[p for e in edges.values() for p in e["points"]]
     left=min([0]+[b["x"]-16 for b in all_boxes])
     right=max([width+64]+[b["x"]+b["width"]+16 for b in all_boxes]+[p["x"]+16 for p in all_points])
+    top=min([0]+[b["y"]-16 for b in all_boxes]+[p["y"]-16 for p in all_points])
+    left=min([left]+[p["x"]-16 for p in all_points])
     bottom=max([y+32]+[b["y"]+b["height"]+16 for b in all_boxes]+[p["y"]+16 for p in all_points])
-    return dict(schemaVersion=model["schemaVersion"],modelId=model["id"],viewport=box(left,0,right-left,bottom),nodes=nodes,regions=regions,edges=edges)
+    return dict(schemaVersion=model["schemaVersion"],modelId=model["id"],viewport=box(left,top,right-left,bottom-top),nodes=nodes,regions=regions,edges=edges)
