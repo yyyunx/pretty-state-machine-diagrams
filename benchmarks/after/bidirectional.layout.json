@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "modelId": "bidirectional",
+  "viewport": {
+    "x": 10.43,
+    "y": 16,
+    "width": 247.14,
+    "height": 328
+  },
+  "nodes": {
+    "v0": {
+      "bounds": {
+        "x": 60.0,
+        "y": 60.0,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 76.96000000000001,
+        "y": 65.0,
+        "width": 66.08,
+        "height": 20
+      }
+    },
+    "v1": {
+      "bounds": {
+        "x": 60.0,
+        "y": 156.0,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 76.96000000000001,
+        "y": 161.0,
+        "width": 66.08,
+        "height": 20
+      }
+    },
+    "v2": {
+      "bounds": {
+        "x": 60.0,
+        "y": 252.0,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 76.96000000000001,
+        "y": 257.0,
+        "width": 66.08,
+        "height": 20
+      }
+    }
+  },
+  "regions": {
+    "region-1": {
+      "bounds": {
+        "x": 36,
+        "y": 36,
+        "width": 148,
+        "height": 288
+      }
+    }
+  },
+  "edges": {
+    "transition-1": {
+      "points": [
+        {
+          "x": 110.0,
+          "y": 108.0
+        },
+        {
+          "x": 110.0,
+          "y": 156.0
+        }
+      ],
+      "labelBounds": {
+        "x": 118.0,
+        "y": 123.0,
+        "width": 55.57,
+        "height": 18
+      }
+    },
+    "transition-2": {
+      "points": [
+        {
+          "x": 94.0,
+          "y": 156.0
+        },
+        {
+          "x": 94.0,
+          "y": 108.0
+        }
+      ],
+      "labelBounds": {
+        "x": 30.43,
+        "y": 123.0,
+        "width": 55.57,
+        "height": 18
+      }
+    },
+    "transition-3": {
+      "points": [
+        {
+          "x": 110.0,
+          "y": 204.0
+        },
+        {
+          "x": 110.0,
+          "y": 252.0
+        }
+      ],
+      "labelBounds": {
+        "x": 118.0,
+        "y": 219.0,
+        "width": 55.57,
+        "height": 18
+      }
+    },
+    "transition-4": {
+      "points": [
+        {
+          "x": 94.0,
+          "y": 252.0
+        },
+        {
+          "x": 94.0,
+          "y": 204.0
+        }
+      ],
+      "labelBounds": {
+        "x": 30.43,
+        "y": 219.0,
+        "width": 55.57,
+        "height": 18
+      }
+    },
+    "transition-5": {
+      "points": [
+        {
+          "x": 126.0,
+          "y": 108.0
+        },
+        {
+          "x": 126.0,
+          "y": 156.0
+        }
+      ],
+      "labelBounds": {
+        "x": 182.0,
+        "y": 123.0,
+        "width": 55.57,
+        "height": 18
+      }
+    }
+  }
+}

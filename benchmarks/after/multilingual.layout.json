@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "modelId": "multilingual",
+  "viewport": {
+    "x": -27.98999999999998,
+    "y": -44.0,
+    "width": 533.4200000000001,
+    "height": 200.0
+  },
+  "nodes": {
+    "v0": {
+      "bounds": {
+        "x": 60.0,
+        "y": 62.0,
+        "width": 146.72,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 60.0,
+        "y": 67.0,
+        "width": 146.72,
+        "height": 20
+      }
+    },
+    "v1": {
+      "bounds": {
+        "x": 270.72,
+        "y": 62.0,
+        "width": 119.83999999999999,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 270.72,
+        "y": 67.0,
+        "width": 119.83999999999999,
+        "height": 20
+      }
+    }
+  },
+  "regions": {
+    "region-1": {
+      "bounds": {
+        "x": 36,
+        "y": 36,
+        "width": 378.56,
+        "height": 100
+      }
+    }
+  },
+  "edges": {
+    "transition-1": {
+      "points": [
+        {
+          "x": 206.72,
+          "y": 86.0
+        },
+        {
+          "x": 270.72,
+          "y": 86.0
+        }
+      ],
+      "labelBounds": {
+        "x": -7.989999999999981,
+        "y": -24.0,
+        "width": 493.42,
+        "height": 78
+      }
+    }
+  }
+}

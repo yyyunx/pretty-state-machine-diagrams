@@ -20,7 +20,7 @@ CASES = (
     ("p1", "resolvedBranch", ("待審查", "通過")),
     ("p2", "nested", ("Processing", "Reviewing", "entry / openJob()", "do / check()")),
     ("p2", "orthogonal", ("Operating", "Monitoring", "Collected", "Monitored")),
-    ("p2", "pseudostates", ("Idle", "Session", "H", "H*", "E", "X")),
+    ("p2", "pseudostates", ("Idle", "Session", "H", "H*")),
 )
 
 

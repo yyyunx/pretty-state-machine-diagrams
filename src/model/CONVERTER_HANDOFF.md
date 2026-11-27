@@ -2,6 +2,8 @@
 
 供老師及 R、S 組逐項確認。下列是 Group F 產生狀態機圖所需的最小資訊，外部資料格式與 Grammar 語意仍待答覆。
 
+Phase 3 查到的公開候選在其主分支仍標示 Parser 與 Converter 待實作。目前缺少可驗證的 R、S 組版本與樣本。CLI 和 Web 使用 SMD 或已解析 Mock JSON，Python SDK 保留 Adapter 注入。 [公開候選狀態](https://github.com/noobist-saiko/process-algebra-converter/blob/88505d7abfddae5981c68cf1fb9374027aa04a82/README.md) · [Python SDK](../../docs/API.md)
+
 ## 最小輸入
 
 | 由 Converter 提供 | Group F 用途 |

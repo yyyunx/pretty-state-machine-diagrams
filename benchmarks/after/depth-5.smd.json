@@ -1,0 +1,82 @@
+{
+  "id": "depth-5",
+  "regions": [
+    {
+      "id": "region-1",
+      "transitions": [],
+      "vertices": [
+        {
+          "displayName": "Container 4",
+          "id": "vertex-1",
+          "kind": "composite",
+          "regions": [
+            {
+              "id": "region-2",
+              "transitions": [],
+              "vertices": [
+                {
+                  "displayName": "Container 3",
+                  "id": "vertex-2",
+                  "kind": "composite",
+                  "regions": [
+                    {
+                      "id": "region-3",
+                      "transitions": [],
+                      "vertices": [
+                        {
+                          "displayName": "Container 2",
+                          "id": "vertex-3",
+                          "kind": "composite",
+                          "regions": [
+                            {
+                              "id": "region-4",
+                              "transitions": [],
+                              "vertices": [
+                                {
+                                  "displayName": "Container 1",
+                                  "id": "vertex-4",
+                                  "kind": "composite",
+                                  "regions": [
+                                    {
+                                      "id": "region-5",
+                                      "transitions": [],
+                                      "vertices": [
+                                        {
+                                          "displayName": "Container 0",
+                                          "id": "vertex-5",
+                                          "kind": "composite",
+                                          "regions": [
+                                            {
+                                              "id": "region-6",
+                                              "transitions": [],
+                                              "vertices": [
+                                                {
+                                                  "displayName": "Leaf",
+                                                  "id": "vertex-6",
+                                                  "kind": "state"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "0.1.0-draft"
+}

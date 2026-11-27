@@ -1,0 +1,400 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "modelId": "nested-workflow",
+  "viewport": {
+    "x": 16,
+    "y": 16,
+    "width": 1196,
+    "height": 567
+  },
+  "nodes": {
+    "vertex-1": {
+      "bounds": {
+        "x": 60.0,
+        "y": 287.5,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-2": {
+      "bounds": {
+        "x": 148.0,
+        "y": 60.0,
+        "width": 932,
+        "height": 479
+      },
+      "labelBounds": {
+        "x": 569.8,
+        "y": 50.0,
+        "width": 88.39999999999999,
+        "height": 20
+      }
+    },
+    "vertex-3": {
+      "bounds": {
+        "x": 186.0,
+        "y": 315.0,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-4": {
+      "bounds": {
+        "x": 274.0,
+        "y": 157.0,
+        "width": 680,
+        "height": 340
+      }
+    },
+    "vertex-5": {
+      "bounds": {
+        "x": 312.0,
+        "y": 323.0,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-6": {
+      "bounds": {
+        "x": 400.0,
+        "y": 297.0,
+        "width": 100,
+        "height": 76
+      },
+      "labelBounds": {
+        "x": 409.52,
+        "y": 302.0,
+        "width": 80.96,
+        "height": 20
+      }
+    },
+    "vertex-7": {
+      "bounds": {
+        "x": 564.0,
+        "y": 215.0,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 577.24,
+        "y": 220.0,
+        "width": 73.52,
+        "height": 20
+      }
+    },
+    "vertex-8": {
+      "bounds": {
+        "x": 564.0,
+        "y": 311.0,
+        "width": 100,
+        "height": 48
+      }
+    },
+    "vertex-9": {
+      "bounds": {
+        "x": 564.0,
+        "y": 407.0,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 577.24,
+        "y": 412.0,
+        "width": 73.52,
+        "height": 20
+      }
+    },
+    "vertex-10": {
+      "bounds": {
+        "x": 728.0,
+        "y": 311.0,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 748.68,
+        "y": 316.0,
+        "width": 58.64,
+        "height": 20
+      }
+    },
+    "vertex-11": {
+      "bounds": {
+        "x": 892.0,
+        "y": 323.0,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-12": {
+      "bounds": {
+        "x": 1018.0,
+        "y": 315.0,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-13": {
+      "bounds": {
+        "x": 1144.0,
+        "y": 287.5,
+        "width": 24,
+        "height": 24
+      }
+    }
+  },
+  "regions": {
+    "region-1": {
+      "bounds": {
+        "x": 36,
+        "y": 36,
+        "width": 1156,
+        "height": 527
+      }
+    },
+    "region-2": {
+      "bounds": {
+        "x": 162.0,
+        "y": 133.0,
+        "width": 904,
+        "height": 388
+      }
+    },
+    "region-3": {
+      "bounds": {
+        "x": 288.0,
+        "y": 191.0,
+        "width": 652,
+        "height": 288
+      },
+      "labelBounds": {
+        "x": 586.54,
+        "y": 181.0,
+        "width": 54.92,
+        "height": 20
+      },
+      "separatorSegments": [
+        [
+          {
+            "x": 288.0,
+            "y": 191.0
+          },
+          {
+            "x": 581.54,
+            "y": 191.0
+          }
+        ],
+        [
+          {
+            "x": 646.46,
+            "y": 191.0
+          },
+          {
+            "x": 940.0,
+            "y": 191.0
+          }
+        ]
+      ]
+    }
+  },
+  "edges": {
+    "transition-11": {
+      "points": [
+        {
+          "x": 84.0,
+          "y": 299.5
+        },
+        {
+          "x": 148.0,
+          "y": 299.5
+        }
+      ]
+    },
+    "transition-12": {
+      "points": [
+        {
+          "x": 1080.0,
+          "y": 299.5
+        },
+        {
+          "x": 1144.48,
+          "y": 299.5
+        }
+      ]
+    },
+    "transition-9": {
+      "points": [
+        {
+          "x": 210.0,
+          "y": 327.0
+        },
+        {
+          "x": 274.0,
+          "y": 327.0
+        }
+      ]
+    },
+    "transition-10": {
+      "points": [
+        {
+          "x": 954.0,
+          "y": 327.0
+        },
+        {
+          "x": 1018.48,
+          "y": 327.0
+        }
+      ]
+    },
+    "transition-1": {
+      "points": [
+        {
+          "x": 614.0,
+          "y": 263.0
+        },
+        {
+          "x": 614.0,
+          "y": 311.0
+        }
+      ],
+      "labelBounds": {
+        "x": 622.0,
+        "y": 278.0,
+        "width": 55.57,
+        "height": 18
+      }
+    },
+    "transition-2": {
+      "points": [
+        {
+          "x": 598.0,
+          "y": 311.0
+        },
+        {
+          "x": 598.0,
+          "y": 263.0
+        }
+      ],
+      "labelBounds": {
+        "x": 423.76,
+        "y": 278.0,
+        "width": 166.24,
+        "height": 18
+      }
+    },
+    "transition-3": {
+      "points": [
+        {
+          "x": 450.0,
+          "y": 297.0
+        },
+        {
+          "x": 450.0,
+          "y": 239.0
+        },
+        {
+          "x": 564.0,
+          "y": 239.0
+        }
+      ],
+      "labelBounds": {
+        "x": 367.81,
+        "y": 133.0,
+        "width": 278.38,
+        "height": 18
+      }
+    },
+    "transition-4": {
+      "points": [
+        {
+          "x": 450.0,
+          "y": 373.0
+        },
+        {
+          "x": 450.0,
+          "y": 431.0
+        },
+        {
+          "x": 564.0,
+          "y": 431.0
+        }
+      ],
+      "labelBounds": {
+        "x": 314.8,
+        "y": 376.0,
+        "width": 270.4,
+        "height": 18
+      }
+    },
+    "transition-5": {
+      "points": [
+        {
+          "x": 664.0,
+          "y": 335.0
+        },
+        {
+          "x": 728.0,
+          "y": 335.0
+        }
+      ],
+      "labelBounds": {
+        "x": 668.215,
+        "y": 309.0,
+        "width": 55.57,
+        "height": 18
+      }
+    },
+    "transition-6": {
+      "points": [
+        {
+          "x": 664.0,
+          "y": 431.0
+        },
+        {
+          "x": 778.0,
+          "y": 431.0
+        },
+        {
+          "x": 778.0,
+          "y": 359.0
+        }
+      ],
+      "labelBounds": {
+        "x": 699.725,
+        "y": 405.0,
+        "width": 42.55,
+        "height": 18
+      }
+    },
+    "transition-7": {
+      "points": [
+        {
+          "x": 336.0,
+          "y": 335.0
+        },
+        {
+          "x": 400.0,
+          "y": 335.0
+        }
+      ]
+    },
+    "transition-8": {
+      "points": [
+        {
+          "x": 828.0,
+          "y": 335.0
+        },
+        {
+          "x": 892.48,
+          "y": 335.0
+        }
+      ],
+      "labelBounds": {
+        "x": 832.455,
+        "y": 309.0,
+        "width": 55.57,
+        "height": 18
+      }
+    }
+  }
+}

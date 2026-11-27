@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UML State Machine Diagram" viewBox="-31.57 16 399.57 328" width="399.57" height="328">
+<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<g data-layer="containers">
+</g>
+<g data-layer="regions">
+</g>
+<g data-layer="edges">
+<polyline data-edge-id="transition-1" tabindex="0" points="60,276 52,276 52,84 60,84" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-2" tabindex="0" points="110,108 110,156" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-3" tabindex="0" points="110,204 110,252" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-4" tabindex="0" points="160,180 224,180" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g data-layer="symbols">
+<g data-node-id="v1" data-kind="state" tabindex="0">
+<rect x="60" y="60" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="v3" data-kind="state" tabindex="0">
+<rect x="224" y="156" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="v2" data-kind="state" tabindex="0">
+<rect x="60" y="156" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="v0" data-kind="state" tabindex="0">
+<rect x="60" y="252" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+</g>
+<g data-layer="node-labels">
+<text xml:space="preserve" x="110" y="78" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="110" dy="0">State 1</tspan>
+</text>
+<text xml:space="preserve" x="274" y="174" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="274" dy="0">State 3</tspan>
+</text>
+<text xml:space="preserve" x="110" y="174" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="110" dy="0">State 2</tspan>
+</text>
+<text xml:space="preserve" x="110" y="270" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="110" dy="0">State 0</tspan>
+</text>
+</g>
+<g data-layer="region-labels">
+</g>
+<g data-layer="edge-labels">
+<g data-edge-id="transition-1">
+<rect x="-11.57" y="171" width="55.57" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="16.215" y="183" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="16.215" dy="0">event_0</tspan>
+</text>
+</g>
+<g data-edge-id="transition-2">
+<rect x="118" y="123" width="55.57" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="145.785" y="135" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="145.785" dy="0">event_1</tspan>
+</text>
+</g>
+<g data-edge-id="transition-3">
+<rect x="118" y="219" width="55.57" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="145.785" y="231" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="145.785" dy="0">event_2</tspan>
+</text>
+</g>
+<g data-edge-id="transition-4">
+<rect x="164.215" y="154" width="55.57" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="192" y="166" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="192" dy="0">event_3</tspan>
+</text>
+</g>
+</g>
+</svg>

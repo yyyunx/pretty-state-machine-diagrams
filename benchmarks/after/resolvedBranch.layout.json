@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "modelId": "mock-resolvedBranch",
+  "viewport": {
+    "x": -44.870000000000005,
+    "y": 16,
+    "width": 500.87,
+    "height": 232
+  },
+  "nodes": {
+    "vertex-1": {
+      "bounds": {
+        "x": 60.0,
+        "y": 120.0,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-2": {
+      "bounds": {
+        "x": 148.0,
+        "y": 108.0,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 173.0,
+        "y": 113.0,
+        "width": 50,
+        "height": 20
+      }
+    },
+    "vertex-3": {
+      "bounds": {
+        "x": 312.0,
+        "y": 60.0,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 343.0,
+        "y": 65.0,
+        "width": 38,
+        "height": 20
+      }
+    },
+    "vertex-4": {
+      "bounds": {
+        "x": 312.0,
+        "y": 156.0,
+        "width": 100,
+        "height": 48
+      }
+    }
+  },
+  "regions": {
+    "region-1": {
+      "bounds": {
+        "x": 36,
+        "y": 36,
+        "width": 400,
+        "height": 192
+      }
+    }
+  },
+  "edges": {
+    "transition-1": {
+      "points": [
+        {
+          "x": 84.0,
+          "y": 132.0
+        },
+        {
+          "x": 148.0,
+          "y": 132.0
+        }
+      ]
+    },
+    "transition-2": {
+      "points": [
+        {
+          "x": 248.0,
+          "y": 132.0
+        },
+        {
+          "x": 256.0,
+          "y": 132.0
+        },
+        {
+          "x": 256.0,
+          "y": 84.0
+        },
+        {
+          "x": 312.0,
+          "y": 84.0
+        }
+      ],
+      "labelBounds": {
+        "x": -2.3799999999999955,
+        "y": 75.0,
+        "width": 278.38,
+        "height": 18
+      }
+    },
+    "transition-3": {
+      "points": [
+        {
+          "x": 198.0,
+          "y": 156.0
+        },
+        {
+          "x": 198.0,
+          "y": 180.0
+        },
+        {
+          "x": 312.0,
+          "y": 180.0
+        }
+      ],
+      "labelBounds": {
+        "x": -24.870000000000005,
+        "y": 171.0,
+        "width": 271.87,
+        "height": 18
+      }
+    }
+  }
+}

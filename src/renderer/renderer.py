@@ -7,8 +7,12 @@ from __future__ import annotations
 
 import html
 import json
+import math
+from numbers import Real
 from pathlib import Path
 from typing import Any
+
+from src.geometry import bar_bounds, behavior_lines, corner_radius, text_lines, text_width, transition_text
 
 
 class RenderError(ValueError):
@@ -16,20 +20,29 @@ class RenderError(ValueError):
 
 
 def _esc(value: Any) -> str:
-    return html.escape(str(value), quote=True)
+    value = str(value)
+    if any(not (c in "\t\n\r" or 32 <= ord(c) <= 0xD7FF or 0xE000 <= ord(c) <= 0xFFFD
+                or 0x10000 <= ord(c) <= 0x10FFFF) for c in value):
+        raise RenderError("Text contains a character that cannot be represented in XML 1.0.")
+    return html.escape(value, quote=True)
+
+
+def _finite(value):
+    return isinstance(value, Real) and not isinstance(value, bool) and abs(value) <= 1e9 and math.isfinite(value)
 
 
 def _box(value: dict, context: str) -> tuple[float, float, float, float]:
-    if not isinstance(value, dict):
-        raise RenderError(f"{context}: expected a bounds object")
-    try:
-        x, y = float(value["x"]), float(value["y"])
-        w, h = float(value["width"]), float(value["height"])
-    except (KeyError, TypeError, ValueError) as exc:
-        raise RenderError(f"{context}: bounds require numeric x, y, width and height") from exc
+    if not isinstance(value, dict) or not all(_finite(value.get(k)) for k in ("x", "y", "width", "height")):
+        raise RenderError(f"{context}: expected finite numeric x, y, width and height")
+    x, y, w, h = (float(value[k]) for k in ("x", "y", "width", "height"))
     if w <= 0 or h <= 0:
         raise RenderError(f"{context}: width and height must be positive")
     return x, y, w, h
+
+
+def _point(value, context):
+    if not isinstance(value, dict) or not all(_finite(value.get(key)) for key in ("x", "y")):
+        raise RenderError(f"{context}: expected a finite numeric x and y")
 
 
 def _index_model(model: dict) -> tuple[dict, dict, dict]:
@@ -82,7 +95,9 @@ def validate_pair(model: dict, layout: dict) -> None:
         ("edges", set(transitions)),
     )
     for key, ids in expected:
-        actual = set(layout.get(key, {}))
+        if not isinstance(layout.get(key), dict):
+            raise RenderError(f"layout.{key}: expected a placement object")
+        actual = set(layout[key])
         missing, extra = ids - actual, actual - ids
         if missing or extra:
             details = []
@@ -93,16 +108,28 @@ def validate_pair(model: dict, layout: dict) -> None:
             raise RenderError(f"layout.{key}: " + "; ".join(details))
     for key, entries in (("nodes", layout["nodes"]), ("regions", layout["regions"])):
         for item_id, placement in entries.items():
+            if not isinstance(placement, dict):
+                raise RenderError(f"layout.{key}.{item_id}: expected a placement object")
             _box(placement.get("bounds"), f"layout.{key}.{item_id}.bounds")
+            if key == "regions" and "separatorSegments" in placement:
+                segments = placement["separatorSegments"]
+                if not isinstance(segments, list):
+                    raise RenderError("Region separatorSegments must be an array")
+                for segment in segments:
+                    if not isinstance(segment, list) or len(segment) != 2:
+                        raise RenderError("Each region separator needs two points")
+                    for point in segment:
+                        _point(point, f"layout.regions.{item_id}.separatorSegments")
             if "labelBounds" in placement:
                 _box(placement["labelBounds"], f"layout.{key}.{item_id}.labelBounds")
     for edge_id, placement in layout["edges"].items():
+        if not isinstance(placement, dict):
+            raise RenderError(f"layout.edges.{edge_id}: expected a placement object")
         points = placement.get("points")
         if not isinstance(points, list) or len(points) < 2:
             raise RenderError(f"layout.edges.{edge_id}.points must contain at least two points")
         for point in points:
-            if not isinstance(point, dict) or not isinstance(point.get("x"), (int, float)) or not isinstance(point.get("y"), (int, float)):
-                raise RenderError(f"layout.edges.{edge_id} contains an invalid point")
+            _point(point, f"layout.edges.{edge_id}.points")
         if "labelBounds" in placement:
             _box(placement["labelBounds"], f"layout.edges.{edge_id}.labelBounds")
 
@@ -131,160 +158,130 @@ class _SVG:
              anchor: str = "middle", weight: str = "normal", color: str = "#20252b") -> None:
         self.add(f'<text x="{x:g}" y="{y:g}" text-anchor="{anchor}" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="{size:g}" font-weight="{weight}" fill="{color}">{_esc(value)}</text>')
 
-    def multiline(self, x: float, y: float, width: float, value: str, *,
-                  size: float = 11, anchor: str = "middle", line_height: float = 14) -> None:
-        # Preserve the original text while allowing explicit newlines.
-        lines = str(value).splitlines() or [""]
-        self.add(f'<text x="{x:g}" y="{y:g}" text-anchor="{anchor}" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="{size:g}" fill="#303840">')
-        for i, line in enumerate(lines):
-            dy = 0 if i == 0 else line_height
-            self.add(f'<tspan x="{x:g}" dy="{dy:g}">{_esc(line)}</tspan>')
-        self.add('</text>')
+    def multiline(self, x, y, lines, *, size=11, anchor="middle", line_height=14):
+        self.add(f'<text xml:space="preserve" x="{x:g}" y="{y:g}" text-anchor="{anchor}" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="{size:g}" fill="#303840">')
+        for index, line in enumerate(lines):
+            self.add(f'<tspan x="{x:g}" dy="{0 if index == 0 else line_height:g}">{_esc(line)}</tspan>')
+        self.add("</text>")
 
-    def render_regions(self) -> None:
-        # Region divider geometry is supplied by Layout. No label is invented.
-        for region_id, region in self.regions.items():
-            placement = self.layout["regions"][region_id]
-            segments = placement.get("separatorSegments", [])
-            for segment in segments:
-                a, b = segment
+    def composite_backgrounds(self):
+        # The model index is pre-order, so a parent fill always precedes its children.
+        for vertex_id, vertex in self.vertices.items():
+            if vertex["kind"] == "composite":
+                bounds = self.layout["nodes"][vertex_id]["bounds"]
+                self.rect(*_box(bounds, f"node {vertex_id}"), rx=corner_radius(bounds, True))
+
+    def region_lines(self):
+        for region_id in self.regions:
+            for a, b in self.layout["regions"][region_id].get("separatorSegments", []):
                 self.line(a["x"], a["y"], b["x"], b["y"], stroke="#68727d", sw=1.2, dash="6 5")
+
+    def region_labels(self):
+        for region_id, region in self.regions.items():
             name = region.get("displayName")
+            if not name:
+                continue
+            placement = self.layout["regions"][region_id]
+            lb = placement.get("labelBounds")
+            if lb:
+                x, y, w, h = _box(lb, f"region {region_id} label")
+            else:
+                rx, ry, rw, _ = _box(placement["bounds"], f"region {region_id}.bounds")
+                w, h = max(36, text_width(name, 11) + 12), 18
+                x, y = rx + (rw - w)/2, ry - h/2
+            self.rect(x, y, w, h, fill="white", stroke="none", sw=0)
+            self.text(x + w/2, y + h*.72, name, size=11, weight="600")
+
+    def edge_paths(self):
+        for edge_id in self.transitions:
+            points = self.layout["edges"][edge_id]["points"]
+            coords = " ".join(f'{float(p["x"]):g},{float(p["y"]):g}' for p in points)
+            self.add(f'<polyline data-edge-id="{_esc(edge_id)}" tabindex="0" points="{coords}" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>')
+
+    def edge_labels(self):
+        for edge_id, edge in self.transitions.items():
+            label = transition_text(edge)
+            if not label:
+                continue
+            placement = self.layout["edges"][edge_id]
+            lines = text_lines(label)
+            if "labelBounds" in placement:
+                x, y, w, h = _box(placement["labelBounds"], f"edge {edge_id} label")
+                h = max(h, 12 * len(lines) + 6)
+            else:
+                mid = placement["points"][len(placement["points"]) // 2]
+                w, h = max(20, max(text_width(line, 10.5) for line in lines) + 8), 12 * len(lines) + 6
+                x, y = mid["x"] - w/2, mid["y"] - h - 4
+            self.add(f'<g data-edge-id="{_esc(edge_id)}">')
+            self.rect(x, y, w, h, rx=3, fill="white", stroke="none", sw=0)
+            self.multiline(x + w/2, y + 12, lines, size=10.5, line_height=12)
+            self.add("</g>")
+
+    def node_symbols(self):
+        for vertex_id, vertex in self.vertices.items():
+            bounds = self.layout["nodes"][vertex_id]["bounds"]
+            x, y, w, h = _box(bounds, f"node {vertex_id}")
+            cx, cy = x + w/2, y + h/2
+            kind = vertex.get("pseudostateKind", vertex["kind"])
+            self.add(f'<g data-node-id="{_esc(vertex_id)}" data-kind="{_esc(kind)}" tabindex="0">')
+            if kind == "state":
+                self.rect(x, y, w, h, rx=corner_radius(bounds))
+            elif kind == "choice":
+                self.add(f'<path d="M {cx:g} {y:g} L {x+w:g} {cy:g} L {cx:g} {y+h:g} L {x:g} {cy:g} Z" fill="white" stroke="#20252b" stroke-width="1.5"/>')
+            elif kind in ("fork", "join"):
+                self.rect(*_box(bar_bounds(bounds), f"{kind} bar"), fill="#20252b", sw=0)
+            elif kind != "composite":
+                radius = min(w,h)/2
+                if kind in ("initial", "junction"):
+                    self.circle(cx, cy, radius, "#20252b")
+                elif kind == "final":
+                    self.circle(cx, cy, radius * .96, "white")
+                    self.circle(cx, cy, radius * .62, "#20252b")
+                elif kind != "terminate":
+                    self.circle(cx, cy, radius, "white")
+                if kind in ("exitPoint", "terminate"):
+                    offset = .56 * radius
+                    self.line(cx-offset, cy-offset, cx+offset, cy+offset, sw=1.8)
+                    self.line(cx+offset, cy-offset, cx-offset, cy+offset, sw=1.8)
+                if kind in ("shallowHistory", "deepHistory"):
+                    self.text(cx, cy + 4, "H" if kind == "shallowHistory" else "H*", size=11, weight="600")
+            if kind == "composite":
+                # The fill is on the bottom layer. A transparent outline is selectable.
+                self.rect(x, y, w, h, rx=corner_radius(bounds, True), fill="none", stroke="transparent", sw=6)
+            self.add("</g>")
+
+    def circle(self, x, y, radius, fill):
+        self.add(f'<circle cx="{x:g}" cy="{y:g}" r="{radius:g}" fill="{fill}" stroke="#20252b" stroke-width="1.5"/>')
+
+    def node_labels(self):
+        for vertex_id, vertex in self.vertices.items():
+            placement = self.layout["nodes"][vertex_id]
+            x, y, w, h = _box(placement["bounds"], f"node {vertex_id}")
+            kind, name = vertex["kind"], vertex.get("displayName")
             if name:
                 lb = placement.get("labelBounds")
                 if lb:
-                    x, y, w, h = _box(lb, f"region {region_id} label")
+                    lx, ly, lw, lh = _box(lb, f"node {vertex_id} label")
+                elif kind == "composite":
+                    lw, lh = max(42, text_width(name) + 14), 20
+                    lx, ly = x + (w-lw)/2, y-lh/2
+                elif kind in ("pseudostate", "final"):
+                    lw, lh = max(20, text_width(name) + 6), 18
+                    lx, ly = x + (w-lw)/2, y+h+3
                 else:
-                    rx, ry, rw, rh = _box(placement["bounds"], f"region {region_id}.bounds")
-                    w, h = max(36, len(name) * 7 + 12), 18
-                    x, y = rx + (rw - w) / 2, ry - h / 2
-                self.rect(x, y, w, h, fill="white", stroke="none", sw=0)
-                self.text(x + w / 2, y + h * .72, name, size=11, weight="600")
-
-    def _transition_label(self, edge: dict) -> str:
-        # sourceText is the most faithful representation when supplied.
-        if edge.get("sourceText"):
-            return edge["sourceText"]
-        trigger = ", ".join(edge.get("triggers", []))
-        guard = f'[{edge["guard"]}]' if edge.get("guard") else ""
-        effect = f'/ {edge["effect"]}' if edge.get("effect") else ""
-        return " ".join(part for part in (trigger, guard, effect) if part)
-
-    def render_edges(self) -> None:
-        for edge_id, edge in self.transitions.items():
-            placement = self.layout["edges"][edge_id]
-            points = placement["points"]
-            coords = " ".join(f'{float(p["x"]):g},{float(p["y"]):g}' for p in points)
-            self.add(f'<polyline points="{coords}" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>')
-            label = self._transition_label(edge)
-            if label:
-                lb = placement.get("labelBounds")
-                if lb:
-                    x, y, w, h = _box(lb, f"edge {edge_id} label")
-                    cx, cy = x + w / 2, y + h / 2
-                    self.rect(x, y, w, h, rx=3, fill="white", stroke="none", sw=0)
-                    self.multiline(cx, cy - 2, w, label, size=10.5, line_height=12)
-                else:
-                    mid = points[len(points) // 2]
-                    self.multiline(float(mid["x"]), float(mid["y"]) - 8, 240, label, size=10.5)
-
-    def _behavior_lines(self, vertex: dict) -> list[str]:
-        behaviors = vertex.get("behaviors", {})
-        lines: list[str] = []
-        for key in ("entry", "do", "exit", "defer", "invariant"):
-            value = behaviors.get(key)
-            if value is None:
-                continue
-            values = value if isinstance(value, list) else [value]
-            prefix = {"entry": "entry / ", "do": "do / ", "exit": "exit / ",
-                      "defer": "defer ", "invariant": "{ "} [key]
-            suffix = " }" if key == "invariant" else ""
-            for i, item in enumerate(values):
-                lines.append((prefix if i == 0 else "  ") + str(item) + suffix)
-        return lines
-
-    def render_vertex(self, vertex_id: str) -> None:
-        vertex = self.vertices[vertex_id]
-        placement = self.layout["nodes"][vertex_id]
-        x, y, w, h = _box(placement["bounds"], f"node {vertex_id}")
-        kind = vertex["kind"]
-        name = vertex.get("displayName")
-
-        if kind == "pseudostate":
-            subtype = vertex["pseudostateKind"]
-            cx, cy = x + w / 2, y + h / 2
-            if subtype == "initial":
-                self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)/2:g}" fill="#20252b" stroke="#20252b"/>')
-            elif subtype == "choice":
-                self.add(f'<path d="M {cx:g} {y:g} L {x+w:g} {cy:g} L {cx:g} {y+h:g} L {x:g} {cy:g} Z" fill="white" stroke="#20252b" stroke-width="1.5"/>')
-            elif subtype == "junction":
-                self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)/2:g}" fill="white" stroke="#20252b" stroke-width="1.5"/>')
-            elif subtype in ("fork", "join"):
-                horizontal = w >= h
-                if horizontal:
-                    self.rect(x, cy - max(2, h * .12), w, max(4, h * .24), fill="#20252b", stroke="#20252b", sw=0)
-                else:
-                    self.rect(cx - max(2, w * .12), y, max(4, w * .24), h, fill="#20252b", stroke="#20252b", sw=0)
-            elif subtype in ("shallowHistory", "deepHistory"):
-                self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)/2:g}" fill="white" stroke="#20252b" stroke-width="1.5"/>')
-                self.text(cx, cy + 4, "H" if subtype == "shallowHistory" else "H*", size=11, weight="600")
-            elif subtype in ("entryPoint", "exitPoint"):
-                self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)/2:g}" fill="white" stroke="#20252b" stroke-width="1.5"/>')
-                self.text(cx, cy + 4, "E" if subtype == "entryPoint" else "X", size=10, weight="600")
-            elif subtype == "terminate":
-                self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)/2:g}" fill="white" stroke="#20252b" stroke-width="1.5"/>')
-                self.line(x+w*.28, y+h*.28, x+w*.72, y+h*.72, sw=1.8)
-                self.line(x+w*.72, y+h*.28, x+w*.28, y+h*.72, sw=1.8)
-            return
-
-        if kind == "final":
-            cx, cy = x + w / 2, y + h / 2
-            self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)*.48:g}" fill="white" stroke="#20252b" stroke-width="1.5"/>')
-            self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)*.31:g}" fill="#20252b"/>')
-            return
-
-        is_composite = kind == "composite"
-        self.rect(x, y, w, h, rx=10 if is_composite else 9, fill="white", sw=1.5)
-        behavior_lines = self._behavior_lines(vertex)
-        if name:
-            lb = placement.get("labelBounds")
-            if lb:
-                lx, ly, lw, lh = _box(lb, f"node {vertex_id} label")
-                # The label is a title over the composite boundary, not a
-                # generated identifier or a caption inside its contents.
-                if is_composite:
+                    lx, ly, lw, lh = x, y+4, w, 20
+                if kind in ("composite", "pseudostate", "final"):
                     self.rect(lx, ly, lw, lh, fill="white", stroke="none", sw=0)
-                self.text(lx + lw/2, ly + lh*.72, name, size=12, weight="600")
-            elif is_composite:
-                # Fallback to the upper edge when the draft layout omits an
-                # explicit title box; keep the caption on the boundary.
-                label_w, label_h = max(42, len(name) * 8 + 14), 20
-                label_x, label_y = x + (w-label_w)/2, y-label_h/2
-                self.rect(label_x, label_y, label_w, label_h, fill="white", stroke="none", sw=0)
-                self.text(label_x + label_w/2, label_y + label_h*.72, name, size=12, weight="600")
-            else:
-                self.text(x+w/2, y+19, name, size=12, weight="600")
-        if behavior_lines:
-            divider_y = y + (28 if name else 8)
-            self.line(x+1, divider_y, x+w-1, divider_y, stroke="#9aa2aa", sw=1)
-            start_y = divider_y + 15
-            for i, line in enumerate(behavior_lines):
-                self.text(x+8, start_y+i*13, line, size=9.5, anchor="start")
-        if is_composite:
-            for child_region in vertex.get("regions", []):
-                self.render_region_children(child_region)
-
-    def render_region_children(self, region: dict) -> None:
-        for vertex in region.get("vertices", []):
-            self.render_vertex(vertex["id"])
-
-    def render_nodes(self) -> None:
-        # Model traversal order keeps parent composites before their descendants.
-        # Start only at top-level regions; composite rendering recursively draws
-        # descendants exactly once.
-        for region in self.model.get("regions", []):
-            for vertex in region.get("vertices", []):
-                self.render_vertex(vertex["id"])
+                self.multiline(lx+lw/2, ly+13, text_lines(name), size=12)
+            lines = behavior_lines(vertex)
+            if lines:
+                heading = 28 + max(0, len(text_lines(name)) - 1) * 14 if name else 8
+                if kind == "composite":
+                    heading = 17
+                divider = y + heading
+                self.line(x+1, divider, x+w-1, divider, stroke="#9aa2aa", sw=1)
+                for index, line in enumerate(lines):
+                    self.text(x+8, divider+14+index*13, line, size=9.5, anchor="start")
 
     def build(self) -> str:
         validate_pair(self.model, self.layout)
@@ -292,14 +289,21 @@ class _SVG:
         self.add('<?xml version="1.0" encoding="UTF-8"?>')
         self.add(f'<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UML State Machine Diagram" viewBox="{vx:g} {vy:g} {vw:g} {vh:g}" width="{vw:g}" height="{vh:g}">')
         self.add('<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>')
-        self.add('<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>')
+        self.add('<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>')
         self.add('<rect x="0" y="0" width="100%" height="100%" fill="white"/>')
-        self.render_edges()
-        self.render_nodes()
-        # Draw region separators after composite backgrounds and child vertices,
-        # so nested white state containers cannot erase their divider lines.
-        self.render_regions()
-        self.add('</svg>')
+        for name, draw in (
+            ("containers", self.composite_backgrounds),
+            ("regions", self.region_lines),
+            ("edges", self.edge_paths),
+            ("symbols", self.node_symbols),
+            ("node-labels", self.node_labels),
+            ("region-labels", self.region_labels),
+            ("edge-labels", self.edge_labels),
+        ):
+            self.add(f'<g data-layer="{name}">')
+            draw()
+            self.add("</g>")
+        self.add("</svg>")
         return "\n".join(self.out)
 
 

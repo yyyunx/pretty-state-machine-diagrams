@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "modelId": "mock-linear",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "width": 687.5,
+    "height": 220
+  },
+  "nodes": {
+    "vertex-1": {
+      "bounds": {
+        "x": 56,
+        "y": 72,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-2": {
+      "bounds": {
+        "x": 144,
+        "y": 72,
+        "width": 204,
+        "height": 76
+      },
+      "labelBounds": {
+        "x": 148,
+        "y": 76,
+        "width": 196,
+        "height": 20
+      }
+    },
+    "vertex-3": {
+      "bounds": {
+        "x": 412,
+        "y": 72,
+        "width": 100,
+        "height": 48
+      }
+    },
+    "vertex-4": {
+      "bounds": {
+        "x": 576,
+        "y": 72,
+        "width": 24,
+        "height": 24
+      }
+    }
+  },
+  "regions": {
+    "region-1": {
+      "bounds": {
+        "x": 32,
+        "y": 32,
+        "width": 592,
+        "height": 156
+      }
+    }
+  },
+  "edges": {
+    "transition-1": {
+      "points": [
+        {
+          "x": 80,
+          "y": 84.0
+        },
+        {
+          "x": 80,
+          "y": 110.0
+        },
+        {
+          "x": 144,
+          "y": 110.0
+        }
+      ]
+    },
+    "transition-2": {
+      "points": [
+        {
+          "x": 348,
+          "y": 110.0
+        },
+        {
+          "x": 348,
+          "y": 96
+        },
+        {
+          "x": 412,
+          "y": 96
+        }
+      ],
+      "labelBounds": {
+        "x": 134.5,
+        "y": 52.0,
+        "width": 491,
+        "height": 20
+      }
+    },
+    "transition-3": {
+      "points": [
+        {
+          "x": 512,
+          "y": 96.0
+        },
+        {
+          "x": 588.0,
+          "y": 96
+        }
+      ],
+      "labelBounds": {
+        "x": 428.5,
+        "y": 120.0,
+        "width": 243,
+        "height": 20
+      }
+    }
+  }
+}

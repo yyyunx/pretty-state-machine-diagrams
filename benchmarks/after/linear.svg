@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UML State Machine Diagram" viewBox="16 4 573.035 176" width="573.035" height="176">
+<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<g data-layer="containers">
+</g>
+<g data-layer="regions">
+</g>
+<g data-layer="edges">
+<polyline data-edge-id="transition-1" tabindex="0" points="84,98 148,98" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-2" tabindex="0" points="279.91,98 343.91,98" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline data-edge-id="transition-3" tabindex="0" points="443.91,98 508.39,98" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</g>
+<g data-layer="symbols">
+<g data-node-id="vertex-1" data-kind="initial" tabindex="0">
+<circle cx="72" cy="98" r="12" fill="#20252b" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-2" data-kind="state" tabindex="0">
+<rect x="148" y="60" width="131.91" height="76" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-3" data-kind="state" tabindex="0">
+<rect x="343.91" y="74" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</g>
+<g data-node-id="vertex-4" data-kind="final" tabindex="0">
+<circle cx="519.91" cy="98" r="11.52" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<circle cx="519.91" cy="98" r="7.44" fill="#20252b" stroke="#20252b" stroke-width="1.5"/>
+</g>
+</g>
+<g data-layer="node-labels">
+<text xml:space="preserve" x="213.955" y="78" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" fill="#303840">
+<tspan x="213.955" dy="0">待機</tspan>
+</text>
+<line x1="149" y1="88" x2="278.91" y2="88" stroke="#9aa2aa" stroke-width="1"/>
+<text x="156" y="102" text-anchor="start" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="9.5" font-weight="normal" fill="#20252b">entry / prepare()</text>
+<text x="156" y="115" text-anchor="start" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="9.5" font-weight="normal" fill="#20252b">defer cancel(jobId)</text>
+</g>
+<g data-layer="region-labels">
+</g>
+<g data-layer="edge-labels">
+<g data-edge-id="transition-2">
+<rect x="130.405" y="24" width="363.01" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="311.91" y="36" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="311.91" dy="0">start(jobId) [ready  &amp;&amp; hasJob(jobId)] / notify(&quot;開始&quot;)</tspan>
+</text>
+</g>
+<g data-edge-id="transition-3">
+<rect x="383.265" y="48" width="185.77" height="18" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text xml:space="preserve" x="476.15" y="60" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="476.15" dy="0">done(jobId) / record(jobId)</tspan>
+</text>
+</g>
+</g>
+</svg>

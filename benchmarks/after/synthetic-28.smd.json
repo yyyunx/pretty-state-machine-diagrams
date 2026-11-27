@@ -1,0 +1,409 @@
+{
+  "id": "synthetic-28",
+  "regions": [
+    {
+      "id": "region-1",
+      "transitions": [
+        {
+          "id": "transition-1",
+          "sourceId": "v0",
+          "targetId": "v1",
+          "triggers": [
+            "event_0"
+          ]
+        },
+        {
+          "id": "transition-2",
+          "sourceId": "v1",
+          "targetId": "v2",
+          "triggers": [
+            "event_1"
+          ]
+        },
+        {
+          "id": "transition-3",
+          "sourceId": "v2",
+          "targetId": "v3",
+          "triggers": [
+            "event_2"
+          ]
+        },
+        {
+          "id": "transition-4",
+          "sourceId": "v3",
+          "targetId": "v4",
+          "triggers": [
+            "event_3"
+          ]
+        },
+        {
+          "id": "transition-5",
+          "sourceId": "v4",
+          "targetId": "v5",
+          "triggers": [
+            "event_4"
+          ]
+        },
+        {
+          "id": "transition-6",
+          "sourceId": "v5",
+          "targetId": "v6",
+          "triggers": [
+            "event_5"
+          ]
+        },
+        {
+          "id": "transition-7",
+          "sourceId": "v6",
+          "targetId": "v7",
+          "triggers": [
+            "event_6"
+          ]
+        },
+        {
+          "id": "transition-8",
+          "sourceId": "v7",
+          "targetId": "v8",
+          "triggers": [
+            "event_7"
+          ]
+        },
+        {
+          "id": "transition-9",
+          "sourceId": "v8",
+          "targetId": "v9",
+          "triggers": [
+            "event_8"
+          ]
+        },
+        {
+          "id": "transition-10",
+          "sourceId": "v9",
+          "targetId": "v10",
+          "triggers": [
+            "event_9"
+          ]
+        },
+        {
+          "id": "transition-11",
+          "sourceId": "v10",
+          "targetId": "v11",
+          "triggers": [
+            "event_10"
+          ]
+        },
+        {
+          "id": "transition-12",
+          "sourceId": "v11",
+          "targetId": "v12",
+          "triggers": [
+            "event_11"
+          ]
+        },
+        {
+          "id": "transition-13",
+          "sourceId": "v12",
+          "targetId": "v13",
+          "triggers": [
+            "event_12"
+          ]
+        },
+        {
+          "id": "transition-14",
+          "sourceId": "v13",
+          "targetId": "v14",
+          "triggers": [
+            "event_13"
+          ]
+        },
+        {
+          "id": "transition-15",
+          "sourceId": "v14",
+          "targetId": "v15",
+          "triggers": [
+            "event_14"
+          ]
+        },
+        {
+          "id": "transition-16",
+          "sourceId": "v15",
+          "targetId": "v16",
+          "triggers": [
+            "event_15"
+          ]
+        },
+        {
+          "id": "transition-17",
+          "sourceId": "v16",
+          "targetId": "v17",
+          "triggers": [
+            "event_16"
+          ]
+        },
+        {
+          "id": "transition-18",
+          "sourceId": "v17",
+          "targetId": "v18",
+          "triggers": [
+            "event_17"
+          ]
+        },
+        {
+          "id": "transition-19",
+          "sourceId": "v18",
+          "targetId": "v19",
+          "triggers": [
+            "event_18"
+          ]
+        },
+        {
+          "id": "transition-20",
+          "sourceId": "v19",
+          "targetId": "v20",
+          "triggers": [
+            "event_19"
+          ]
+        },
+        {
+          "id": "transition-21",
+          "sourceId": "v20",
+          "targetId": "v21",
+          "triggers": [
+            "event_20"
+          ]
+        },
+        {
+          "id": "transition-22",
+          "sourceId": "v21",
+          "targetId": "v22",
+          "triggers": [
+            "event_21"
+          ]
+        },
+        {
+          "id": "transition-23",
+          "sourceId": "v22",
+          "targetId": "v23",
+          "triggers": [
+            "event_22"
+          ]
+        },
+        {
+          "id": "transition-24",
+          "sourceId": "v23",
+          "targetId": "v24",
+          "triggers": [
+            "event_23"
+          ]
+        },
+        {
+          "id": "transition-25",
+          "sourceId": "v24",
+          "targetId": "v25",
+          "triggers": [
+            "event_24"
+          ]
+        },
+        {
+          "id": "transition-26",
+          "sourceId": "v25",
+          "targetId": "v26",
+          "triggers": [
+            "event_25"
+          ]
+        },
+        {
+          "id": "transition-27",
+          "sourceId": "v26",
+          "targetId": "v27",
+          "triggers": [
+            "event_26"
+          ]
+        },
+        {
+          "id": "transition-28",
+          "sourceId": "v0",
+          "targetId": "v3",
+          "triggers": [
+            "event_27"
+          ]
+        },
+        {
+          "id": "transition-29",
+          "sourceId": "v5",
+          "targetId": "v8",
+          "triggers": [
+            "event_28"
+          ]
+        },
+        {
+          "id": "transition-30",
+          "sourceId": "v10",
+          "targetId": "v13",
+          "triggers": [
+            "event_29"
+          ]
+        },
+        {
+          "id": "transition-31",
+          "sourceId": "v15",
+          "targetId": "v18",
+          "triggers": [
+            "event_30"
+          ]
+        },
+        {
+          "id": "transition-32",
+          "sourceId": "v20",
+          "targetId": "v23",
+          "triggers": [
+            "event_31"
+          ]
+        }
+      ],
+      "vertices": [
+        {
+          "displayName": "State 0",
+          "id": "v0",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 1",
+          "id": "v1",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 2",
+          "id": "v2",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 3",
+          "id": "v3",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 4",
+          "id": "v4",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 5",
+          "id": "v5",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 6",
+          "id": "v6",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 7",
+          "id": "v7",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 8",
+          "id": "v8",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 9",
+          "id": "v9",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 10",
+          "id": "v10",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 11",
+          "id": "v11",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 12",
+          "id": "v12",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 13",
+          "id": "v13",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 14",
+          "id": "v14",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 15",
+          "id": "v15",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 16",
+          "id": "v16",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 17",
+          "id": "v17",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 18",
+          "id": "v18",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 19",
+          "id": "v19",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 20",
+          "id": "v20",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 21",
+          "id": "v21",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 22",
+          "id": "v22",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 23",
+          "id": "v23",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 24",
+          "id": "v24",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 25",
+          "id": "v25",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 26",
+          "id": "v26",
+          "kind": "state"
+        },
+        {
+          "displayName": "State 27",
+          "id": "v27",
+          "kind": "state"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "0.1.0-draft"
+}

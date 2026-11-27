@@ -1,0 +1,356 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "modelId": "parallel-workflow",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "width": 1182,
+    "height": 456
+  },
+  "nodes": {
+    "vertex-1": {
+      "bounds": {
+        "x": 56,
+        "y": 72,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-2": {
+      "bounds": {
+        "x": 144,
+        "y": 72,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 148,
+        "y": 76,
+        "width": 92,
+        "height": 20
+      }
+    },
+    "vertex-3": {
+      "bounds": {
+        "x": 308,
+        "y": 72,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-4": {
+      "bounds": {
+        "x": 396,
+        "y": 72,
+        "width": 390,
+        "height": 312
+      },
+      "labelBounds": {
+        "x": 400,
+        "y": 76,
+        "width": 382,
+        "height": 20
+      }
+    },
+    "vertex-5": {
+      "bounds": {
+        "x": 436,
+        "y": 144,
+        "width": 114,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 440,
+        "y": 148,
+        "width": 106,
+        "height": 20
+      }
+    },
+    "vertex-6": {
+      "bounds": {
+        "x": 614,
+        "y": 144,
+        "width": 105,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 618,
+        "y": 148,
+        "width": 97,
+        "height": 20
+      }
+    },
+    "vertex-7": {
+      "bounds": {
+        "x": 436,
+        "y": 272,
+        "width": 141,
+        "height": 56
+      }
+    },
+    "vertex-8": {
+      "bounds": {
+        "x": 641,
+        "y": 272,
+        "width": 105,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 645,
+        "y": 276,
+        "width": 97,
+        "height": 20
+      }
+    },
+    "vertex-9": {
+      "bounds": {
+        "x": 850,
+        "y": 72,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-10": {
+      "bounds": {
+        "x": 938,
+        "y": 72,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 942,
+        "y": 76,
+        "width": 92,
+        "height": 20
+      }
+    },
+    "vertex-11": {
+      "bounds": {
+        "x": 1102,
+        "y": 72,
+        "width": 24,
+        "height": 24
+      }
+    }
+  },
+  "regions": {
+    "region-1": {
+      "bounds": {
+        "x": 32,
+        "y": 32,
+        "width": 1118,
+        "height": 392
+      }
+    },
+    "region-2": {
+      "bounds": {
+        "x": 412,
+        "y": 104,
+        "width": 358,
+        "height": 128
+      }
+    },
+    "region-3": {
+      "bounds": {
+        "x": 412,
+        "y": 232,
+        "width": 358,
+        "height": 136
+      },
+      "labelBounds": {
+        "x": 546.0,
+        "y": 222,
+        "width": 90,
+        "height": 20
+      },
+      "separatorSegments": [
+        [
+          {
+            "x": 412,
+            "y": 232
+          },
+          {
+            "x": 540.0,
+            "y": 232
+          }
+        ],
+        [
+          {
+            "x": 642.0,
+            "y": 232
+          },
+          {
+            "x": 770,
+            "y": 232
+          }
+        ]
+      ]
+    }
+  },
+  "edges": {
+    "transition-1": {
+      "points": [
+        {
+          "x": 550,
+          "y": 168.0
+        },
+        {
+          "x": 614,
+          "y": 168.0
+        }
+      ],
+      "labelBounds": {
+        "x": 541.5,
+        "y": 124.0,
+        "width": 81,
+        "height": 20
+      }
+    },
+    "transition-2": {
+      "points": [
+        {
+          "x": 577,
+          "y": 300.0
+        },
+        {
+          "x": 577,
+          "y": 296.0
+        },
+        {
+          "x": 641,
+          "y": 296.0
+        }
+      ],
+      "labelBounds": {
+        "x": 568.5,
+        "y": 252.0,
+        "width": 81,
+        "height": 20
+      }
+    },
+    "transition-3": {
+      "points": [
+        {
+          "x": 68.0,
+          "y": 96
+        },
+        {
+          "x": 144,
+          "y": 96
+        }
+      ]
+    },
+    "transition-4": {
+      "points": [
+        {
+          "x": 244,
+          "y": 96.0
+        },
+        {
+          "x": 320.0,
+          "y": 96
+        }
+      ],
+      "labelBounds": {
+        "x": 259.5,
+        "y": 68.0,
+        "width": 45,
+        "height": 20
+      }
+    },
+    "transition-5": {
+      "points": [
+        {
+          "x": 862.0,
+          "y": 96
+        },
+        {
+          "x": 938,
+          "y": 96
+        }
+      ]
+    },
+    "transition-6": {
+      "points": [
+        {
+          "x": 1038,
+          "y": 96.0
+        },
+        {
+          "x": 1114.0,
+          "y": 96
+        }
+      ],
+      "labelBounds": {
+        "x": 1049.0,
+        "y": 104.0,
+        "width": 54,
+        "height": 20
+      }
+    },
+    "transition-7": {
+      "points": [
+        {
+          "x": 332,
+          "y": 84.0
+        },
+        {
+          "x": 332,
+          "y": 168.0
+        },
+        {
+          "x": 436,
+          "y": 168.0
+        }
+      ]
+    },
+    "transition-8": {
+      "points": [
+        {
+          "x": 332,
+          "y": 84.0
+        },
+        {
+          "x": 436,
+          "y": 84.0
+        },
+        {
+          "x": 436,
+          "y": 300.0
+        }
+      ]
+    },
+    "transition-9": {
+      "points": [
+        {
+          "x": 719,
+          "y": 168.0
+        },
+        {
+          "x": 719,
+          "y": 84.0
+        },
+        {
+          "x": 850,
+          "y": 84.0
+        }
+      ]
+    },
+    "transition-10": {
+      "points": [
+        {
+          "x": 746,
+          "y": 296.0
+        },
+        {
+          "x": 850,
+          "y": 296.0
+        },
+        {
+          "x": 850,
+          "y": 84.0
+        }
+      ]
+    }
+  }
+}
