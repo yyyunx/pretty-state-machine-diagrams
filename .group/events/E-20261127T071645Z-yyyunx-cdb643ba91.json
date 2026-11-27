@@ -1,0 +1,12 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T071645Z-yyyunx-cdb643ba91",
+  "event_type": "question",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:16:45.133272Z",
+  "related_events": [],
+  "question_id": "Q-yyyunx-0153a3806a",
+  "text": "Group F 開發規範調整（接續 Q-yyyunx-6faf49e280）：是否同意三位成員暫時以目前 0.1.0-draft Schema，在各自的 feature branch 與責任目錄做可逆、可測試的實驗性開發？這次例外只涵蓋分支上的原型與 Mock。共同 Schema 的正式修改、Grammar／語意決策與 PR 合併仍要三方共識。Semantic Model 擬先做 P0 建構、驗證與序列化，再用 Mock Converter 做 P1，未決語意回報診斷。請 Layout 與 Renderer 負責人各自用自己的 groupctl 身分明確回覆是否同意這項範圍，或要調整哪一項。",
+  "blocking": false
+}
