@@ -58,8 +58,7 @@ function render(){
  let s='<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="'+[vx,vy,vw,vh].join(" ")+'" width="'+vw+'" height="'+vh+'"><defs><marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0 0L9 3.5L0 7Z" fill="#303840"/></marker></defs><rect x="0" y="0" width="100%" height="100%" fill="white"/>';
  const rect=(x,y,w,h,rx=0,fill="white",stroke="#20252b",sw=1.5)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+rx+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"/>';
  const txt=(x,y,t,size=12,anchor="middle",weight=400)=>'<text x="'+x+'" y="'+y+'" text-anchor="'+anchor+'" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="'+size+'" font-weight="'+weight+'" fill="#20252b">'+esc(t)+'</text>';
- // Region separators and labels are geometry/metadata driven by Layout and Model.
- for(const [id,r] of R){const p=l.regions[id];for(const seg of (p.separatorSegments||[]))s+='<line x1="'+seg[0].x+'" y1="'+seg[0].y+'" x2="'+seg[1].x+'" y2="'+seg[1].y+'" stroke="#68727d" stroke-dasharray="6 5"/>';if(r.displayName&&p.labelBounds){const [x,y,w,h]=box(p.labelBounds);s+=rect(x,y,w,h,0,"white","none",0)+txt(x+w/2,y+h*.72,r.displayName,11,"middle",600)}}
+ // Region separators are overlaid after composite backgrounds are painted.
  // Transitions are drawn before vertices so endpoints remain visible.
  for(const [id,t] of T){const p=l.edges[id],pts=p.points;if(!Array.isArray(pts)||pts.length<2)throw Error("Transition points 至少需要兩點。");s+='<polyline points="'+pts.map(p=>p.x+","+p.y).join(" ")+'" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arr)"/>';
  let label=t.sourceText||[(t.triggers||[]).join(", "),t.guard?"["+t.guard+"]":"",t.effect?"/ "+t.effect:""].filter(Boolean).join(" ");
@@ -80,6 +79,7 @@ function render(){
  if(comp)(v.regions||[]).forEach(region=>region.vertices.forEach(child=>vertex(child.id)));
  }
  (m.regions||[]).forEach(r=>r.vertices.forEach(v=>vertex(v.id)));
+ for(const [id,r] of R){const p=l.regions[id];for(const seg of (p.separatorSegments||[]))s+='<line x1="'+seg[0].x+'" y1="'+seg[0].y+'" x2="'+seg[1].x+'" y2="'+seg[1].y+'" stroke="#68727d" stroke-dasharray="6 5"/>';if(r.displayName&&p.labelBounds){const [x,y,w,h]=box(p.labelBounds);s+=rect(x,y,w,h,0,"white","none",0)+txt(x+w/2,y+h*.72,r.displayName,11,"middle",600)}}
  s+="</svg>";currentSvg=s;preview.innerHTML=s;
 }
 $("#render").onclick=()=>{try{render()}catch(e){error.textContent=e.message;preview.replaceChildren();currentSvg=""}};
