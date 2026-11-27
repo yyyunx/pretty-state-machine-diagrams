@@ -1,0 +1,67 @@
+{
+  "id": "mock-linear",
+  "regions": [
+    {
+      "id": "region-1",
+      "transitions": [
+        {
+          "id": "transition-1",
+          "sourceId": "vertex-1",
+          "targetId": "vertex-2"
+        },
+        {
+          "effect": "notify(\"開始\")",
+          "guard": "ready  && hasJob(jobId)",
+          "id": "transition-2",
+          "sourceId": "vertex-2",
+          "sourceInteractionId": "i1",
+          "sourceText": "start(jobId) [ready  && hasJob(jobId)] / notify(\"開始\")",
+          "targetId": "vertex-3",
+          "triggers": [
+            "start(jobId)"
+          ]
+        },
+        {
+          "effect": "record(jobId)",
+          "id": "transition-3",
+          "sourceId": "vertex-3",
+          "sourceInteractionId": "i2",
+          "sourceText": "done(jobId) / record(jobId)",
+          "targetId": "vertex-4",
+          "triggers": [
+            "done(jobId)"
+          ]
+        }
+      ],
+      "vertices": [
+        {
+          "id": "vertex-1",
+          "kind": "pseudostate",
+          "pseudostateKind": "initial"
+        },
+        {
+          "behaviors": {
+            "defer": [
+              "cancel(jobId)"
+            ],
+            "entry": [
+              "prepare()"
+            ]
+          },
+          "displayName": "待機",
+          "id": "vertex-2",
+          "kind": "state"
+        },
+        {
+          "id": "vertex-3",
+          "kind": "state"
+        },
+        {
+          "id": "vertex-4",
+          "kind": "final"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "0.1.0-draft"
+}
