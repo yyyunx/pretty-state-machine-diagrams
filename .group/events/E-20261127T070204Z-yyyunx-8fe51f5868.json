@@ -1,0 +1,43 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261127T070204Z-yyyunx-8fe51f5868",
+  "event_type": "test_result",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-27T07:02:04.574238Z",
+  "related_events": [],
+  "scope": "main",
+  "commit": "4541d61b2884422b95bf133dd58fb2b82bb54b18",
+  "commands": [
+    "[\"C:\\\\Users\\\\User\\\\Desktop\\\\大三上\\\\ai輔助\\\\pretty-state-machine-diagrams\\\\.venv\\\\Scripts\\\\python.exe\", \"-m\", \"unittest\", \"discover\", \"-s\", \"tests\", \"-v\"]"
+  ],
+  "automated_result": "pass",
+  "passed": 12,
+  "failed": 0,
+  "skipped": 0,
+  "human_checks_required": [],
+  "summary": "Automated validation: pass",
+  "command_results": [
+    {
+      "argv": [
+        "C:\\Users\\User\\Desktop\\大三上\\ai輔助\\pretty-state-machine-diagrams\\.venv\\Scripts\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_detects_dangling_transition (integration.test_contracts.DraftContractTests.test_detects_dangling_transition) ... ok\ntest_detects_mismatched_model_and_layout (integration.test_contracts.DraftContractTests.test_detects_mismatched_model_and_layout) ... ok\ntest_detects_missing_and_extra_layout_entries (integration.test_contracts.DraftContractTests.test_detects_missing_and_extra_layout_entries) ... ok\ntest_detects_repeat_id_in_a_nested_region (integration.test_contracts.DraftContractTests.test_detects_repeat_id_in_a_nested_region) ... ok\ntest_fixture_preserves_nested_regions_and_unnamed_elements (integration.test_contracts.DraftContractTests.test_fixture_preserves_nested_regions_and_unnamed_elements) ... ok\ntest_fixture_retains_transition_fields (integration.test_contracts.DraftContractTests.test_fixture_retains_transition_fields) ... ok\ntest_mock_pairs_follow_the_contract (integration.test_contracts.DraftContractTests.test_mock_pairs_follow_the_contract) ... ok\ntest_rejects_blank_display_name (integration.test_contracts.DraftContractTests.test_rejects_blank_display_name) ... ok\ntest_rejects_composite_without_regions (integration.test_contracts.DraftContractTests.test_rejects_composite_without_regions) ... ok\ntest_rejects_edge_with_only_one_point (integration.test_contracts.DraftContractTests.test_rejects_edge_with_only_one_point) ... ok\ntest_rejects_pseudostate_without_subtype (integration.test_contracts.DraftContractTests.test_rejects_pseudostate_without_subtype) ... ok\ntest_schemas_are_valid_draft_2020_12 (integration.test_contracts.DraftContractTests.test_schemas_are_valid_draft_2020_12) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.118s\n\nOK\n",
+      "counts": [
+        12,
+        0,
+        0
+      ],
+      "evidence_state": "pass"
+    }
+  ],
+  "validation_issues": []
+}
