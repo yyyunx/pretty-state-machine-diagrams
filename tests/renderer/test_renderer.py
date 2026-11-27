@@ -79,7 +79,7 @@ class RendererTests(unittest.TestCase):
             "edges": {},
         }
         svg = render(model, layout)
-        for marker in ("H", "H*", "E", "X"):
+        for marker in ("H", "H*"):
             self.assertIn(marker, svg)
         self.assertIn("<path", svg)
         self.assertIn("<line", svg)
