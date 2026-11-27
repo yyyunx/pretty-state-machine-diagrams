@@ -1,0 +1,198 @@
+{
+  "displayName": "Nested workflow",
+  "id": "nested-workflow",
+  "regions": [
+    {
+      "id": "region-1",
+      "transitions": [
+        {
+          "id": "transition-11",
+          "sourceId": "vertex-1",
+          "targetId": "vertex-2"
+        },
+        {
+          "id": "transition-12",
+          "sourceId": "vertex-2",
+          "targetId": "vertex-13"
+        }
+      ],
+      "vertices": [
+        {
+          "id": "vertex-1",
+          "kind": "pseudostate",
+          "pseudostateKind": "initial"
+        },
+        {
+          "behaviors": {
+            "entry": [
+              "openJob()"
+            ],
+            "exit": [
+              "archive()"
+            ],
+            "invariant": "job != null"
+          },
+          "displayName": "Processing",
+          "id": "vertex-2",
+          "kind": "composite",
+          "regions": [
+            {
+              "id": "region-2",
+              "transitions": [
+                {
+                  "id": "transition-9",
+                  "sourceId": "vertex-3",
+                  "targetId": "vertex-4"
+                },
+                {
+                  "id": "transition-10",
+                  "sourceId": "vertex-4",
+                  "targetId": "vertex-12"
+                }
+              ],
+              "vertices": [
+                {
+                  "id": "vertex-3",
+                  "kind": "pseudostate",
+                  "pseudostateKind": "initial"
+                },
+                {
+                  "id": "vertex-4",
+                  "kind": "composite",
+                  "regions": [
+                    {
+                      "displayName": "Review",
+                      "id": "region-3",
+                      "transitions": [
+                        {
+                          "id": "transition-1",
+                          "sourceId": "vertex-7",
+                          "targetId": "vertex-8",
+                          "triggers": [
+                            "checked"
+                          ]
+                        },
+                        {
+                          "guard": "attempts < limit",
+                          "id": "transition-2",
+                          "sourceId": "vertex-8",
+                          "targetId": "vertex-7",
+                          "triggers": [
+                            "retry"
+                          ]
+                        },
+                        {
+                          "effect": "mark(\"通過\")",
+                          "guard": "score >= 60",
+                          "id": "transition-3",
+                          "sourceId": "vertex-6",
+                          "sourceInteractionId": "approve",
+                          "sourceText": "submit(score) [score >= 60] / mark(\"通過\")",
+                          "targetId": "vertex-7",
+                          "triggers": [
+                            "submit(score)"
+                          ]
+                        },
+                        {
+                          "effect": "returnJob()",
+                          "guard": "score < 60",
+                          "id": "transition-4",
+                          "sourceId": "vertex-6",
+                          "targetId": "vertex-9",
+                          "triggers": [
+                            "submit(score)"
+                          ]
+                        },
+                        {
+                          "id": "transition-5",
+                          "sourceId": "vertex-8",
+                          "targetId": "vertex-10",
+                          "triggers": [
+                            "confirm"
+                          ]
+                        },
+                        {
+                          "id": "transition-6",
+                          "sourceId": "vertex-9",
+                          "targetId": "vertex-10",
+                          "triggers": [
+                            "close"
+                          ]
+                        },
+                        {
+                          "id": "transition-7",
+                          "sourceId": "vertex-5",
+                          "targetId": "vertex-6"
+                        },
+                        {
+                          "id": "transition-8",
+                          "sourceId": "vertex-10",
+                          "targetId": "vertex-11",
+                          "triggers": [
+                            "archive"
+                          ]
+                        }
+                      ],
+                      "vertices": [
+                        {
+                          "id": "vertex-5",
+                          "kind": "pseudostate",
+                          "pseudostateKind": "initial"
+                        },
+                        {
+                          "behaviors": {
+                            "defer": [
+                              "cancel"
+                            ],
+                            "do": [
+                              "check()"
+                            ]
+                          },
+                          "displayName": "Reviewing",
+                          "id": "vertex-6",
+                          "kind": "state"
+                        },
+                        {
+                          "displayName": "Checking",
+                          "id": "vertex-7",
+                          "kind": "state"
+                        },
+                        {
+                          "id": "vertex-8",
+                          "kind": "state"
+                        },
+                        {
+                          "displayName": "Returned",
+                          "id": "vertex-9",
+                          "kind": "state"
+                        },
+                        {
+                          "displayName": "Closed",
+                          "id": "vertex-10",
+                          "kind": "state"
+                        },
+                        {
+                          "id": "vertex-11",
+                          "kind": "final"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "vertex-12",
+                  "kind": "final"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "vertex-13",
+          "kind": "final"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "0.1.0-draft"
+}

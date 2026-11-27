@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "0.1.0-draft",
+  "modelId": "mock-resolvedBranch",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "width": 628,
+    "height": 192
+  },
+  "nodes": {
+    "vertex-1": {
+      "bounds": {
+        "x": 56,
+        "y": 72,
+        "width": 24,
+        "height": 24
+      }
+    },
+    "vertex-2": {
+      "bounds": {
+        "x": 144,
+        "y": 72,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 148,
+        "y": 76,
+        "width": 92,
+        "height": 20
+      }
+    },
+    "vertex-3": {
+      "bounds": {
+        "x": 308,
+        "y": 72,
+        "width": 100,
+        "height": 48
+      },
+      "labelBounds": {
+        "x": 312,
+        "y": 76,
+        "width": 92,
+        "height": 20
+      }
+    },
+    "vertex-4": {
+      "bounds": {
+        "x": 472,
+        "y": 72,
+        "width": 100,
+        "height": 48
+      }
+    }
+  },
+  "regions": {
+    "region-1": {
+      "bounds": {
+        "x": 32,
+        "y": 32,
+        "width": 564,
+        "height": 128
+      }
+    }
+  },
+  "edges": {
+    "transition-1": {
+      "points": [
+        {
+          "x": 68.0,
+          "y": 96
+        },
+        {
+          "x": 144,
+          "y": 96
+        }
+      ]
+    },
+    "transition-2": {
+      "points": [
+        {
+          "x": 244,
+          "y": 96.0
+        },
+        {
+          "x": 308,
+          "y": 96
+        }
+      ],
+      "labelBounds": {
+        "x": 107.0,
+        "y": 52.0,
+        "width": 338,
+        "height": 20
+      }
+    },
+    "transition-3": {
+      "points": [
+        {
+          "x": 244,
+          "y": 96.0
+        },
+        {
+          "x": 244,
+          "y": 72
+        },
+        {
+          "x": 472,
+          "y": 72
+        },
+        {
+          "x": 472,
+          "y": 96
+        }
+      ],
+      "labelBounds": {
+        "x": 193.5,
+        "y": 28.0,
+        "width": 329,
+        "height": 20
+      }
+    }
+  }
+}

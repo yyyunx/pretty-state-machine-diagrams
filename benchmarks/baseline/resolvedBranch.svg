@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UML State Machine Diagram" viewBox="0 0 628 192" width="628" height="192">
+<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<polyline points="68,96 144,96" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="244,96 308,96" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="107" y="52" width="338" height="20" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text x="276" y="60" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="276" dy="0">submit(score) [score &gt;= 60] / emit(&quot;通過&quot;)</tspan>
+</text>
+<polyline points="244,96 244,72 472,72 472,96" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="193.5" y="28" width="329" height="20" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text x="358" y="36" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="358" dy="0">submit(score) [score &lt; 60] / emit(&quot;退回&quot;)</tspan>
+</text>
+<circle cx="68" cy="84" r="12" fill="#20252b" stroke="#20252b"/>
+<rect x="144" y="72" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<text x="194" y="90.4" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" font-weight="600" fill="#20252b">待審查</text>
+<rect x="308" y="72" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<text x="358" y="90.4" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" font-weight="600" fill="#20252b">通過</text>
+<rect x="472" y="72" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+</svg>

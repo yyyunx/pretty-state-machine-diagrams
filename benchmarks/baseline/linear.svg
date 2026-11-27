@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UML State Machine Diagram" viewBox="0 0 687.5 220" width="687.5" height="220">
+<title>UML State Machine Diagram</title><desc>Generated from an SMD model and layout data.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#303840"/></marker></defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<polyline points="80,84 80,110 144,110" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="348,110 348,96 412,96" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="134.5" y="52" width="491" height="20" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text x="380" y="60" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="380" dy="0">start(jobId) [ready  &amp;&amp; hasJob(jobId)] / notify(&quot;開始&quot;)</tspan>
+</text>
+<polyline points="512,96 588,96" fill="none" stroke="#303840" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="428.5" y="120" width="243" height="20" rx="3" fill="white" stroke="none" stroke-width="0"/>
+<text x="550" y="128" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="10.5" fill="#303840">
+<tspan x="550" dy="0">done(jobId) / record(jobId)</tspan>
+</text>
+<circle cx="68" cy="84" r="12" fill="#20252b" stroke="#20252b"/>
+<rect x="144" y="72" width="204" height="76" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<text x="246" y="90.4" text-anchor="middle" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="12" font-weight="600" fill="#20252b">待機</text>
+<line x1="145" y1="100" x2="347" y2="100" stroke="#9aa2aa" stroke-width="1"/>
+<text x="152" y="115" text-anchor="start" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="9.5" font-weight="normal" fill="#20252b">entry / prepare()</text>
+<text x="152" y="128" text-anchor="start" font-family="Inter,Segoe UI,Noto Sans TC,sans-serif" font-size="9.5" font-weight="normal" fill="#20252b">defer cancel(jobId)</text>
+<rect x="412" y="72" width="100" height="48" rx="9" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<circle cx="588" cy="84" r="11.52" fill="white" stroke="#20252b" stroke-width="1.5"/>
+<circle cx="588" cy="84" r="7.44" fill="#20252b"/>
+</svg>

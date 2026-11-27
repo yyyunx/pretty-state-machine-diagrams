@@ -9,10 +9,10 @@ ROOT=Path(__file__).resolve().parents[2]
 
 class LayoutTests(unittest.TestCase):
     def test_fixtures(self):
-        schema=json.loads((ROOT/"schemas/layout.schema.json").read_text())
+        schema=json.loads((ROOT/"schemas/layout.schema.json").read_text(encoding="utf-8"))
         for name in ("basic","nested-orthogonal"):
             with self.subTest(name=name):
-                model=json.loads((ROOT/f"examples/{name}.smd.json").read_text())
+                model=json.loads((ROOT/f"examples/{name}.smd.json").read_text(encoding="utf-8"))
                 original=copy.deepcopy(model)
                 result=layout(model)
                 Draft202012Validator(schema).validate(result)
