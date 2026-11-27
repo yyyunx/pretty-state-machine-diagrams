@@ -154,8 +154,12 @@ class _SVG:
                 lb = placement.get("labelBounds")
                 if lb:
                     x, y, w, h = _box(lb, f"region {region_id} label")
-                    self.rect(x, y, w, h, fill="white", stroke="none", sw=0)
-                    self.text(x + w / 2, y + h * .72, name, size=11, weight="600")
+                else:
+                    rx, ry, rw, rh = _box(placement["bounds"], f"region {region_id}.bounds")
+                    w, h = max(36, len(name) * 7 + 12), 18
+                    x, y = rx + (rw - w) / 2, ry - h / 2
+                self.rect(x, y, w, h, fill="white", stroke="none", sw=0)
+                self.text(x + w / 2, y + h * .72, name, size=11, weight="600")
 
     def _transition_label(self, edge: dict) -> str:
         # sourceText is the most faithful representation when supplied.
@@ -214,7 +218,7 @@ class _SVG:
             elif subtype == "choice":
                 self.add(f'<path d="M {cx:g} {y:g} L {x+w:g} {cy:g} L {cx:g} {y+h:g} L {x:g} {cy:g} Z" fill="white" stroke="#20252b" stroke-width="1.5"/>')
             elif subtype == "junction":
-                self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)/2:g}" fill="#20252b" stroke="#20252b"/>')
+                self.add(f'<circle cx="{cx:g}" cy="{cy:g}" r="{min(w,h)/2:g}" fill="white" stroke="#20252b" stroke-width="1.5"/>')
             elif subtype in ("fork", "join"):
                 horizontal = w >= h
                 if horizontal:
