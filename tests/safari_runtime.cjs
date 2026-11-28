@@ -32,7 +32,7 @@ async function main() {
     const response = await fetch(base+route,{method,body:body===undefined ? undefined : JSON.stringify(body),
       headers:{"Content-Type":"application/json"},signal:AbortSignal.timeout(80000)});
     const data = await response.json();
-    if (!response.ok || data.value?.error) throw new Error(data.value?.message || "SafariDriver HTTP "+response.status);
+    if (!response.ok) throw new Error(data.value?.message || "SafariDriver HTTP "+response.status);
     return data.value;
   }
   try {
@@ -49,6 +49,7 @@ async function main() {
     await command("POST",prefix+"/timeouts",{script:75000,pageLoad:60000});
     await command("POST",prefix+"/url",{url:report.url+"?lang=en"});
     const exercise = async callback => {
+      let stage = "load the classroom examples";
       const wait = async predicate => {
         const stop = performance.now()+65000;
         while (!predicate()) {
@@ -59,23 +60,35 @@ async function main() {
       try {
         const button = document.querySelector('[data-lesson="resolvedBranch"]');
         await wait(()=>button && !button.disabled);
+        stage = "generate the guarded example";
         button.click();
         await wait(()=>document.querySelector("#drawing svg") && !document.querySelector("#generate").disabled);
+        stage = "select and generate Hybrid";
         const menu = document.querySelector("#algorithm");
         menu.value = "hybrid";
         menu.dispatchEvent(new Event("change",{bubbles:true}));
         document.querySelector("#generate").click();
         await wait(()=>!document.querySelector("#generate").disabled);
-        if (!current?.quality.optimization?.selected || !current.svg.includes("<svg"))
+        const selection = document.querySelector("#selection");
+        if (!selection || selection.hidden || !document.querySelector("#drawing svg"))
           throw new Error("Hybrid did not generate an SVG.");
-        const png = await pngFrom(current);
+        stage = "verify SVG and PNG";
+        const {body,status} = await window.prettySmdTransport.request("generate",{
+          source:document.querySelector("#source").value,algorithm:"hybrid"
+        });
+        if (status!==200 || !body.svg?.includes("<svg"))
+          throw new Error(JSON.stringify(body.diagnostics));
+        const png = await window.pngFrom(body);
         const signature = Array.from(new Uint8Array(await png.slice(0,8).arrayBuffer()));
-        callback({svg:current.svg,engine:current.quality.optimization.selected,signature,
-          semantic:current.quality.semantic_preservation,userAgent:navigator.userAgent});
-      } catch (error) { callback({error:String(error)}); }
+        callback({svg:body.svg,engine:body.quality.optimization.selected,signature,
+          semantic:body.quality.semantic_preservation,userAgent:navigator.userAgent});
+      } catch (error) {
+        callback({failure:stage+": "+String(error),status:document.querySelector("#status")?.textContent,
+          diagnostics:document.querySelector("#diagnostic-list")?.textContent});
+      }
     };
     const result = await command("POST",prefix+"/execute/async",{script:"("+exercise.toString()+")(arguments[0]);",args:[]});
-    assert(!result.error,result.error);
+    assert(!result.failure,JSON.stringify(result));
     assert.equal(result.semantic,true);
     assert.deepEqual(result.signature,[137,80,78,71,13,10,26,10]);
     await fs.writeFile(path.join(output,"safari.svg"),result.svg);
