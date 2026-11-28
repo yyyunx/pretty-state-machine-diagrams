@@ -58,7 +58,8 @@ def main(argv=None):
     make.add_argument("--layout-output", type=Path)
     make.add_argument("--quality-output", type=Path)
     make.add_argument("--direction", choices=("horizontal", "vertical"), default="horizontal")
-    make.add_argument("--algorithm", choices=("topology","legacy","advanced"), default="topology")
+    make.add_argument("--algorithm", choices=("topology","legacy","advanced","hybrid"), default="topology")
+    make.add_argument("--dot",help="Optional dot executable for a Hybrid candidate.")
     make.add_argument("--mode", choices=("fast","balanced","quality"), default="balanced")
     make.add_argument("--timeout",type=float,help="Cancel advanced or topology search after this many seconds.")
     make.add_argument("--allow-rotate",action="store_true",help="Let advanced search test the other direction.")
@@ -76,7 +77,8 @@ def main(argv=None):
     large.add_argument("--dot",help="Path to an optional Graphviz dot executable.")
     large.add_argument("--case",action="append",help="Select one or more benchmark cases.")
     large.add_argument("--engine",action="append",
-                       choices=("legacy","topology","advanced-fast","advanced-balanced","advanced-quality","graphviz"))
+                       choices=("legacy","topology","advanced-fast","advanced-balanced","advanced-quality",
+                                "graphviz","hybrid","hybrid-dot"))
     web = commands.add_parser("serve", help="Run the local web app.")
     web.add_argument("--port", type=int, default=8000)
     args = parser.parse_args(argv)
@@ -100,9 +102,19 @@ def main(argv=None):
                 _, warnings = prepare_model(source, **options)
                 sys.stdout.buffer.write(_json({"valid": True, "warnings": [asdict(item) for item in warnings]}).encode("utf-8"))
                 return 0
+            external = None
+            if args.dot and (args.direction=="horizontal" or args.allow_rotate):
+                from subprocess import SubprocessError
+                from .graphviz import graphviz_layout
+                def external(model,remaining):
+                    try:
+                        return graphviz_layout(model,args.dot,timeout=remaining)
+                    except SubprocessError as error:
+                        raise InputError("Graphviz failed or exceeded its time budget.") from error
             result = generate(
                 source, options=LayoutOptions(direction=args.direction, **dict(args.set)), algorithm=args.algorithm,
                 mode=args.mode, timeout=args.timeout, allow_rotate=args.allow_rotate,
+                external_name="graphviz" if external is not None else None,external_layout=external,
                 **options,
             )
             _save_outputs(args.input, (

@@ -30,4 +30,8 @@ except ModelError as error:
 
 ## 0.1.0-draft
 
+`generate(..., algorithm="hybrid", mode="balanced")` 可使用 Auto／Hybrid。選中的引擎、候選狀態、圖形特徵及理由在 `result.quality["optimization"]`。模式包含 `fast`、`balanced`、`quality`。原生 CLI 可用 `--dot PATH` 選配 Graphviz。瀏覽器的選配 ELK 由 Worker 啟動。
+
+`src.layout.editor.edit_layout(model, layout, moves, locked=...)` 接收節點 ID 以及絕對 `x`、`y`。它回傳新 Layout、品質及 reroute 統計。原始資料維持原樣。工作區 JSON 由 Web Bridge 檢查版本、Layout Schema、幾何及鎖定位置。見 [編輯器用法](BROWSER_RUNTIME.md)。
+
 兩份 Schema 均沿用。Layout 的 `nodes[id].bounds` 仍是圖元對應的方框，`edges[id].points` 是依原始方向排列的折線點。Topology 排版的端點可以落在圓、圓角、菱形或橫桿的輪廓之上，因而位於對應方框內。Entry／Exit Point 方框可跨在 Composite 邊界上。排版設定、效能及品質資料在輸出之外獨立傳遞。

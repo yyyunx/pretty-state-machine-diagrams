@@ -12,6 +12,8 @@ element("curve").append(graph);
 
 function show() {
   const selected = element("case").value;
+  const editor = element("edit-case");
+  if (editor) editor.href = "../?case=gallery-"+encodeURIComponent(selected);
   for (const figure of document.querySelectorAll("figure[data-engine]")) {
     const engine = figure.dataset.engine;
     const asset = folder + engine + "/" + selected + ".svg";
@@ -19,7 +21,7 @@ function show() {
     const link = figure.querySelector("a");
     const output = figure.querySelector("span");
     const row = rows.find(row => row.case===selected && row.algorithm===engine);
-    const available = !row || row.status==="ok";
+    const available = row ? row.status==="ok" : engine!=="hybrid";
     img.hidden = !available;
     link.hidden = !available;
     if (available) {
@@ -43,8 +45,15 @@ fetch(folder + "comparison.json").then(response => {
   if (!response.ok) throw new Error("讀取失敗");
   return response.json();
 }).then(data => {
-  rows = data.results;
+  rows.push(...data.results);
   element("bench-status").textContent = "共 " + rows.length + " 筆量測，包含 "
     + rows.filter(row => row.status!=="ok").length + " 筆未完成或不支援。";
   show();
 }).catch(() => {element("bench-status").textContent = "可使用下方連結讀取完整報告。";});
+if (document.querySelector('figure[data-engine="hybrid"]')) {
+  fetch(folder + "hybrid/comparison.json").then(response => {
+    if (!response.ok) throw new Error("讀取失敗");
+    return response.json();
+  }).then(data => { rows.push(...data); show(); })
+    .catch(() => {document.querySelector('figure[data-engine="hybrid"] span').textContent = "無法載入 Hybrid 比較。";});
+}

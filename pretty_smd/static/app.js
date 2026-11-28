@@ -3,6 +3,25 @@
 const el = id => document.getElementById(id);
 const canvas = el("canvas");
 const drawing = el("drawing");
+const inBrowser = Boolean(window.prettySmdTransport);
+const transport = window.prettySmdTransport || {
+  async examples() {
+    const response = await fetch("/api/examples");
+    if (!response.ok) throw new Error("無法載入內建案例。");
+    return response.json();
+  },
+  async request(action,payload) {
+    const response = await fetch("/api/"+action,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)});
+    return {ok:response.ok,status:response.status,body:await response.json()};
+  },
+};
+const phases = {initializing:"初始化 Python Worker",runtime:"正在載入 Python 與 WebAssembly",
+  idle:"Python 引擎會在第一次操作時載入。",
+  packages:"正在載入 Python 套件與驗證依賴",imports:"正在初始化驗證及排版模組",
+  package:"正在載入 Pretty SMD 套件",dependencies:"正在載入 Schema 驗證依賴",ready:"Python 引擎就緒",
+  validate:"驗證模型",layout:"計算排版",render:"產生 SVG",quality:"計算品質",compare:"計算 Phase 3 對照",
+  elk:"載入選配 ELK 並計算平面排版"};
 const reportNames = {
   node_overlaps: "節點重疊", label_collisions: "標籤碰撞", edge_crossings: "連線交叉",
   edge_node_intersections: "連線穿過非端點節點", edge_overlap_length: "共線長度",
@@ -27,20 +46,28 @@ let drag = null;
 let busy = false;
 let displayed = null;
 let focused = null;
+let inputEpoch = 0;
 const ns = "http://www.w3.org/2000/svg";
 
 function status(message) {
-  el("status").textContent = message;
+  el("status").textContent = tr(message);
 }
 
 function formatControls() {
   const unavailable = el("format").value === "pa";
   const legacy = el("algorithm").value === "legacy";
-  el("advanced-options").hidden = el("algorithm").value !== "advanced";
+  el("advanced-options").hidden = !["advanced","hybrid","elk"].includes(el("algorithm").value);
+  el("elk-option").hidden = !inBrowser || el("algorithm").value!=="hybrid";
   el("pa-note").hidden = !unavailable;
   el("generate").disabled = busy || unavailable;
+  el("validate").disabled = busy || unavailable;
+  el("format-json").disabled = busy || unavailable;
+  el("cancel").disabled = !busy;
+  for (const button of document.querySelectorAll("[data-lesson]"))
+    button.disabled = busy || !Object.hasOwn(samples,button.dataset.lesson);
   el("direction").disabled = legacy;
   for (const input of document.querySelectorAll("[data-option]")) input.disabled = legacy;
+  editorControls();
 }
 
 function diagnostics(items) {
@@ -86,10 +113,12 @@ function zoom(factor, x = canvas.clientWidth/2, y = canvas.clientHeight/2) {
 
 function mount(svg) {
   const parsed = new DOMParser().parseFromString(svg, "image/svg+xml");
-  if (parsed.documentElement.localName !== "svg" ||
+  if (parsed.doctype || parsed.documentElement.localName !== "svg" ||
       Array.from(parsed.querySelectorAll("*")).some(item =>
-        !allowedSvg.has(item.localName) ||
-        Array.from(item.attributes).some(attr => /^on/i.test(attr.name) || /href$/i.test(attr.name)))) {
+        item.namespaceURI!==ns || !allowedSvg.has(item.localName) ||
+        Array.from(item.attributes).some(attr => /^on/i.test(attr.name) || /href$|^style$/i.test(attr.name)
+          || (/^(fill|stroke|marker-|filter|mask)/i.test(attr.name) && /url\s*\(/i.test(attr.value)
+            && attr.value!=="url(#arrow)")))) {
     throw new Error("收到無法顯示的 SVG。");
   }
   drawing.replaceChildren(document.importNode(parsed.documentElement, true));
@@ -98,12 +127,14 @@ function mount(svg) {
 function show(result) {
   current = result;
   focused = null;
+  selectedStates = new Set();
   el("comparison").hidden = !result.baseline;
   if (result.baseline) {
     const b = result.baseline.quality, a = result.quality;
-    el("delta").textContent = "交叉 " + b.edge_crossings + " → " + a.edge_crossings
-      + "　轉折 " + b.edge_bends + " → " + a.edge_bends
-      + "　排版時間 " + b.execution_ms + " → " + a.execution_ms + " ms";
+    el("after").textContent = a.optimization?.mode==="elk" ? "ELK" : tr("本次結果");
+    el("delta").textContent = tr("連線交叉") + " " + b.edge_crossings + " → " + a.edge_crossings
+      + "　" + tr("轉折數") + " " + b.edge_bends + " → " + a.edge_bends
+      + "　" + tr("排版時間（ms）") + " " + b.execution_ms + " → " + a.execution_ms;
   }
   tree();
   diagnostics(result.diagnostics);
@@ -111,7 +142,7 @@ function show(result) {
 }
 
 function showVersion(before) {
-  const result = before ? current.baseline : current;
+  const result = before ? current.baseline : (projection || current);
   if (!result) return;
   mount(result.svg);
   displayed = result;
@@ -122,26 +153,51 @@ function showVersion(before) {
   view.height = viewport.height;
   el("empty").hidden = true;
   el("download").disabled = false;
-  if (!focused) el("item").textContent = "點選狀態或轉移查看資料。";
+  if (!focused) el("item").textContent = tr("點選狀態或轉移查看資料。");
   const optimization = result.quality.optimization;
-  el("time").textContent = "完整管線 " + result.quality.pipeline_ms + " ms" + (optimization
-    ? " · " + optimization.mode + " · " + optimization.candidates.length + " 個候選" : "");
+  if (optimization?.reasons) {
+    el("selection").hidden = false;
+    const names = {"high-edge-density":"密集轉移","large-scc":"大型 SCC",
+      "composite-hierarchy":"複合階層","cross-level-transitions":"跨階層轉移",
+      "bounded-runtime":"有時間或規模限制","optional-external-engine-unavailable":"使用內建候選",
+      "small-sparse-graph":"小型稀疏圖","advanced-candidates-rejected":"進階候選無解，已回退",
+      "flat-elk-layout":"ELK 平面圖排版"};
+    el("selection").textContent = optimization.selected + " · " +
+      optimization.reasons.map(reason=>names[reason]||reason).join("、");
+  } else el("selection").hidden = true;
+  const candidates = el("candidate-list");
+  candidates.replaceChildren();
+  candidates.hidden = !optimization?.candidates.length;
+  for (const candidate of optimization?.candidates || []) {
+    const row = document.createElement("li");
+    row.textContent = [candidate.candidate, candidate.status,
+      candidate.crossings===undefined ? null : tr("連線交叉")+" "+candidate.crossings,
+      candidate.score===undefined ? null : tr("分數")+" "+candidate.score.toFixed(2),
+      candidate.elapsed_ms===undefined ? null : candidate.elapsed_ms+" ms", candidate.detail].filter(Boolean).join(" · ");
+    candidates.append(row);
+  }
+  const runtime = result.runtime ? " · " + tr("瀏覽器 Python") + " " + Math.round(result.runtime.engineMs) + " ms" : "";
+  el("time").textContent = (result.quality.pipeline_ms===undefined ? "" : tr("完整管線") + " " +
+    result.quality.pipeline_ms + " ms") + (optimization
+    ? " · " + optimization.mode + " · " + optimization.candidates.length + " " + tr("個候選") : "") + runtime;
   const list = el("quality-list");
   list.replaceChildren();
   for (const [key, label] of Object.entries(reportNames)) {
     const term = document.createElement("dt");
-    term.textContent = label;
+    term.textContent = tr(label);
     const value = document.createElement("dd");
     value.textContent = typeof result.quality[key] === "boolean" ?
-      (result.quality[key] ? "通過" : "失敗") : String(result.quality[key] ?? "—");
+      tr(result.quality[key] ? "通過" : "失敗") : String(result.quality[key] ?? "—");
     list.append(term, value);
   }
   minimap();
   highlight();
   fit();
+  editorControls();
 }
 
-async function generate() {
+async function generate(action="generate", {clearEdits=false}={}) {
+  if (typeof action!=="string") action = "generate";
   const source = el("source").value.trim();
   if (!source || busy || el("format").value === "pa") {
     if (!source) status("請先輸入 JSON。");
@@ -157,19 +213,31 @@ async function generate() {
   }
   busy = true;
   formatControls();
-  status("正在驗證及生成圖形…");
+  const epoch = inputEpoch;
+  const algorithm = el("algorithm").value, mode = el("mode").value;
+  const flags = {allowRotate:el("rotate").checked,compare:el("compare").checked,useElk:el("use-elk").checked};
+  status(action==="generate" ? "正在驗證及生成圖形…" : "正在處理輸入…");
   try {
-    const response = await fetch("/api/generate", {method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({source, format: el("format").value, algorithm: el("algorithm").value, options,
-        mode:el("mode").value, allowRotate:el("rotate").checked, compare:el("compare").checked})});
-    const result = await response.json();
+    const response = await transport.request(action,{source,format:el("format").value,algorithm,options,mode,...flags});
+    if (epoch!==inputEpoch) return;
+    const result = response.body;
     if (!response.ok) {
       diagnostics(result.diagnostics || []);
-      status(current ? "這次生成失敗。預覽保留上一份圖形。" : "生成失敗，請查看診斷。");
+      status(response.status===499 ? "已取消運算。" : current ?
+        "這次操作失敗。預覽保留上一份圖形。" : "操作失敗，請查看診斷。");
       return;
     }
-    show(result);
-    status("狀態機圖已生成。");
+    if (action==="format") {
+      el("source").value = result.formatted;
+      diagnostics([]);
+      status("JSON 已格式化。");
+    } else if (action==="validate") {
+      diagnostics(result.diagnostics);
+      status("Semantic Model 驗證完成。");
+    } else {
+      if (!await acceptGeneration(result,{options,algorithm,mode,flags},epoch,!clearEdits)) return;
+      status("狀態機圖已生成。");
+    }
   } catch (error) {
     status(String(error.message || error));
   } finally {
@@ -190,34 +258,37 @@ function findInRegions(regions, id, field) {
   return null;
 }
 
-function inspect(target) {
+function inspect(target, extend=false) {
   if (!current) return;
-  const element = target.closest("[data-node-id], [data-edge-id]");
+  const element = target.closest("[data-node-id], [data-node-label-id], [data-edge-id]");
   if (!element) return;
   const edge = element.dataset.edgeId;
-  selectItem(edge || element.dataset.nodeId, edge ? "transitions" : "vertices");
+  selectItem(edge || element.dataset.nodeId || element.dataset.nodeLabelId, edge ? "transitions" : "vertices",extend);
 }
 
-function selectItem(id, field) {
+function selectItem(id, field, extend=false) {
   const edge = field === "transitions";
   const item = findInRegions(current.model.regions,id,field);
   if (!item) return;
+  if (!extend || edge) selectedStates = new Set();
+  if (!edge) selectedStates.add(id);
   focused = {id,edge,item};
   const details = edge ? {
     Trigger: item.triggers || [], Guard: item.guard ?? null, Effect: item.effect ?? null,
-    "互動原文": item.sourceText ?? null,
+    [tr("互動原文")]: item.sourceText ?? null,
   } : {
-    "名稱": item.displayName ?? "未命名", "種類": item.pseudostateKind || item.kind,
-    "行為": item.behaviors || {},
+    [tr("名稱")]: item.displayName ?? tr("未命名"), [tr("種類")]: item.pseudostateKind || item.kind,
+    [tr("行為")]: item.behaviors || {},
   };
   el("item").textContent = JSON.stringify(details, null, 2);
   el("inspector").open = true;
   highlight();
+  editorControls();
 }
 
 function highlight() {
   for (const node of drawing.querySelectorAll("[data-node-id]")) {
-    node.classList.toggle("selected-node", !!(focused && !focused.edge && node.dataset.nodeId === focused.id));
+    node.classList.toggle("selected-node",selectedStates.has(node.dataset.nodeId));
   }
   for (const edge of drawing.querySelectorAll("[data-edge-id]")) {
     const id = edge.dataset.edgeId;
@@ -301,6 +372,33 @@ function minimap() {
 }
 
 el("generate").addEventListener("click", generate);
+el("validate").addEventListener("click",()=>generate("validate"));
+el("format-json").addEventListener("click",()=>generate("format"));
+el("cancel").hidden = !inBrowser;
+el("cancel").addEventListener("click",()=>transport.cancel?.());
+function invalidateInput() {
+  inputEpoch++;
+  if (busy && transport.cancel) {
+    transport.cancel();
+    status("輸入已變更，請重新生成。");
+  }
+}
+el("source").addEventListener("input",invalidateInput);
+document.querySelector(".editor").addEventListener("change",event => {
+  if (event.target.matches("#example,#format,#file,#algorithm,#mode,#rotate,#direction,#compare,#use-elk,[data-option]")) invalidateInput();
+});
+if (inBrowser) {
+  el("algorithm").add(new Option("ELK 平面圖","elk"));
+  const runtime = el("runtime-note");
+  runtime.hidden = false;
+  let text = "Python 引擎會在第一次操作時載入。";
+  const update = () => {runtime.textContent = tr(navigator.onLine ? "線上" : "離線") + " · " + tr(text);};
+  transport.listen(phase => { text = phases[phase] || phase; update(); });
+  window.addEventListener("online",update);
+  window.addEventListener("offline",update);
+  document.addEventListener("DOMContentLoaded",update);
+  el("language").addEventListener("change",()=>queueMicrotask(update));
+}
 el("format").addEventListener("change", formatControls);
 el("algorithm").addEventListener("change", formatControls);
 el("before").addEventListener("click",() => showVersion(true));
@@ -333,7 +431,7 @@ el("load-settings").addEventListener("change",async event => {
     if (!file) return;
     if (file.size>16384) throw new Error("設定檔超過 16 KiB。");
     const settings = JSON.parse(await file.text());
-    if (settings?.version!==1 || !["topology","legacy","advanced"].includes(settings.algorithm) ||
+    if (settings?.version!==1 || !["topology","legacy","advanced","hybrid","elk"].includes(settings.algorithm) ||
         !["fast","balanced","quality"].includes(settings.mode) ||
         !["horizontal","vertical"].includes(settings.direction) ||
         typeof settings.allowRotate!=="boolean" || !settings.options ||
@@ -375,6 +473,13 @@ el("example").addEventListener("change", () => {
   el("format").value = sample.schemaVersion ? "smd" : "mock";
   formatControls();
 });
+for (const button of document.querySelectorAll("[data-lesson]")) {
+  button.addEventListener("click",()=>{
+    el("example").value = button.dataset.lesson;
+    el("example").dispatchEvent(new Event("change",{bubbles:true}));
+    generate();
+  });
+}
 el("file").addEventListener("change", async event => {
   const file = event.target.files[0];
   if (!file) return;
@@ -395,7 +500,7 @@ el("theme").addEventListener("click", () => {
   const dark = document.documentElement.dataset.theme !== "dark";
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   el("theme").setAttribute("aria-pressed", String(dark));
-  el("theme").textContent = dark ? "淺色模式" : "深色模式";
+  el("theme").textContent = tr(dark ? "淺色模式" : "深色模式");
 });
 el("fit").addEventListener("click", fit);
 el("reset").addEventListener("click", () => {
@@ -415,41 +520,106 @@ canvas.addEventListener("wheel", event => {
   zoom(event.deltaY < 0 ? 1.13 : .89, event.clientX-rect.left, event.clientY-rect.top);
 }, {passive: false});
 canvas.addEventListener("pointerdown", event => {
-  if (current && event.button === 0 && !event.target.closest("#minimap"))
-    drag = {x:event.clientX, y:event.clientY, vx:view.x, vy:view.y, moved:false};
+  if (!current || event.button!==0 || event.target.closest("#minimap")) return;
+  const node = event.target.closest("[data-node-id], [data-node-label-id]");
+  const id = !el("edit-mode").disabled && el("edit-mode").checked && (node?.dataset.nodeId || node?.dataset.nodeLabelId);
+  drag = {x:event.clientX,y:event.clientY,vx:view.x,vy:view.y,moved:false,id,scale:view.scale};
+  if (id) {
+    drag.bounds = current.layout.nodes[id].bounds;
+    drag.locked = Object.hasOwn(locked,id);
+  }
 });
 canvas.addEventListener("pointermove", event => {
   if (!drag) return;
   const dx = event.clientX-drag.x, dy = event.clientY-drag.y;
   if (!drag.moved && Math.hypot(dx,dy) < 4) return;
-  if (!drag.moved) canvas.setPointerCapture(event.pointerId);
+  if (!drag.moved) {
+    canvas.setPointerCapture(event.pointerId);
+    if (drag.id && !drag.locked) {
+      drag.ghost = document.createElementNS(ns,"rect");
+      drag.ghost.classList.add("node-ghost");
+      drag.ghost.setAttribute("width",drag.bounds.width);
+      drag.ghost.setAttribute("height",drag.bounds.height);
+      drawing.querySelector("svg").append(drag.ghost);
+    }
+  }
   drag.moved = true;
   canvas.classList.add("dragging");
-  view.x = drag.vx + dx; view.y = drag.vy + dy; updateView();
+  if (drag.id) {
+    drag.next = {x:drag.bounds.x+dx/drag.scale,y:drag.bounds.y+dy/drag.scale};
+    drag.ghost?.setAttribute("x",drag.next.x);
+    drag.ghost?.setAttribute("y",drag.next.y);
+  } else {
+    view.x = drag.vx + dx; view.y = drag.vy + dy; updateView();
+  }
 });
 canvas.addEventListener("pointerup", event => {
-  if (drag && !drag.moved) inspect(event.target);
+  if (drag?.id && drag.next && drag.locked) el("edit-status").textContent = tr("此節點已鎖定。");
+  if (drag?.id && drag.next && !drag.locked) {
+    selectItem(drag.id,"vertices");
+    changeScene("edit",{moves:{[drag.id]:drag.next},locked});
+  }
+  if (drag && !drag.moved) inspect(event.target,event.shiftKey);
+  drag?.ghost?.remove();
   drag = null; canvas.classList.remove("dragging");
 });
-canvas.addEventListener("pointercancel", () => { drag = null; canvas.classList.remove("dragging"); });
-canvas.addEventListener("keydown", event => {
-  if (event.key === "Enter" || event.key === " ") { event.preventDefault(); inspect(event.target); }
+canvas.addEventListener("pointercancel", () => {
+  drag?.ghost?.remove(); drag = null; canvas.classList.remove("dragging");
 });
-el("download").addEventListener("click", () => {
+canvas.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") { event.preventDefault(); inspect(event.target,event.shiftKey); }
+});
+async function pngFrom(result) {
+  const {width,height} = result.layout.viewport;
+  const scale = Math.min(2,4096/width,4096/height,Math.sqrt(12_000_000/(width*height)));
+  const image = new Image();
+  const url = URL.createObjectURL(new Blob([result.svg],{type:"image/svg+xml"}));
+  try {
+    image.src = url;
+    await image.decode();
+    const output = document.createElement("canvas");
+    output.width = Math.max(1,Math.ceil(width*scale));
+    output.height = Math.max(1,Math.ceil(height*scale));
+    const context = output.getContext("2d",{willReadFrequently:true});
+    if (!context) throw new Error(tr("無法匯出 PNG。"));
+    context.drawImage(image,0,0,output.width,output.height);
+    const blob = await new Promise(resolve => output.toBlob(resolve,"image/png"));
+    if (blob) return blob;
+    // Some Safari sessions decline the asynchronous encoding of a detached canvas.
+    const encoded = output.toDataURL("image/png");
+    const prefix = "data:image/png;base64,";
+    if (!encoded.startsWith(prefix)) throw new Error(tr("無法匯出 PNG。"));
+    const bytes = Uint8Array.from(atob(encoded.slice(prefix.length)),character=>character.charCodeAt(0));
+    return new Blob([bytes],{type:"image/png"});
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+el("download").addEventListener("click", async () => {
   if (!displayed) return;
   const kind = el("export").value;
-  const svg = kind === "svg";
-  const contents = svg ? displayed.svg : JSON.stringify(kind==="model" ? current.model : displayed[kind],null,2) + "\n";
+  if (kind==="png") {
+    try { saveFile(await pngFrom(displayed),"image/png","diagram.png"); }
+    catch (error) { status(error.message); }
+    return;
+  }
+  const svg = kind === "svg" || kind === "svg-original";
+  const scene = kind==="svg-original" || (projection && displayed===projection && kind==="layout") ? current : displayed;
+  const contents = svg ? scene.svg : JSON.stringify(kind==="model" ? current.model : scene[kind],null,2) + "\n";
   saveFile(contents,svg ? "image/svg+xml" : "application/json",svg ? "diagram.svg" : "diagram." + kind + ".json");
 });
 
-fetch("/api/examples").then(response => {
-  if (!response.ok) throw new Error("無法載入內建案例。");
-  return response.json();
-}).then(data => {
+document.addEventListener("DOMContentLoaded",()=>transport.examples().then(data => {
   samples = data;
-  for (const [key,label] of Object.entries(caseNames)) el("example").add(new Option(label,key));
-  el("example").value = "orthogonal";
+  for (const [key,label] of Object.entries(caseNames)) {
+    const option = new Option(tr(label),key);
+    option.dataset.translate = label;
+    el("example").add(option);
+  }
+  const requested = new URLSearchParams(location.search).get("case");
+  const sample = requested && Object.hasOwn(samples,requested) ? requested : "orthogonal";
+  if (!Object.hasOwn(caseNames,sample)) el("example").add(new Option(samples[sample].displayName || sample,sample));
+  el("example").value = sample;
   el("example").dispatchEvent(new Event("change"));
-  return generate();
-}).catch(error => status(error.message));
+  if (!inBrowser) return generate();
+}).catch(error => status(error.message)));

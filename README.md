@@ -6,12 +6,23 @@
 
 ## 快速開始
 
+瀏覽器版在 Web Worker 內執行同一個 Python 管線。選擇案例或開啟 SMD／已解析 Mock JSON，即可生成、編輯及匯出 SVG、PNG 和工作區。從 [PR #7 的 CI](https://github.com/yyyunx/pretty-state-machine-diagrams/pull/7/checks) 取得 `install-free-website` 測試產物。正式 Pages 發布狀態及驗收方式見 [部署說明](docs/DEPLOYMENT.md)。
+
+[瀏覽器操作與架構](docs/BROWSER_RUNTIME.md) · [CLI 與 SDK](docs/API.md) · [Phase 5–7 實測](benchmarks/phase57/REPORT.md)
+
+[課堂快速入門](docs/TEACHER_QUICKSTART.md) · [最終驗收與合併順序](docs/FINAL_INTEGRATION.md) · [Experimental v0.3.0 發行草稿](docs/RELEASE-0.3.0.md)
+
+![Chromium 實測的狀態機編輯器與收合畫面](benchmarks/phase57/editor.png)
+
+### 本機 CLI 與 SDK
+
 需要 Python 3.10 以上。從專案目錄執行下列命令。
 
 ~~~sh
 python -m pip install .
 pretty-smd generate examples/basic.smd.json --output diagram.svg
 pretty-smd generate examples/basic.smd.json --algorithm advanced --mode balanced --output advanced.svg
+pretty-smd generate examples/basic.smd.json --algorithm hybrid --output hybrid.svg
 pretty-smd validate examples/basic.smd.json
 pretty-smd serve
 ~~~
@@ -51,7 +62,7 @@ Topology 排版先對每個 Region 的圖計算強連通分量及最長路徑分
 
 - SMD 支援一般與複合狀態、巢狀及正交 Region、Final，以及 Initial、Choice、Junction、Fork、Join、Shallow History、Deep History、Entry Point、Exit Point、Terminate。轉移與狀態行為保持原始內容。匿名狀態及 Region 保持無名。
 - 已解析 Mock 提供課堂例及測試用控制流。正式 R、S 組 Converter 仍待可執行版本與 Grammar 確認。原始 Process Algebra 文字暫無 CLI 或 Web 解析模式。Python 提供 [Adapter 接縫](docs/API.md)，外部所需資料與待決語意見 [交接提問單](src/model/CONVERTER_HANDOFF.md)。
-- 安裝包版本 0.2.0 Experimental，Model 及 Layout 資料採 UTF-8 `0.1.0-draft`。本機 Web App 綁定 loopback，另可建置 [靜態 Gallery](demo/index.html)。
+- 安裝包版本 0.3.0 Experimental，Model 及 Layout 資料採 UTF-8 `0.1.0-draft`。本機 Web App 綁定 loopback，另可建置 [靜態 Gallery](demo/index.html)。
 
 ## Phase 4 進階排版
 

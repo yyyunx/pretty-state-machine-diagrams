@@ -15,6 +15,7 @@ from time import perf_counter
 from src.layout.advanced import optimize
 from src.layout.budget import BudgetExceeded
 from src.layout.engine import layout
+from src.layout.hybrid import optimize_hybrid
 from src.layout.quality import evaluate, model_index
 from src.model import validate_model
 from src.renderer import render
@@ -64,6 +65,14 @@ def _worker(algorithm,dot,limit,repeats,include_svg):
             elif algorithm=="graphviz":
                 geometry = graphviz_layout(model,dot,timeout=limit)
                 search = {}
+            elif algorithm in ("hybrid","hybrid-dot"):
+                def external(remaining):
+                    return graphviz_layout(model,dot,timeout=remaining)
+                use_dot = algorithm=="hybrid-dot" and dot
+                result = optimize_hybrid(model,timeout=limit,external_name="graphviz" if use_dot else None,
+                                         external_layout=external if use_dot else None)
+                geometry = result.layout
+                search = {"selected":result.search["selected"],"candidate_count":len(result.search["candidates"])}
             else:
                 geometry = layout(model,algorithm=algorithm)
                 search = {}
@@ -139,7 +148,9 @@ def run(output, *, suite="all", timeout=6.0, dot=None, repeats=1, case_filter=No
             if case_filter and name not in case_filter:
                 continue
             vertices,_,_,transitions = model_index(model)
-            for algorithm in (*algorithms,*(("graphviz",) if dot and group!="stress" else ())):
+            optional = ("hybrid",)+(("hybrid-dot",) if dot else ())
+            extras = tuple(name for name in optional if engines and name in engines)
+            for algorithm in (*algorithms,*extras,*(("graphviz",) if dot and group!="stress" else ())):
                 if engines and algorithm not in engines:
                     continue
                 export = group!="stress" and name in (

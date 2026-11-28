@@ -1,13 +1,14 @@
-name: Static diagram gallery
+name: Browser-native Python and Pages
 on:
   pull_request:
-    branches: [main, 'feature/project-optimization']
+    branches: [main, 'feature/project-optimization', 'feature/advanced-optimization']
   push:
     branches: [main]
   workflow_dispatch:
 jobs:
-  gallery:
+  browser-site:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
     steps:
@@ -15,20 +16,135 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: python scripts/build_gallery.py --output dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip wheel --no-deps --wheel-dir build/wheels .
+      - run: python -m pip install build/wheels/*.whl
+      - run: python scripts/build_browser.py --wheel build/wheels/*.whl --output dist
+      - run: npm install --no-save --no-package-lock playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/browser_runtime.cjs dist integration-output/browser-runtime
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-runtime-evidence
+          path: integration-output/browser-runtime/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: install-free-website
+          path: dist/
+          include-hidden-files: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+  cross-browser:
+    needs: browser-site
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: firefox
+            os: ubuntu-latest
+          - browser: webkit
+            os: ubuntu-latest
+          - browser: edge
+            os: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: install-free-website
+          path: dist
+      - run: npm install --no-save --no-package-lock playwright@1.62.1
+      - if: matrix.browser != 'edge'
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: node tests/browser_runtime.cjs dist integration-output/acceptance
+        env:
+          P57_BROWSER: ${{ matrix.browser }}
+          P57_SMOKE_ONLY: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-${{ matrix.browser }}
+          path: integration-output/acceptance/
+  safari:
+    name: Apple Safari (native capability check)
+    needs: browser-site
+    runs-on: macos-latest
+    timeout-minutes: 8
+    continue-on-error: true
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: install-free-website
+          path: dist
+      - run: npm install --no-save --no-package-lock playwright@1.62.1
+      - name: Enable and exercise native Safari
+        timeout-minutes: 4
+        run: |
+          mkdir -p integration-output/safari
+          /usr/bin/safaridriver --version | tee integration-output/safari/version.txt
+          sudo /usr/bin/safaridriver --enable 2>&1 | tee integration-output/safari/enable.log
+          node tests/safari_runtime.cjs dist integration-output/safari
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-apple-safari
+          path: integration-output/safari/
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: gallery
+    needs: [browser-site, cross-browser]
     runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
+    outputs:
+      url: ${{ steps.deployment.outputs.page_url }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/configure-pages@v5
       - uses: actions/deploy-pages@v4
         id: deployment
+  live-acceptance:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-package-lock playwright@1.62.1
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: node tests/browser_runtime.cjs dist integration-output/live
+        env:
+          P57_LIVE: ${{ needs.deploy.outputs.url }}
+          P57_BROWSER: ${{ matrix.browser }}
+          P57_SMOKE_ONLY: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-acceptance-${{ matrix.browser }}
+          path: integration-output/live/

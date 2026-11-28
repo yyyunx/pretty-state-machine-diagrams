@@ -3,7 +3,7 @@ on:
   push:
     branches: ['integration/group-f', main]
   pull_request:
-    branches: [main, 'feature/project-optimization']
+    branches: [main, 'feature/project-optimization', 'feature/advanced-optimization']
   workflow_dispatch:
 jobs:
   integration:
@@ -68,7 +68,7 @@ jobs:
           mkdir package-test
           cd package-test
           pretty-smd generate ../examples/basic.smd.json --algorithm advanced --mode fast --output smoke.svg
-          python -c "from importlib.resources import files; import pretty_smd; assert pretty_smd.__version__ == '0.2.0'; assert files('pretty_smd').joinpath('static', 'index.html').is_file()"
+          python -c "from importlib.resources import files; import pretty_smd; assert pretty_smd.__version__ == '0.3.0'; assert files('pretty_smd').joinpath('static', 'index.html').is_file()"
       - uses: actions/upload-artifact@v4
         with:
           name: experimental-wheel-${{ matrix.os }}
