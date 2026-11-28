@@ -6,7 +6,8 @@ from math import ceil, sqrt
 from statistics import median
 
 
-def layers(ids, edges, *, order="mean", split_cycles=False, reverse_sweep=False):
+def connected_components(ids, edges):
+    """Return deterministic SCCs, ownership and adjacency for these vertices."""
     index = {node: position for position, node in enumerate(ids)}
     successors = {node: [] for node in ids}
     predecessors = {node: [] for node in ids}
@@ -47,6 +48,12 @@ def layers(ids, edges, *, order="mean", split_cycles=False, reverse_sweep=False)
                     owner[parent] = len(components)
                     queue.append(parent)
         components.append(sorted(component, key=index.get))
+    return components, owner, successors, predecessors
+
+
+def layers(ids, edges, *, order="mean", split_cycles=False, reverse_sweep=False):
+    index = {node:position for position,node in enumerate(ids)}
+    components,owner,successors,predecessors = connected_components(ids,edges)
 
     outgoing = [set() for _ in components]
     indegree = [0] * len(components)

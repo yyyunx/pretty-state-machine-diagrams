@@ -6,12 +6,21 @@
 
 ## 快速開始
 
+瀏覽器版在 Web Worker 內執行同一個 Python 管線。選擇案例或開啟 SMD／已解析 Mock JSON，即可生成、編輯及匯出 SVG、PNG 和工作區。從 [PR #7 的 CI](https://github.com/yyyunx/pretty-state-machine-diagrams/pull/7/checks) 取得 `install-free-website` 測試產物。正式 Pages 發布狀態及驗收方式見 [部署說明](docs/DEPLOYMENT.md)。
+
+[瀏覽器操作與架構](docs/BROWSER_RUNTIME.md) · [CLI 與 SDK](docs/API.md) · [Phase 5–7 實測](benchmarks/phase57/REPORT.md)
+
+![Chromium 實測的狀態機編輯器與收合畫面](benchmarks/phase57/editor.png)
+
+### 本機 CLI 與 SDK
+
 需要 Python 3.10 以上。從專案目錄執行下列命令。
 
 ~~~sh
 python -m pip install .
 pretty-smd generate examples/basic.smd.json --output diagram.svg
 pretty-smd generate examples/basic.smd.json --algorithm advanced --mode balanced --output advanced.svg
+pretty-smd generate examples/basic.smd.json --algorithm hybrid --output hybrid.svg
 pretty-smd validate examples/basic.smd.json
 pretty-smd serve
 ~~~

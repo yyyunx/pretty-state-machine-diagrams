@@ -1,0 +1,3622 @@
+[
+  {
+    "case": "sparse-10",
+    "algorithm": "topology",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 94.53039999789326,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 2,
+        "label_path_intersections": 1,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 16,
+        "disconnected_anchors": 0,
+        "edge_bends": 6,
+        "total_edge_length": 2220.8,
+        "diagram_area": 253612.8,
+        "execution_ms": 70.859,
+        "semantic_preservation": true,
+        "render_ms": 3.534,
+        "pipeline_ms": 94.156
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 133,
+      "runtime": {
+        "engineMs": 117.5,
+        "workerMs": 117.89999999850988,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 118.59999999776483
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 2,
+        "label_path_intersections": 1,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 16,
+        "disconnected_anchors": 0,
+        "edge_bends": 6,
+        "total_edge_length": 2220.8,
+        "diagram_area": 253612.8,
+        "execution_ms": 75.8,
+        "semantic_preservation": true,
+        "render_ms": 3,
+        "pipeline_ms": 114.3
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-10",
+    "algorithm": "advanced",
+    "mode": "fast",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 154.41030000147293,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 4,
+        "total_edge_length": 2285.2,
+        "diagram_area": 253612.8,
+        "execution_ms": 120.016,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 109.964,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 2679,
+          "work_limit": 320000
+        },
+        "render_ms": 10.636,
+        "pipeline_ms": 153.726
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 167,
+      "runtime": {
+        "engineMs": 155.09999999776483,
+        "workerMs": 155.29999999701977,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 156
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 4,
+        "total_edge_length": 2285.2,
+        "diagram_area": 253612.8,
+        "execution_ms": 120.6,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 106.3,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 2679,
+          "work_limit": 320000
+        },
+        "render_ms": 3.1,
+        "pipeline_ms": 152.1
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-10",
+    "algorithm": "advanced",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 336.96190000046045,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 4,
+        "total_edge_length": 2285.2,
+        "diagram_area": 253612.8,
+        "execution_ms": 304.81,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 72.037,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 11.21033873,
+              "work": 3471,
+              "elapsed_ms": 115.662,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 109.649,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 8829,
+          "work_limit": 690000
+        },
+        "render_ms": 3.6,
+        "pipeline_ms": 336.66
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 383,
+      "runtime": {
+        "engineMs": 368.19999999925494,
+        "workerMs": 368.29999999701977,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 368.8999999985099
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 4,
+        "total_edge_length": 2285.2,
+        "diagram_area": 253612.8,
+        "execution_ms": 337.3,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 71.7,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 11.21033873,
+              "work": 3471,
+              "elapsed_ms": 152.5,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 108.2,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 8829,
+          "work_limit": 690000
+        },
+        "render_ms": 3.5,
+        "pipeline_ms": 365.4
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-10",
+    "algorithm": "advanced",
+    "mode": "quality",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 636.4141000012751,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 4,
+        "total_edge_length": 2042,
+        "diagram_area": 236563.2,
+        "execution_ms": 613.18,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "scc",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 85.667,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 11.21033873,
+              "work": 3471,
+              "elapsed_ms": 108.3,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 64.874,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "clearance",
+              "status": "valid",
+              "score": 13.22065897,
+              "work": 5455,
+              "elapsed_ms": 182.163,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "scc",
+              "status": "valid",
+              "score": 10.66787965,
+              "work": 3575,
+              "elapsed_ms": 164.01,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 17859,
+          "work_limit": 1250000
+        },
+        "render_ms": 1.277,
+        "pipeline_ms": 635.328
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 930,
+      "runtime": {
+        "engineMs": 917,
+        "workerMs": 917.1999999992549,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 917.6000000014901
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 4,
+        "total_edge_length": 2042,
+        "diagram_area": 236563.2,
+        "execution_ms": 881.3,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "scc",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 109,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 11.21033873,
+              "work": 3471,
+              "elapsed_ms": 151.8,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11,
+              "work": 2679,
+              "elapsed_ms": 107.6,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "clearance",
+              "status": "valid",
+              "score": 13.22065897,
+              "work": 5455,
+              "elapsed_ms": 309.2,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "scc",
+              "status": "valid",
+              "score": 10.66787965,
+              "work": 3575,
+              "elapsed_ms": 185.1,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 17859,
+          "work_limit": 1250000
+        },
+        "render_ms": 3.5,
+        "pipeline_ms": 914.1
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-10",
+    "algorithm": "hybrid",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 79.6836000008625,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 2,
+        "label_path_intersections": 1,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 16,
+        "disconnected_anchors": 0,
+        "edge_bends": 6,
+        "total_edge_length": 2220.8,
+        "diagram_area": 253612.8,
+        "execution_ms": 59.49,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "topology",
+          "candidates": [
+            {
+              "candidate": "topology",
+              "status": "valid",
+              "work": 1540,
+              "elapsed_ms": 51.424,
+              "score": 32,
+              "crossings": 2,
+              "area": 253612.8
+            }
+          ],
+          "reasons": [
+            "optional-external-engine-unavailable",
+            "small-sparse-graph"
+          ],
+          "features": {
+            "vertices": 10,
+            "transitions": 11,
+            "density": 0.12222222,
+            "edges_per_vertex": 1.1,
+            "scc_count": 10,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 7,
+              "characters": 73,
+              "longest": 12,
+              "lines": 7
+            }
+          }
+        },
+        "render_ms": 1.631,
+        "pipeline_ms": 79.38
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 149,
+      "runtime": {
+        "engineMs": 135.60000000149012,
+        "workerMs": 135.69999999925494,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 136.30000000074506
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 2,
+        "label_path_intersections": 1,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 16,
+        "disconnected_anchors": 0,
+        "edge_bends": 6,
+        "total_edge_length": 2220.8,
+        "diagram_area": 253612.8,
+        "execution_ms": 98.3,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "topology",
+          "candidates": [
+            {
+              "candidate": "topology",
+              "status": "valid",
+              "work": 1540,
+              "elapsed_ms": 84.3,
+              "score": 32,
+              "crossings": 2,
+              "area": 253612.8
+            }
+          ],
+          "reasons": [
+            "optional-external-engine-unavailable",
+            "small-sparse-graph"
+          ],
+          "features": {
+            "vertices": 10,
+            "transitions": 11,
+            "density": 0.12222222,
+            "edges_per_vertex": 1.1,
+            "scc_count": 10,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 7,
+              "characters": 73,
+              "longest": 12,
+              "lines": 7
+            }
+          }
+        },
+        "render_ms": 3.8,
+        "pipeline_ms": 132.7
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-25",
+    "algorithm": "topology",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 302.5748999971256,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 3,
+        "label_path_intersections": 1,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 24,
+        "disconnected_anchors": 0,
+        "edge_bends": 15,
+        "total_edge_length": 5770.56,
+        "diagram_area": 632374.4,
+        "execution_ms": 252.306,
+        "semantic_preservation": true,
+        "render_ms": 3.469,
+        "pipeline_ms": 301.837
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 540,
+      "runtime": {
+        "engineMs": 518.8999999985099,
+        "workerMs": 519.1000000014901,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 519.8000000007451
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 3,
+        "label_path_intersections": 1,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 24,
+        "disconnected_anchors": 0,
+        "edge_bends": 15,
+        "total_edge_length": 5770.56,
+        "diagram_area": 632374.4,
+        "execution_ms": 422.2,
+        "semantic_preservation": true,
+        "render_ms": 6.7,
+        "pipeline_ms": 513.4
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-25",
+    "algorithm": "advanced",
+    "mode": "fast",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 293.5355999979947,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 12,
+        "total_edge_length": 5870.88,
+        "diagram_area": 632374.4,
+        "execution_ms": 245.582,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 214.943,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 7277,
+          "work_limit": 320000
+        },
+        "render_ms": 4.317,
+        "pipeline_ms": 293.053
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 466,
+      "runtime": {
+        "engineMs": 442.30000000074506,
+        "workerMs": 442.5,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 443.1000000014901
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 12,
+        "total_edge_length": 5870.88,
+        "diagram_area": 632374.4,
+        "execution_ms": 364,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 327.3,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 7277,
+          "work_limit": 320000
+        },
+        "render_ms": 7.6,
+        "pipeline_ms": 437.3
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-25",
+    "algorithm": "advanced",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 765.4345000009926,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 12,
+        "total_edge_length": 5870.88,
+        "diagram_area": 632374.4,
+        "execution_ms": 704.215,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 282.508,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 187.50640184,
+              "work": 7919,
+              "elapsed_ms": 222.933,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 174.544,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 22473,
+          "work_limit": 690000
+        },
+        "render_ms": 3.493,
+        "pipeline_ms": 764.963
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 1146,
+      "runtime": {
+        "engineMs": 1120.0999999977648,
+        "workerMs": 1120.199999999255,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 1121
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 12,
+        "total_edge_length": 5870.88,
+        "diagram_area": 632374.4,
+        "execution_ms": 1034.4,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 306.3,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 187.50640184,
+              "work": 7919,
+              "elapsed_ms": 369.7,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 314.5,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 22473,
+          "work_limit": 690000
+        },
+        "render_ms": 7.4,
+        "pipeline_ms": 1114.8
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-25",
+    "algorithm": "advanced",
+    "mode": "quality",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 1435.758800002077,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 12,
+        "total_edge_length": 5243.68,
+        "diagram_area": 586908.8,
+        "execution_ms": 1378.223,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "scc",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 176.834,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 187.50640184,
+              "work": 7919,
+              "elapsed_ms": 221.808,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 199.35,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "clearance",
+              "status": "valid",
+              "score": 57.34929753,
+              "work": 14111,
+              "elapsed_ms": 459.305,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "scc",
+              "status": "valid",
+              "score": 10.64236918,
+              "work": 9608,
+              "elapsed_ms": 301.59,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 46192,
+          "work_limit": 1250000
+        },
+        "render_ms": 2.88,
+        "pipeline_ms": 1435.279
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 2352,
+      "runtime": {
+        "engineMs": 2325,
+        "workerMs": 2325.099999997765,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 2325.699999999255
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 12,
+        "total_edge_length": 5243.68,
+        "diagram_area": 586908.8,
+        "execution_ms": 2241.5,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "scc",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 298.9,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 187.50640184,
+              "work": 7919,
+              "elapsed_ms": 339.6,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11,
+              "work": 7277,
+              "elapsed_ms": 290.6,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "clearance",
+              "status": "valid",
+              "score": 57.34929753,
+              "work": 14111,
+              "elapsed_ms": 761.2,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "scc",
+              "status": "valid",
+              "score": 10.64236918,
+              "work": 9608,
+              "elapsed_ms": 517.8,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 46192,
+          "work_limit": 1250000
+        },
+        "render_ms": 9.5,
+        "pipeline_ms": 2319.7
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-25",
+    "algorithm": "hybrid",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 951.7617999990762,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 12,
+        "total_edge_length": 5870.88,
+        "diagram_area": 632374.4,
+        "execution_ms": 914.817,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-balanced",
+          "candidates": [
+            {
+              "candidate": "advanced-balanced",
+              "status": "valid",
+              "work": 22473,
+              "elapsed_ms": 651.433,
+              "placement": "indexed",
+              "score": 10.4,
+              "crossings": 0,
+              "area": 632374.4
+            },
+            {
+              "candidate": "topology",
+              "status": "valid",
+              "work": 4200,
+              "elapsed_ms": 245.789,
+              "score": 31.1014523,
+              "crossings": 3,
+              "area": 632374.4
+            }
+          ],
+          "reasons": [
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 25,
+            "transitions": 30,
+            "density": 0.05,
+            "edges_per_vertex": 1.2,
+            "scc_count": 25,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 15,
+              "characters": 165,
+              "longest": 13,
+              "lines": 15
+            }
+          }
+        },
+        "render_ms": 2.76,
+        "pipeline_ms": 951.307
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 1509,
+      "runtime": {
+        "engineMs": 1489.699999999255,
+        "workerMs": 1489.800000000745,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 1490.5
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 12,
+        "total_edge_length": 5870.88,
+        "diagram_area": 632374.4,
+        "execution_ms": 1408.2,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-balanced",
+          "candidates": [
+            {
+              "candidate": "advanced-balanced",
+              "status": "valid",
+              "work": 22473,
+              "elapsed_ms": 947.9,
+              "placement": "indexed",
+              "score": 10.4,
+              "crossings": 0,
+              "area": 632374.4
+            },
+            {
+              "candidate": "topology",
+              "status": "valid",
+              "work": 4200,
+              "elapsed_ms": 423.4,
+              "score": 31.1014523,
+              "crossings": 3,
+              "area": 632374.4
+            }
+          ],
+          "reasons": [
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 25,
+            "transitions": 30,
+            "density": 0.05,
+            "edges_per_vertex": 1.2,
+            "scc_count": 25,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 15,
+              "characters": 165,
+              "longest": 13,
+              "lines": 15
+            }
+          }
+        },
+        "render_ms": 7.2,
+        "pipeline_ms": 1485.1
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-50",
+    "algorithm": "topology",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 938.9627999989898,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 6,
+        "label_path_intersections": 1,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 48,
+        "disconnected_anchors": 0,
+        "edge_bends": 30,
+        "total_edge_length": 11123.04,
+        "diagram_area": 1330917.12,
+        "execution_ms": 861.549,
+        "semantic_preservation": true,
+        "render_ms": 5.35,
+        "pipeline_ms": 938.219
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 1644,
+      "runtime": {
+        "engineMs": 1608.5999999977648,
+        "workerMs": 1608.7999999970198,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 1609.800000000745
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 6,
+        "label_path_intersections": 1,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 48,
+        "disconnected_anchors": 0,
+        "edge_bends": 30,
+        "total_edge_length": 11123.04,
+        "diagram_area": 1330917.12,
+        "execution_ms": 1448.4,
+        "semantic_preservation": true,
+        "render_ms": 15.2,
+        "pipeline_ms": 1597.2
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-50",
+    "algorithm": "advanced",
+    "mode": "fast",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 428.4990999985894,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 24,
+        "total_edge_length": 11331.12,
+        "diagram_area": 1330917.12,
+        "execution_ms": 359.091,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 14796,
+              "elapsed_ms": 320.291,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 14796,
+          "work_limit": 320000
+        },
+        "render_ms": 5.701,
+        "pipeline_ms": 427.713
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 927,
+      "runtime": {
+        "engineMs": 891.1000000014901,
+        "workerMs": 891.5,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 892.6999999992549
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 24,
+        "total_edge_length": 11331.12,
+        "diagram_area": 1330917.12,
+        "execution_ms": 715.7,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 14796,
+              "elapsed_ms": 642.1,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 14796,
+          "work_limit": 320000
+        },
+        "render_ms": 13.3,
+        "pipeline_ms": 883.3
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-50",
+    "algorithm": "advanced",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 1196.4240000015707,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 24,
+        "total_edge_length": 11331.12,
+        "diagram_area": 1330917.12,
+        "execution_ms": 1125.166,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 14796,
+              "elapsed_ms": 317.883,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 451.45385381,
+              "work": 15184,
+              "elapsed_ms": 374.376,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11.05968598,
+              "work": 15683,
+              "elapsed_ms": 396.853,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 45663,
+          "work_limit": 690000
+        },
+        "render_ms": 6.606,
+        "pipeline_ms": 1195.685
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 2266,
+      "runtime": {
+        "engineMs": 2223.599999997765,
+        "workerMs": 2223.699999999255,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 2224.5
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 24,
+        "total_edge_length": 11331.12,
+        "diagram_area": 1330917.12,
+        "execution_ms": 2058.4,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 14796,
+              "elapsed_ms": 637.2,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 451.45385381,
+              "work": 15184,
+              "elapsed_ms": 670.2,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11.05968598,
+              "work": 15683,
+              "elapsed_ms": 678.1,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 45663,
+          "work_limit": 690000
+        },
+        "render_ms": 18.1,
+        "pipeline_ms": 2214.5
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-50",
+    "algorithm": "advanced",
+    "mode": "quality",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 2720.3480999996827,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 25,
+        "total_edge_length": 10050.88,
+        "diagram_area": 1169839.36,
+        "execution_ms": 2639.036,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "scc",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 14796,
+              "elapsed_ms": 371.429,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 451.45385381,
+              "work": 15184,
+              "elapsed_ms": 357.976,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11.05968598,
+              "work": 15683,
+              "elapsed_ms": 348.825,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "clearance",
+              "status": "valid",
+              "score": 498.03045025,
+              "work": 25273,
+              "elapsed_ms": 790.471,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "scc",
+              "status": "valid",
+              "score": 10.73644652,
+              "work": 20987,
+              "elapsed_ms": 731.952,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 91923,
+          "work_limit": 1250000
+        },
+        "render_ms": 6.238,
+        "pipeline_ms": 2719.52
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 4790,
+      "runtime": {
+        "engineMs": 4746.599999997765,
+        "workerMs": 4746.79999999702,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 4747.89999999851
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 25,
+        "total_edge_length": 10050.88,
+        "diagram_area": 1169839.36,
+        "execution_ms": 4585.2,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "scc",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 14796,
+              "elapsed_ms": 599,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 451.45385381,
+              "work": 15184,
+              "elapsed_ms": 713.9,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "crossings",
+              "status": "valid",
+              "score": 11.05968598,
+              "work": 15683,
+              "elapsed_ms": 609.5,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "clearance",
+              "status": "valid",
+              "score": 498.03045025,
+              "work": 25273,
+              "elapsed_ms": 1421.8,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "scc",
+              "status": "valid",
+              "score": 10.73644652,
+              "work": 20987,
+              "elapsed_ms": 1176.2,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 91923,
+          "work_limit": 1250000
+        },
+        "render_ms": 16.3,
+        "pipeline_ms": 4736.3
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-50",
+    "algorithm": "hybrid",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 2767.944700000953,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 24,
+        "total_edge_length": 11331.12,
+        "diagram_area": 1330917.12,
+        "execution_ms": 2690.852,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-balanced",
+          "candidates": [
+            {
+              "candidate": "advanced-balanced",
+              "status": "valid",
+              "work": 45663,
+              "elapsed_ms": 1537.407,
+              "placement": "indexed",
+              "score": 10.4,
+              "crossings": 0,
+              "area": 1330917.12
+            },
+            {
+              "candidate": "topology",
+              "status": "valid",
+              "work": 8540,
+              "elapsed_ms": 1102.892,
+              "score": 31.09520438,
+              "crossings": 6,
+              "area": 1330917.12
+            }
+          ],
+          "reasons": [
+            "bounded-runtime",
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 50,
+            "transitions": 61,
+            "density": 0.02489796,
+            "edges_per_vertex": 1.22,
+            "scc_count": 50,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 30,
+              "characters": 332,
+              "longest": 13,
+              "lines": 30
+            }
+          }
+        },
+        "render_ms": 5.455,
+        "pipeline_ms": 2766.97
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 2207,
+      "runtime": {
+        "engineMs": 2189,
+        "workerMs": 2189.300000000745,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 2189.699999999255
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 24,
+        "total_edge_length": 11331.12,
+        "diagram_area": 1330917.12,
+        "execution_ms": 2037.6,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-balanced",
+          "candidates": [
+            {
+              "candidate": "advanced-balanced",
+              "status": "valid",
+              "work": 45663,
+              "elapsed_ms": 1390.4,
+              "placement": "indexed",
+              "score": 10.4,
+              "crossings": 0,
+              "area": 1330917.12
+            },
+            {
+              "candidate": "topology",
+              "status": "valid",
+              "work": 8540,
+              "elapsed_ms": 548.5,
+              "score": 31.09520438,
+              "crossings": 6,
+              "area": 1330917.12
+            }
+          ],
+          "reasons": [
+            "bounded-runtime",
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 50,
+            "transitions": 61,
+            "density": 0.02489796,
+            "edges_per_vertex": 1.22,
+            "scc_count": 50,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 30,
+              "characters": 332,
+              "longest": 13,
+              "lines": 30
+            }
+          }
+        },
+        "render_ms": 4.1,
+        "pipeline_ms": 2183.8
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-100",
+    "algorithm": "topology",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 3723.1836000028125,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 3,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 70,
+        "total_edge_length": 22900.88,
+        "diagram_area": 2662732.8,
+        "execution_ms": 3561.682,
+        "semantic_preservation": true,
+        "render_ms": 14.062,
+        "pipeline_ms": 3721.712
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 2211,
+      "runtime": {
+        "engineMs": 2182.10000000149,
+        "workerMs": 2182.2000000029802,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 2183.39999999851
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 3,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 70,
+        "total_edge_length": 22900.88,
+        "diagram_area": 2662732.8,
+        "execution_ms": 2095,
+        "semantic_preservation": true,
+        "render_ms": 7.8,
+        "pipeline_ms": 2175.1
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-100",
+    "algorithm": "advanced",
+    "mode": "fast",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 1119.2381999971985,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 50,
+        "total_edge_length": 23608.12,
+        "diagram_area": 2662732.8,
+        "execution_ms": 890.236,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 30075,
+              "elapsed_ms": 796.889,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 30075,
+          "work_limit": 320000
+        },
+        "render_ms": 11.752,
+        "pipeline_ms": 1117.767
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 508,
+      "runtime": {
+        "engineMs": 479.5999999977648,
+        "workerMs": 479.69999999925494,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 480.1000000014901
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 50,
+        "total_edge_length": 23608.12,
+        "diagram_area": 2662732.8,
+        "execution_ms": 399.7,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 30075,
+              "elapsed_ms": 365.3,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 30075,
+          "work_limit": 320000
+        },
+        "render_ms": 7.6,
+        "pipeline_ms": 474.4
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-100",
+    "algorithm": "advanced",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 1846.7939000001934,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 50,
+        "total_edge_length": 23608.12,
+        "diagram_area": 2662732.8,
+        "execution_ms": 1655.055,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 30075,
+              "elapsed_ms": 729.732,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 1067.63664509,
+              "work": 30023,
+              "elapsed_ms": 791.257,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 60098,
+          "work_limit": 690000
+        },
+        "render_ms": 10.732,
+        "pipeline_ms": 1845.334
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 972,
+      "runtime": {
+        "engineMs": 932.8999999985099,
+        "workerMs": 933,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 933.8999999985099
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 50,
+        "total_edge_length": 23608.12,
+        "diagram_area": 2662732.8,
+        "execution_ms": 843.1,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 30075,
+              "elapsed_ms": 414.5,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 1067.63664509,
+              "work": 30023,
+              "elapsed_ms": 392.2,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 60098,
+          "work_limit": 690000
+        },
+        "render_ms": 6.9,
+        "pipeline_ms": 928
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-100",
+    "algorithm": "advanced",
+    "mode": "quality",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 1836.3104999989446,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 50,
+        "total_edge_length": 23608.12,
+        "diagram_area": 2662732.8,
+        "execution_ms": 1688.939,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 30075,
+              "elapsed_ms": 758.089,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 1067.63664509,
+              "work": 30023,
+              "elapsed_ms": 862.279,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 60098,
+          "work_limit": 1250000
+        },
+        "render_ms": 10.175,
+        "pipeline_ms": 1834.825
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 892,
+      "runtime": {
+        "engineMs": 865,
+        "workerMs": 865.0999999977648,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 866
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 50,
+        "total_edge_length": 23608.12,
+        "diagram_area": 2662732.8,
+        "execution_ms": 782,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 11,
+              "work": 30075,
+              "elapsed_ms": 360.6,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 1067.63664509,
+              "work": 30023,
+              "elapsed_ms": 382.8,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 60098,
+          "work_limit": 1250000
+        },
+        "render_ms": 8.3,
+        "pipeline_ms": 857.5
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-100",
+    "algorithm": "hybrid",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 1034.700199998042,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 50,
+        "total_edge_length": 23608.12,
+        "diagram_area": 2662732.8,
+        "execution_ms": 870.623,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-fast",
+          "candidates": [
+            {
+              "candidate": "advanced-fast",
+              "status": "valid",
+              "work": 30075,
+              "elapsed_ms": 793.445,
+              "placement": "indexed",
+              "score": 11,
+              "crossings": 0,
+              "area": 2662732.8
+            }
+          ],
+          "reasons": [
+            "bounded-runtime",
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 100,
+            "transitions": 124,
+            "density": 0.01252525,
+            "edges_per_vertex": 1.24,
+            "scc_count": 100,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 59,
+              "characters": 666,
+              "longest": 13,
+              "lines": 59
+            }
+          }
+        },
+        "render_ms": 10.755,
+        "pipeline_ms": 1033.222
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 514,
+      "runtime": {
+        "engineMs": 486.80000000074506,
+        "workerMs": 486.8999999985099,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 487.5999999977648
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 0,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 0,
+        "disconnected_anchors": 0,
+        "edge_bends": 50,
+        "total_edge_length": 23608.12,
+        "diagram_area": 2662732.8,
+        "execution_ms": 410.4,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-fast",
+          "candidates": [
+            {
+              "candidate": "advanced-fast",
+              "status": "valid",
+              "work": 30075,
+              "elapsed_ms": 375.9,
+              "placement": "indexed",
+              "score": 11,
+              "crossings": 0,
+              "area": 2662732.8
+            }
+          ],
+          "reasons": [
+            "bounded-runtime",
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 100,
+            "transitions": 124,
+            "density": 0.01252525,
+            "edges_per_vertex": 1.24,
+            "scc_count": 100,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 59,
+              "characters": 666,
+              "longest": 13,
+              "lines": 59
+            }
+          }
+        },
+        "render_ms": 6.8,
+        "pipeline_ms": 481.8
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-250",
+    "algorithm": "topology",
+    "mode": "balanced",
+    "native": {
+      "status": 504,
+      "elapsed_ms": 10452.210299998114,
+      "diagnostics": [
+        {
+          "severity": "error",
+          "code": "layout-timeout",
+          "path": "",
+          "message": "Layout exceeded its time limit."
+        }
+      ]
+    },
+    "browser": {
+      "status": 504,
+      "elapsed_ms": 10208,
+      "runtime": {
+        "engineMs": 10204.199999999255,
+        "workerMs": 10204.300000000745,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 10204.599999997765
+      },
+      "diagnostics": [
+        {
+          "severity": "error",
+          "code": "layout-timeout",
+          "path": "",
+          "message": "Layout exceeded its time limit."
+        }
+      ]
+    }
+  },
+  {
+    "case": "sparse-250",
+    "algorithm": "advanced",
+    "mode": "fast",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 2301.146699999663,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 144,
+        "total_edge_length": 59795.04,
+        "diagram_area": 6713116.8,
+        "execution_ms": 1939.924,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 75389,
+              "elapsed_ms": 1776.162,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 75389,
+          "work_limit": 320000
+        },
+        "render_ms": 26.852,
+        "pipeline_ms": 2297.899
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 1403,
+      "runtime": {
+        "engineMs": 1336.4000000022352,
+        "workerMs": 1336.5,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 1338.6000000014901
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 144,
+        "total_edge_length": 59795.04,
+        "diagram_area": 6713116.8,
+        "execution_ms": 1123.2,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 75389,
+              "elapsed_ms": 1030.1,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 75389,
+          "work_limit": 320000
+        },
+        "render_ms": 19,
+        "pipeline_ms": 1315.4
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-250",
+    "algorithm": "advanced",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 4150.795900000958,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 144,
+        "total_edge_length": 59795.04,
+        "diagram_area": 6713116.8,
+        "execution_ms": 3752.769,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 75389,
+              "elapsed_ms": 1748.981,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 60.66660532,
+              "work": 73873,
+              "elapsed_ms": 1826.369,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 149262,
+          "work_limit": 690000
+        },
+        "render_ms": 26.797,
+        "pipeline_ms": 4146.613
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 2747,
+      "runtime": {
+        "engineMs": 2561.300000000745,
+        "workerMs": 2561.400000002235,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 2565.300000000745
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 144,
+        "total_edge_length": 59795.04,
+        "diagram_area": 6713116.8,
+        "execution_ms": 2274.6,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 75389,
+              "elapsed_ms": 1011.6,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 60.66660532,
+              "work": 73873,
+              "elapsed_ms": 1174.7,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 149262,
+          "work_limit": 690000
+        },
+        "render_ms": 78.3,
+        "pipeline_ms": 2534.6
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-250",
+    "algorithm": "advanced",
+    "mode": "quality",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 4500.287099999696,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 144,
+        "total_edge_length": 59795.04,
+        "diagram_area": 6713116.8,
+        "execution_ms": 4131.485,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 75389,
+              "elapsed_ms": 1830.351,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 60.66660532,
+              "work": 73873,
+              "elapsed_ms": 2130.202,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 149262,
+          "work_limit": 1250000
+        },
+        "render_ms": 34.487,
+        "pipeline_ms": 4496.951
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 8175,
+      "runtime": {
+        "engineMs": 7998.60000000149,
+        "workerMs": 7998.699999999255,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 8002.10000000149
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 144,
+        "total_edge_length": 59795.04,
+        "diagram_area": 6713116.8,
+        "execution_ms": 7098.5,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 75389,
+              "elapsed_ms": 3380.5,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 60.66660532,
+              "work": 73873,
+              "elapsed_ms": 3364.2,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 149262,
+          "work_limit": 1250000
+        },
+        "render_ms": 66.1,
+        "pipeline_ms": 7956.1
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-250",
+    "algorithm": "hybrid",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 2660.606599998573,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 144,
+        "total_edge_length": 59795.04,
+        "diagram_area": 6713116.8,
+        "execution_ms": 2184.513,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-fast",
+          "candidates": [
+            {
+              "candidate": "advanced-fast",
+              "status": "valid",
+              "work": 75389,
+              "elapsed_ms": 1940.893,
+              "placement": "indexed",
+              "score": 27,
+              "crossings": 20,
+              "area": 6713116.8
+            }
+          ],
+          "reasons": [
+            "bounded-runtime",
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 250,
+            "transitions": 311,
+            "density": 0.00499598,
+            "edges_per_vertex": 1.244,
+            "scc_count": 250,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 147,
+              "characters": 1746,
+              "longest": 14,
+              "lines": 147
+            }
+          }
+        },
+        "render_ms": 25.858,
+        "pipeline_ms": 2657.349
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 5161,
+      "runtime": {
+        "engineMs": 4986.800000000745,
+        "workerMs": 4987.199999999255,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 4990.699999999255
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 20,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 160,
+        "disconnected_anchors": 0,
+        "edge_bends": 144,
+        "total_edge_length": 59795.04,
+        "diagram_area": 6713116.8,
+        "execution_ms": 4187.2,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-fast",
+          "candidates": [
+            {
+              "candidate": "advanced-fast",
+              "status": "valid",
+              "work": 75389,
+              "elapsed_ms": 3833.5,
+              "placement": "indexed",
+              "score": 27,
+              "crossings": 20,
+              "area": 6713116.8
+            }
+          ],
+          "reasons": [
+            "bounded-runtime",
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 250,
+            "transitions": 311,
+            "density": 0.00499598,
+            "edges_per_vertex": 1.244,
+            "scc_count": 250,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 147,
+              "characters": 1746,
+              "longest": 14,
+              "lines": 147
+            }
+          }
+        },
+        "render_ms": 65.6,
+        "pipeline_ms": 4938.2
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-500",
+    "algorithm": "topology",
+    "mode": "balanced",
+    "native": {
+      "status": 504,
+      "elapsed_ms": 10657.869800001208,
+      "diagnostics": [
+        {
+          "severity": "error",
+          "code": "layout-timeout",
+          "path": "",
+          "message": "Layout exceeded its time limit."
+        }
+      ]
+    },
+    "browser": {
+      "status": 504,
+      "elapsed_ms": 11115,
+      "runtime": {
+        "engineMs": 11101,
+        "workerMs": 11101.300000000745,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 11101.70000000298
+      },
+      "diagnostics": [
+        {
+          "severity": "error",
+          "code": "layout-timeout",
+          "path": "",
+          "message": "Layout exceeded its time limit."
+        }
+      ]
+    }
+  },
+  {
+    "case": "sparse-500",
+    "algorithm": "advanced",
+    "mode": "fast",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 4979.408799998055,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 54,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 432,
+        "disconnected_anchors": 0,
+        "edge_bends": 304,
+        "total_edge_length": 113252.04,
+        "diagram_area": 13462338.24,
+        "execution_ms": 4254.36,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 151391,
+              "elapsed_ms": 3929.159,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 151391,
+          "work_limit": 320000
+        },
+        "render_ms": 55.703,
+        "pipeline_ms": 4972.949
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 9200,
+      "runtime": {
+        "engineMs": 8896.39999999851,
+        "workerMs": 8896.5,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 8907.800000000745
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 54,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 432,
+        "disconnected_anchors": 0,
+        "edge_bends": 304,
+        "total_edge_length": 113252.04,
+        "diagram_area": 13462338.24,
+        "execution_ms": 7354.1,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "fast",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 151391,
+              "elapsed_ms": 6680.6,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 151391,
+          "work_limit": 320000
+        },
+        "render_ms": 119.1,
+        "pipeline_ms": 8818.5
+      },
+      "diagnostics": []
+    }
+  },
+  {
+    "case": "sparse-500",
+    "algorithm": "advanced",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 9147.354100001394,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 54,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 432,
+        "disconnected_anchors": 0,
+        "edge_bends": 304,
+        "total_edge_length": 113252.04,
+        "diagram_area": 13462338.24,
+        "execution_ms": 8363.325,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 151391,
+              "elapsed_ms": 3994.671,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 48.10376645,
+              "work": 147252,
+              "elapsed_ms": 4023.045,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 298643,
+          "work_limit": 690000
+        },
+        "render_ms": 52.787,
+        "pipeline_ms": 9140.608
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 504,
+      "elapsed_ms": 11225,
+      "runtime": {
+        "engineMs": 11208.599999997765,
+        "workerMs": 11209.39999999851,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 11210
+      },
+      "diagnostics": [
+        {
+          "severity": "error",
+          "code": "layout-timeout",
+          "path": "",
+          "message": "Layout exceeded its time limit."
+        }
+      ]
+    }
+  },
+  {
+    "case": "sparse-500",
+    "algorithm": "advanced",
+    "mode": "quality",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 9090.950300000259,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 54,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 432,
+        "disconnected_anchors": 0,
+        "edge_bends": 304,
+        "total_edge_length": 113252.04,
+        "diagram_area": 13462338.24,
+        "execution_ms": 8313.054,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "quality",
+          "selected": "indexed",
+          "candidates": [
+            {
+              "candidate": "indexed",
+              "status": "valid",
+              "score": 27,
+              "work": 151391,
+              "elapsed_ms": 3991.062,
+              "direction": "horizontal"
+            },
+            {
+              "candidate": "compact",
+              "status": "valid",
+              "score": 48.10376645,
+              "work": 147252,
+              "elapsed_ms": 3991.264,
+              "direction": "horizontal"
+            }
+          ],
+          "work": 298643,
+          "work_limit": 1250000
+        },
+        "render_ms": 54.138,
+        "pipeline_ms": 9083.377
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 504,
+      "elapsed_ms": 11300,
+      "runtime": {
+        "engineMs": 11289.5,
+        "workerMs": 11289.60000000149,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 11290.099999997765
+      },
+      "diagnostics": [
+        {
+          "severity": "error",
+          "code": "layout-timeout",
+          "path": "",
+          "message": "Layout exceeded its time limit."
+        }
+      ]
+    }
+  },
+  {
+    "case": "sparse-500",
+    "algorithm": "hybrid",
+    "mode": "balanced",
+    "native": {
+      "status": 200,
+      "elapsed_ms": 5451.765799996792,
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 54,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 432,
+        "disconnected_anchors": 0,
+        "edge_bends": 304,
+        "total_edge_length": 113252.04,
+        "diagram_area": 13462338.24,
+        "execution_ms": 4652.561,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-fast",
+          "candidates": [
+            {
+              "candidate": "advanced-fast",
+              "status": "valid",
+              "work": 151391,
+              "elapsed_ms": 4284.418,
+              "placement": "indexed",
+              "score": 27,
+              "crossings": 54,
+              "area": 13462338.24
+            }
+          ],
+          "reasons": [
+            "bounded-runtime",
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 500,
+            "transitions": 624,
+            "density": 0.002501,
+            "edges_per_vertex": 1.248,
+            "scc_count": 500,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 292,
+              "characters": 3528,
+              "longest": 14,
+              "lines": 292
+            }
+          }
+        },
+        "render_ms": 55.212,
+        "pipeline_ms": 5444.948
+      },
+      "diagnostics": []
+    },
+    "browser": {
+      "status": 200,
+      "elapsed_ms": 9781,
+      "runtime": {
+        "engineMs": 9458.199999999255,
+        "workerMs": 9458.599999997765,
+        "wasmHeapBytes": 30212096,
+        "cold": false,
+        "initMs": 6090.5,
+        "version": "0.29.3",
+        "runtime": "runtime/0.29.3/",
+        "elk": "vendor/elkjs-0.11.0/",
+        "wheel": "engine/447298c2b5e23df5/pretty_smd-0.3.0-py3-none-any.whl",
+        "wheelSha256": "447298c2b5e23df57184779bb37ec3313ba21ed67abdcf5cd1ac690df2dd1c9d",
+        "runtimeBytes": 12685275,
+        "wheelBytes": 101303,
+        "dependencies": {
+          "attrs": "25.2.0",
+          "jsonschema": "4.23.0",
+          "jsonschema-specifications": "2024.10.1",
+          "pyrsistent": "0.20.0",
+          "referencing": "0.36.2",
+          "rpds-py": "0.30.0",
+          "six": "1.17.0",
+          "typing-extensions": "4.15.0"
+        },
+        "roundTripMs": 9468.400000002235
+      },
+      "quality": {
+        "node_overlaps": 0,
+        "label_collisions": 0,
+        "edge_crossings": 54,
+        "label_path_intersections": 0,
+        "broken_paths": 0,
+        "edge_node_intersections": 0,
+        "edge_overlap_length": 432,
+        "disconnected_anchors": 0,
+        "edge_bends": 304,
+        "total_edge_length": 113252.04,
+        "diagram_area": 13462338.24,
+        "execution_ms": 8107.9,
+        "semantic_preservation": true,
+        "optimization": {
+          "mode": "balanced",
+          "selected": "advanced-fast",
+          "candidates": [
+            {
+              "candidate": "advanced-fast",
+              "status": "valid",
+              "work": 151391,
+              "elapsed_ms": 7455.3,
+              "placement": "indexed",
+              "score": 27,
+              "crossings": 54,
+              "area": 13462338.24
+            }
+          ],
+          "reasons": [
+            "bounded-runtime",
+            "optional-external-engine-unavailable"
+          ],
+          "features": {
+            "vertices": 500,
+            "transitions": 624,
+            "density": 0.002501,
+            "edges_per_vertex": 1.248,
+            "scc_count": 500,
+            "largest_scc": 1,
+            "cycle_complexity": 0,
+            "self_loops": 0,
+            "parallel_edges": 0,
+            "hierarchy_depth": 0,
+            "orthogonal_regions": 0,
+            "region_count": 1,
+            "cross_region": 0,
+            "cross_level": 0,
+            "pseudostates": {},
+            "labels": {
+              "count": 292,
+              "characters": 3528,
+              "longest": 14,
+              "lines": 292
+            }
+          }
+        },
+        "render_ms": 126.7,
+        "pipeline_ms": 9405.7
+      },
+      "diagnostics": []
+    }
+  }
+]

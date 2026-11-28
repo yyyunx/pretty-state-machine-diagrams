@@ -163,6 +163,27 @@ async function parity(browser,withStress) {
     console.log("Parity",where);
   }
   await fs.writeFile(path.join(output,"parity.json"),JSON.stringify(report,null,2));
+  const names = ["linear","cycle","self-loop","multilingual","holdout-dense-17","orthogonal"];
+  const external = await page.evaluate(async names=>{
+    const api = window.prettySmdTransport;
+    const all = await api.examples();
+    const results = [];
+    for (const name of names) for (const [algorithm,useElk] of [["elk",true],["hybrid",true]]) {
+      if (!all["gallery-"+name]) continue;
+      let frames = 0, timer;
+      const count = ()=>{frames++;timer=requestAnimationFrame(count);};
+      timer = requestAnimationFrame(count);
+      const response = await api.request("generate",{source:JSON.stringify(all["gallery-"+name]),algorithm,useElk});
+      cancelAnimationFrame(timer);
+      const {quality,runtime,diagnostics} = response.body;
+      results.push({case:name,algorithm,status:response.status,frames,quality,runtime,diagnostics});
+    }
+    return results;
+  },names);
+  const rejected = external.find(row=>row.case==="orthogonal" && row.algorithm==="elk");
+  assert.equal(rejected?.status,422);
+  assert.match(rejected.diagnostics[0].message,/supports a flat/);
+  await fs.writeFile(path.join(output,"external.json"),JSON.stringify(external,null,2));
   if (withStress) {
     const rows = [];
     for (const vector of vectors(true)) {
@@ -181,6 +202,121 @@ async function parity(browser,withStress) {
   await page.close();
 }
 
+async function editor(browser) {
+  const context = await browser.newContext({viewport:{width:1450,height:1060},acceptDownloads:true});
+  const page = await context.newPage();
+  const errors = [];
+  page.on("pageerror",error=>errors.push(error.message));
+  await page.goto(shell+"?case=linear&lang=en");
+  await page.waitForFunction(()=>document.querySelector("#source").value.length>10);
+  assert.equal(await page.locator("#generate").textContent(),"Generate diagram");
+  const initialSource = await page.locator("#source").inputValue();
+  const elk = await request(page,"generate",{source:initialSource,algorithm:"elk"});
+  assert.equal(elk.status,200,JSON.stringify(elk.body.diagnostics));
+  assert.equal(elk.body.quality.optimization.selected,"elk");
+  await fs.writeFile(path.join(output,"linear-elk.svg"),elk.body.svg);
+
+  await page.locator("#generate").click();
+  await page.locator("#drawing svg").waitFor();
+  const initial = await page.evaluate(()=>({model:current.model,layout:current.layout,quality:current.quality}));
+  const id = initial.model.regions[0].vertices.find(item=>item.kind==="state").id;
+  const node = page.locator('[data-node-id="'+id+'"]');
+  await page.locator("#edit-mode").check();
+  await node.scrollIntoViewIfNeeded();
+  const pos = await node.boundingBox();
+  await page.evaluate(()=>{
+    document.querySelector("#canvas").addEventListener("pointerdown",event=>{
+      window._pointer = [event.target.localName,event.target.closest("[data-node-id]")?.outerHTML.slice(0,150),
+        event.target.getAttribute("data-edge-id")];
+    },{once:true,capture:true});
+  });
+  await page.mouse.move(pos.x+pos.width/2,pos.y+pos.height/2);
+  await page.mouse.down();
+  const started = await page.evaluate(()=>({drag,enabled:!document.querySelector("#edit-mode").disabled,
+    checked:document.querySelector("#edit-mode").checked,hit:window._pointer}));
+  assert.equal(started.drag?.id,id,JSON.stringify(started));
+  await page.mouse.move(pos.x+pos.width/2,pos.y+pos.height/2+Math.min(15,pos.height*.3),{steps:5});
+  const preview = await page.evaluate(()=>({point:drag?.next,ghost:!!document.querySelector(".node-ghost")}));
+  assert(preview.ghost && preview.point,JSON.stringify(preview));
+  await page.mouse.up();
+  await page.waitForFunction(()=>document.querySelector("#edit-status").textContent.length>0,{},{timeout:12000})
+    .catch(async error=>{
+      await page.screenshot({path:path.join(output,"editor-failure.png"),fullPage:true});
+      const state = await page.evaluate(({x,y})=>({target:document.elementFromPoint(x,y)?.outerHTML.slice(0,300),
+        busy,canvas:document.querySelector("#canvas").getBoundingClientRect().toJSON()}),
+      {x:pos.x+pos.width/2,y:pos.y+pos.height/2});
+      throw new Error(error.message+" "+JSON.stringify({pos,state,errors}));
+    });
+  assert.match(await page.locator("#edit-status").textContent(),/Rerouted/);
+  const moved = await page.evaluate(()=>({model:current.model,layout:current.layout,edit:current.edit,quality:current.quality}));
+  exact(moved.model,initial.model);
+  assert.notEqual(moved.layout.nodes[id].bounds.y,initial.layout.nodes[id].bounds.y);
+  assert.equal(moved.edit.unaffected_displacement,0);
+  for (const [key,part] of Object.entries(initial.layout.nodes)) if (key!==id) exact(moved.layout.nodes[key],part);
+  await page.locator("#toggle-lock").click();
+  assert(await node.evaluate(item=>item.classList.contains("locked-node")));
+  await page.locator("#generate").click();
+  await page.waitForFunction(()=>!document.querySelector("#generate").disabled);
+  const relaid = await page.evaluate(id=>current.layout.nodes[id].bounds,id);
+  exact(relaid,moved.layout.nodes[id].bounds,"locked node after automatic layout");
+  await page.locator("#undo").click();
+  await page.keyboard.press("Control+z");
+  assert(!(await node.evaluate(item=>item.classList.contains("locked-node"))));
+  await page.locator("#redo").click();
+  assert(await node.evaluate(item=>item.classList.contains("locked-node")));
+
+  await page.locator("#example").selectOption("nested");
+  await page.locator("#algorithm").selectOption("hybrid");
+  await page.locator("#generate").click();
+  await page.waitForFunction(()=>current?.quality.optimization?.features.hierarchy_depth>0);
+  const nested = await page.evaluate(()=>({model:current.model,layout:current.layout,
+    composite:current.model.regions[0].vertices.find(item=>item.kind==="composite").id}));
+  await page.locator('[data-node-id="'+nested.composite+'"]').press("Enter");
+  await page.locator("#toggle-collapse").click();
+  await page.waitForFunction(()=>document.querySelector("#edit-status").textContent.includes("Hidden internal nodes"));
+  assert(await page.locator("#drawing [data-node-id]").count()<Object.keys(nested.layout.nodes).length);
+  exact(await page.evaluate(()=>current.model),nested.model);
+  const projection = await page.evaluate(()=>({summary:projection.summary,svg:projection.svg,full:current.svg}));
+  assert(Object.values(projection.summary)[0].vertices>0);
+  await fs.writeFile(path.join(output,"nested-hybrid.svg"),projection.full);
+  await fs.writeFile(path.join(output,"nested-collapsed.svg"),projection.svg);
+  await page.screenshot({path:path.join(output,"editor.png"),fullPage:true});
+  await page.locator("#toggle-collapse").click();
+  await page.waitForFunction(()=>projection===null);
+  assert.equal(await page.locator("#drawing [data-node-id]").count(),Object.keys(nested.layout.nodes).length);
+
+  await page.locator("#workspace summary").click();
+  await page.locator("#auto-save").check();
+  const [download] = await Promise.all([page.waitForEvent("download"),page.locator("#workspace-save").click()]);
+  assert.equal(download.suggestedFilename(),"diagram.workspace.json");
+  const workspace = await fs.readFile(await download.path());
+  await fs.writeFile(path.join(output,"nested.workspace.json"),workspace);
+  assert(workspace.includes(Buffer.from(nested.composite)));
+  await page.reload();
+  await page.locator("#workspace summary").click();
+  await page.locator("#workspace-restore").click();
+  await page.waitForFunction(()=>document.querySelector("#edit-status").textContent==="Workspace loaded.");
+  exact(await page.evaluate(()=>current.model),nested.model);
+  await page.locator("#workspace-clear").click();
+  assert(await page.locator("#workspace-restore").isDisabled());
+  await page.locator("#workspace-file").setInputFiles({name:"project.json",mimeType:"application/json",buffer:workspace});
+  await page.waitForFunction(()=>!document.querySelector("#workspace-file").disabled);
+  exact(await page.evaluate(()=>current.layout),nested.layout);
+  await page.locator("#offline-download").click();
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller,{},{timeout:90000});
+  await context.setOffline(true);
+  await page.reload();
+  await page.waitForFunction(()=>document.querySelector("#source").value.length>10);
+  await page.locator("#generate").click();
+  await page.locator("#drawing svg").waitFor({timeout:60000});
+  assert.equal(await page.evaluate(()=>navigator.onLine),false);
+  await context.setOffline(false);
+  assert.deepEqual(errors,[]);
+  await fs.writeFile(path.join(output,"incremental.json"),JSON.stringify({initial:initial.quality,edited:moved.quality,
+    edit:moved.edit},null,2));
+  await context.close();
+}
+
 (async () => {
   await fs.mkdir(output,{recursive:true});
   const server = process.env.P57_LIVE ? null : await openServer();
@@ -188,8 +324,14 @@ async function parity(browser,withStress) {
   let browser;
   try {
     browser = await chromium.launch({headless:true,executablePath:process.env.CHROME||undefined});
-    const cold = await smoke(browser);
-    console.log("Runtime",JSON.stringify(cold));
+    if (!process.env.P57_BENCHMARK_ONLY) {
+      if (!process.env.P57_EDITOR_ONLY) {
+        const cold = await smoke(browser);
+        console.log("Runtime",JSON.stringify(cold));
+      }
+      await editor(browser);
+      console.log("ELK, Hybrid, editor, workspace and offline passed.");
+    }
     if (!process.env.P57_SMOKE_ONLY) await parity(browser,Boolean(process.env.P57_STRESS));
   } finally {
     if (browser) await browser.close();

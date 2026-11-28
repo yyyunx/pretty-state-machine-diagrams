@@ -6,11 +6,15 @@
 <title>Pretty State Machine Diagrams | Group F</title>
 <link rel="stylesheet" href="/app.css">
 <script src="/app.js" defer></script>
+<script src="/editor.js" defer></script>
 </head>
 <body>
 <header class="banner">
   <div><p class="course">NSYSU · Group F</p><h1>Pretty State Machine Diagrams</h1></div>
-  <button id="theme" type="button" aria-pressed="false">深色模式</button>
+  <div class="actions">
+    <label for="language">語言</label><select id="language"><option value="zh-Hant">繁體中文</option><option value="en">English</option></select>
+    <button id="theme" type="button" aria-pressed="false">深色模式</button>
+  </div>
 </header>
 <main class="workspace">
   <section class="editor panel" aria-labelledby="input-title">
@@ -29,7 +33,7 @@
     <textarea id="source" spellcheck="false" autocomplete="off" placeholder="貼上 SMD 或已解析的 Mock Converter JSON"></textarea>
     <div class="paired">
       <div><label for="algorithm">排版引擎</label><select id="algorithm">
-        <option value="topology">Phase 3 拓樸</option><option value="advanced">進階最佳化</option><option value="legacy">原始基準</option>
+        <option value="topology">Phase 3 拓樸</option><option value="hybrid">Auto／Hybrid</option><option value="advanced">進階最佳化</option><option value="legacy">原始基準</option>
       </select></div>
       <div><label for="direction">方向</label><select id="direction">
         <option value="horizontal">水平</option><option value="vertical">垂直</option>
@@ -41,6 +45,7 @@
       <div class="checks">
         <label><input id="rotate" type="checkbox">可試用另一個方向</label>
         <label><input id="compare" type="checkbox" checked>產生 Phase 3 對照</label>
+        <label id="elk-option" hidden><input id="use-elk" type="checkbox">密集平面圖比較 ELK</label>
       </div>
     </div>
     <details id="settings"><summary>排版參數</summary>
@@ -64,6 +69,8 @@
       <button id="cancel" type="button" hidden>取消運算</button>
     </div>
     <p id="runtime-note" class="runtime-note" aria-live="polite" hidden></p>
+    <div id="offline" class="offline" hidden><button id="offline-download" type="button">下載離線引擎</button>
+      <p id="offline-status" aria-live="polite"></p></div>
     <p id="status" role="status" aria-live="polite"></p>
     <details id="diagnostics"><summary>驗證與診斷</summary><ul id="diagnostic-list"></ul></details>
   </section>
@@ -75,6 +82,15 @@
         <button id="fullscreen" type="button">全螢幕</button>
       </div>
     </div>
+    <div class="actions edit-tools" aria-label="編輯圖形">
+      <label><input id="edit-mode" type="checkbox" disabled>拖曳節點</label>
+      <button id="toggle-lock" type="button" disabled aria-pressed="false">鎖定節點</button>
+      <button id="toggle-collapse" type="button" disabled aria-pressed="false">收合複合狀態</button>
+      <button id="undo" type="button" disabled>復原</button>
+      <button id="redo" type="button" disabled>重做</button>
+      <button id="reset-layout" type="button" disabled>恢復自動排版</button>
+    </div>
+    <p id="edit-status" class="runtime-note" aria-live="polite"></p>
     <div id="comparison" class="comparison" hidden>
       <div class="actions" aria-label="版本比較">
         <button id="before" type="button" aria-pressed="false">Phase 3</button>
@@ -95,12 +111,22 @@
     </details>
     <div class="viewer-bottom">
       <div class="actions"><label for="export">匯出</label><select id="export">
-        <option value="svg">SVG</option><option value="png">PNG</option><option value="model">SMD JSON</option>
+        <option value="svg">SVG</option><option value="svg-original">SVG（完整階層）</option><option value="png">PNG</option><option value="model">SMD JSON</option>
         <option value="layout">Layout JSON</option><option value="quality">品質報告 JSON</option>
       </select><button id="download" type="button" disabled>下載</button></div>
       <p id="time"></p>
     </div>
-    <details id="quality"><summary>排版品質</summary><dl id="quality-list"></dl></details>
+    <details id="workspace"><summary>工作區</summary>
+      <div class="actions">
+        <button id="workspace-save" type="button" disabled>下載工作區</button>
+        <button id="workspace-restore" type="button" disabled>還原裝置上的工作區</button>
+        <button id="workspace-clear" type="button">清除裝置副本</button>
+      </div>
+      <label for="workspace-file">開啟工作區 JSON</label><input id="workspace-file" type="file" accept=".json,application/json">
+      <label class="edit-tools"><input id="auto-save" type="checkbox">只在這部裝置自動保存</label>
+    </details>
+    <details id="quality"><summary>排版品質</summary><p id="selection" hidden></p>
+      <ul id="candidate-list" hidden></ul><dl id="quality-list"></dl></details>
     <details id="inspector"><summary>選取的圖元</summary><pre id="item">點選狀態或轉移查看資料。</pre></details>
   </section>
 </main>

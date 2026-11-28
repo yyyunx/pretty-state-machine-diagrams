@@ -396,7 +396,7 @@ def layout(model, options=None, *, algorithm="topology", mode="balanced", timeou
     """Compute a Layout JSON object without mutating the model."""
     if algorithm == "legacy":
         return legacy.layout(model)
-    if algorithm not in ("topology","advanced"):
+    if algorithm not in ("topology","advanced","hybrid"):
         raise LayoutError(f"Unknown layout algorithm {algorithm!r}")
     if options is None:
         options = LayoutOptions()
@@ -405,6 +405,9 @@ def layout(model, options=None, *, algorithm="topology", mode="balanced", timeou
     if algorithm == "advanced":
         from .advanced import optimize
         return optimize(model, options, mode=mode, timeout=timeout, allow_rotate=allow_rotate).layout
+    if algorithm == "hybrid":
+        from .hybrid import optimize_hybrid
+        return optimize_hybrid(model,options,mode=mode,timeout=timeout,allow_rotate=allow_rotate).layout
     if timeout is not None:
         from .budget import SearchBudget
         budget = SearchBudget(4_000_000,timeout)

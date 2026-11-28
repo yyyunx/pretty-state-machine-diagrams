@@ -16,6 +16,7 @@ ASSETS = {
     "/": ("index.html", "text/html; charset=utf-8"),
     "/app.css": ("app.css", "text/css; charset=utf-8"),
     "/app.js": ("app.js", "text/javascript; charset=utf-8"),
+    "/editor.js": ("editor.js", "text/javascript; charset=utf-8"),
 }
 CSP = ("default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; "
        "img-src 'self' blob:; base-uri 'none'; frame-ancestors 'none'; form-action 'none'")
@@ -122,7 +123,7 @@ class Handler(BaseHTTPRequestHandler):
         if not self._local():
             return
         action = self.path.removeprefix("/api/")
-        if action not in ("generate","format","validate") or not self.path.startswith("/api/"):
+        if action not in ("generate","format","validate","edit","collapse","workspace") or not self.path.startswith("/api/"):
             self._error(404, "Resource not found.")
             return
         if self.headers.get_content_type() != "application/json" or self.headers.get("Transfer-Encoding"):

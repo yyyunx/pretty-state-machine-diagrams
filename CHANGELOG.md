@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 Experimental
+
+- Pyodide Web Worker 在瀏覽器執行原有 Python 引擎。支援真實階段進度、取消、逾時重建、JSON 驗證及 PNG 匯出。
+- Auto／Hybrid 依圖形特徵安排候選，確認合法幾何後依正規化目標挑選結果。ELK 可作為瀏覽器選配平面引擎，Graphviz 保留原生選配入口。
+- 支援拖曳、增量路由、單一或多個節點鎖定、收合、復原、重做及工作區 JSON。
+- 加入中英文介面、選配裝置自動保存、離線引擎、Gallery 一鍵開啟案例及 Hybrid 比較。
+- GitHub Pages 在 Chromium 驗收後由核准的 main 工作流發布。原生 wheel、CLI、SDK 及 SMD／Layout Schema 維持相容。
+
 ## 0.2.0 Experimental
 
 - 增加 Advanced Fast、Balanced、Quality，多目標比較的兩種基準仍可使用。

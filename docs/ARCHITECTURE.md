@@ -10,6 +10,10 @@ Process Algebra + interaction definitions
 
 Semantic Model 擁有階層、狀態、轉移和行為。Layout Engine 以唯讀 Model 計算幾何資料。Renderer 依同一份 Model 選擇圖形與標籤，再按 Layout 放置元素。應用程式語言、CLI 或函式介面、如何載入元件、排版方式及 SVG 等輸出選項待共同決策。Python 3.10+ 與 `unittest` 提供這次的共用驗證。
 
+## 目前的應用入口
+
+原生 CLI、SDK、本機 Web 和瀏覽器的 Pyodide Worker 使用 Python 管線。Web 入口以 JSON Bridge 封裝驗證、生成、增量路由、收合和工作區還原。SMD 與 Layout 仍用共同 Schema。收合畫面是可丟棄的投影。Hybrid 候選透過硬性幾何檢查後才比較品質。架構、平台界線及離線版本策略見 [Browser Runtime](BROWSER_RUNTIME.md)。
+
 ## Converter 確認項目
 
 老師將 Process Algebra Converter 分派給 R、S 組。接手可用的輸出之前，Semantic Model 負責與兩組確認下列資料及實際樣本。

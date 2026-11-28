@@ -258,6 +258,10 @@ class _SVG:
             placement = self.layout["nodes"][vertex_id]
             x, y, w, h = _box(placement["bounds"], f"node {vertex_id}")
             kind, name = vertex["kind"], vertex.get("displayName")
+            lines = behavior_lines(vertex)
+            if not name and not lines:
+                continue
+            self.add(f'<g data-node-label-id="{_esc(vertex_id)}">')
             if name:
                 lb = placement.get("labelBounds")
                 if lb:
@@ -273,7 +277,6 @@ class _SVG:
                 if kind in ("composite", "pseudostate", "final"):
                     self.rect(lx, ly, lw, lh, fill="white", stroke="none", sw=0)
                 self.multiline(lx+lw/2, ly+13, text_lines(name), size=12)
-            lines = behavior_lines(vertex)
             if lines:
                 heading = 28 + max(0, len(text_lines(name)) - 1) * 14 if name else 8
                 if kind == "composite":
@@ -282,6 +285,7 @@ class _SVG:
                 self.line(x+1, divider, x+w-1, divider, stroke="#9aa2aa", sw=1)
                 for index, line in enumerate(lines):
                     self.text(x+8, divider+14+index*13, line, size=9.5, anchor="start")
+            self.add("</g>")
 
     def build(self) -> str:
         validate_pair(self.model, self.layout)

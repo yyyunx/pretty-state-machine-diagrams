@@ -14,7 +14,7 @@ def reference_vectors():
         yield name,"topology","balanced",model
         if name in ("linear","resolvedBranch","nested","orthogonal","pseudostates"):
             for algorithm,mode in (("legacy","balanced"),("advanced","fast"),("advanced","balanced"),
-                                   ("advanced","quality")):
+                                   ("advanced","quality"),("hybrid","balanced")):
                 yield name,algorithm,mode,model
 
 
@@ -33,7 +33,8 @@ def build(stress=False):
     source = reference_vectors() if not stress else (
         (f"sparse-{n}",algorithm,mode,generated_case("sparse",n,HOLDOUT_SEED))
         for n in (10,25,50,100,250,500) for algorithm,mode in (
-            ("topology","balanced"),("advanced","fast"),("advanced","balanced"),("advanced","quality")))
+            ("topology","balanced"),("advanced","fast"),("advanced","balanced"),("advanced","quality"),
+            ("hybrid","balanced")))
     for name,algorithm,mode,model in source:
         payload = {"source":json.dumps(model,ensure_ascii=False),"format":"smd",
                    "algorithm":algorithm,"mode":mode}

@@ -5,6 +5,7 @@ const config = self.PRETTY_RUNTIME;
 const workerRoot = new URL("./",self.location.href);
 let runtime;
 let loaded;
+let elk;
 
 function report(id,phase) {
   self.postMessage({id,type:"progress",phase});
@@ -38,13 +39,41 @@ self.onmessage = async event => {
       self.postMessage({id,type:"result",status:200,body:{engine:loaded,cold}});
       return;
     }
-    python.globals.set("_smd_action",action);
-    python.globals.set("_smd_payload",JSON.stringify(payload));
     python.globals.set("_smd_progress",phase => report(id,phase));
     const before = performance.now();
     let result;
     try {
-      result = JSON.parse(python.runPython("execute_json(_smd_action, _smd_payload, _smd_progress)"));
+      const execute = (operation,data) => {
+        python.globals.set("_smd_action",operation);
+        python.globals.set("_smd_payload",JSON.stringify(data));
+        return JSON.parse(python.runPython("execute_json(_smd_action, _smd_payload, _smd_progress)"));
+      };
+      if (action==="generate" && (payload.algorithm==="elk" || (payload.algorithm==="hybrid" && payload.useElk))) {
+        const prepared = execute("elk-input",payload);
+        if (prepared.status!==200 && payload.algorithm==="elk") {
+          result = prepared;
+        } else if (prepared.status!==200) {
+          payload.elkWarning = prepared.body.diagnostics?.[0]?.message || "ELK rejected the model.";
+        } else if (prepared.body.graph) {
+          try {
+            report(id,"elk");
+            if (!elk) {
+              const base = new URL(config.elk,workerRoot);
+              importScripts(new URL("elk-api.js",base).href);
+              elk = new self.ELK({workerUrl:new URL("elk-worker.min.js",base).href,algorithms:["layered"]});
+            }
+            const started = performance.now();
+            payload.elkLayout = await elk.layout(prepared.body.graph);
+            payload.elkMs = performance.now()-started;
+          } catch (error) {
+            payload.elkWarning = String(error.message || error);
+            if (payload.algorithm==="elk") result = {status:422,body:{diagnostics:[{
+              severity:"error",code:"elk-error",path:"",message:payload.elkWarning,
+            }]}};
+          }
+        }
+      }
+      result ??= execute(action,payload);
     } finally {
       for (const key of ["_smd_action","_smd_payload","_smd_progress"]) python.globals.delete(key);
     }

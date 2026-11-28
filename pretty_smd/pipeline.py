@@ -9,6 +9,7 @@ from time import perf_counter
 
 from src.layout.advanced import optimize
 from src.layout.engine import LayoutOptions, layout
+from src.layout.hybrid import optimize_hybrid
 from src.layout.quality import evaluate, model_index
 from src.model import MockConverterAdapter, transform_model, validate_model
 from src.model.model import Diagnostic
@@ -126,7 +127,7 @@ class GenerationResult:
 
 def generate(document, *, input_format="auto", case=None, adapter=None, options=None, algorithm="topology",
              uml=True, max_vertices=500, max_edges=2400, mode="balanced", timeout=None, allow_rotate=False,
-             progress=None):
+             progress=None, external_name=None, external_layout=None):
     """Generate SVG, SMD, Layout Data and a quality report from the same model."""
     start = perf_counter()
     if progress is not None:
@@ -142,6 +143,11 @@ def generate(document, *, input_format="auto", case=None, adapter=None, options=
     optimization = None
     if algorithm == "advanced":
         optimization = optimize(model,options,mode=mode,timeout=timeout,allow_rotate=allow_rotate)
+        geometry = optimization.layout
+    elif algorithm == "hybrid":
+        external = (lambda remaining: external_layout(model,remaining)) if external_layout is not None else None
+        optimization = optimize_hybrid(model,options,mode=mode,timeout=timeout,allow_rotate=allow_rotate,
+                                       external_name=external_name,external_layout=external)
         geometry = optimization.layout
     else:
         geometry = layout(model,options,algorithm=algorithm,timeout=timeout)

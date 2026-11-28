@@ -1,0 +1,42 @@
+{
+  "initial": {
+    "node_overlaps": 0,
+    "label_collisions": 0,
+    "edge_crossings": 0,
+    "label_path_intersections": 0,
+    "broken_paths": 0,
+    "edge_node_intersections": 0,
+    "edge_overlap_length": 0,
+    "disconnected_anchors": 0,
+    "edge_bends": 0,
+    "total_edge_length": 192.48,
+    "diagram_area": 100854.16,
+    "execution_ms": 25.3,
+    "semantic_preservation": true,
+    "render_ms": 2,
+    "pipeline_ms": 57.3
+  },
+  "edited": {
+    "node_overlaps": 0,
+    "label_collisions": 0,
+    "edge_crossings": 0,
+    "label_path_intersections": 0,
+    "broken_paths": 0,
+    "edge_node_intersections": 0,
+    "edge_overlap_length": 0,
+    "disconnected_anchors": 0,
+    "edge_bends": 4,
+    "total_edge_length": 210.672,
+    "diagram_area": 100854.16,
+    "execution_ms": 29.8,
+    "semantic_preservation": true
+  },
+  "edit": {
+    "rerouted": 2,
+    "affected": 2,
+    "moved": 1,
+    "unaffected_displacement": 0,
+    "fallback": false,
+    "total_ms": 40.8
+  }
+}

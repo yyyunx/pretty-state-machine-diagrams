@@ -46,11 +46,18 @@ details { border-top:1px solid var(--line);padding:.65rem 0 .1rem;margin-top:.75
 .canvas.dragging {cursor:grabbing;}
 #drawing { position:absolute;top:0;left:0;transform-origin:0 0; }
 #drawing svg {display:block;max-width:none;user-select:none;}
-#drawing [data-node-id],#drawing [data-edge-id] {cursor:pointer;}
+#drawing [data-node-id],#drawing [data-node-label-id],#drawing [data-edge-id] {cursor:pointer;}
 #drawing polyline:hover,#drawing polyline:focus {stroke:#286cce;stroke-width:3;}
 #drawing polyline.related-edge {stroke:#1964bb;stroke-width:3;}
 #drawing g.related-edge text {fill:#1454ad;font-weight:700;}
 #drawing g.selected-node :is(rect,circle,path,line) {stroke:#1964bb;stroke-width:3;}
+#drawing g.locked-node > :is(rect,circle,path,line) {stroke:#8a5300;stroke-width:2.5;stroke-dasharray:4 2;}
+#drawing .node-ghost {pointer-events:none;fill:#629aed38;stroke:#195fb0;stroke-width:2;stroke-dasharray:5 3;}
+.edit-tools {margin-top:.65rem;}
+.edit-tools input {width:auto;min-height:0;vertical-align:middle;margin-right:.3rem;}
+.edit-tools label {display:inline-flex;align-items:center;}
+.offline {margin:.55rem 0;}
+.offline p {font-size:.85rem;margin:.25rem 0;}
 .checks {display:flex;flex-wrap:wrap;gap:.2rem .8rem;}
 .checks input {width:auto;min-height:0;vertical-align:middle;margin-right:.35rem;}
 .settings-files {margin-top:.65rem;}
