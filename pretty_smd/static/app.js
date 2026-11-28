@@ -582,8 +582,13 @@ async function pngFrom(result) {
     output.height = Math.max(1,Math.ceil(height*scale));
     output.getContext("2d").drawImage(image,0,0,output.width,output.height);
     const blob = await new Promise(resolve => output.toBlob(resolve,"image/png"));
-    if (!blob) throw new Error("無法匯出 PNG。");
-    return blob;
+    if (blob) return blob;
+    // Some Safari sessions decline the asynchronous encoding of a detached canvas.
+    const encoded = output.toDataURL("image/png");
+    const prefix = "data:image/png;base64,";
+    if (!encoded.startsWith(prefix)) throw new Error(tr("無法匯出 PNG。"));
+    const bytes = Uint8Array.from(atob(encoded.slice(prefix.length)),character=>character.charCodeAt(0));
+    return new Blob([bytes],{type:"image/png"});
   } finally {
     URL.revokeObjectURL(url);
   }

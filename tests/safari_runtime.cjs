@@ -50,6 +50,7 @@ async function main() {
     await command("POST",prefix+"/url",{url:report.url+"?lang=en"});
     const exercise = async callback => {
       let stage = "load the classroom examples";
+      let rendered;
       const wait = async predicate => {
         const stop = performance.now()+65000;
         while (!predicate()) {
@@ -78,23 +79,27 @@ async function main() {
         });
         if (status!==200 || !body.svg?.includes("<svg"))
           throw new Error(JSON.stringify(body.diagnostics));
+        rendered = {svg:body.svg,engine:body.quality.optimization.selected,
+          semantic:body.quality.semantic_preservation,userAgent:navigator.userAgent};
         const png = await window.pngFrom(body);
         const signature = Array.from(new Uint8Array(await png.slice(0,8).arrayBuffer()));
-        callback({svg:body.svg,engine:body.quality.optimization.selected,signature,
-          semantic:body.quality.semantic_preservation,userAgent:navigator.userAgent});
+        callback({...rendered,signature});
       } catch (error) {
-        callback({failure:stage+": "+String(error),status:document.querySelector("#status")?.textContent,
+        callback({...rendered,failure:stage+": "+String(error),status:document.querySelector("#status")?.textContent,
           diagnostics:document.querySelector("#diagnostic-list")?.textContent});
       }
     };
     const result = await command("POST",prefix+"/execute/async",{script:"("+exercise.toString()+")(arguments[0]);",args:[]});
-    assert(!result.failure,JSON.stringify(result));
-    assert.equal(result.semantic,true);
-    assert.deepEqual(result.signature,[137,80,78,71,13,10,26,10]);
-    await fs.writeFile(path.join(output,"safari.svg"),result.svg);
+    if (result.svg) {
+      await fs.writeFile(path.join(output,"safari.svg"),result.svg);
+      Object.assign(report,{svgGenerated:true,engine:result.engine,userAgent:result.userAgent});
+    }
     const screenshot = await command("GET",prefix+"/screenshot");
     await fs.writeFile(path.join(output,"safari.png"),Buffer.from(screenshot,"base64"));
-    Object.assign(report,{status:"passed",engine:result.engine,userAgent:result.userAgent});
+    assert(!result.failure,JSON.stringify({failure:result.failure,status:result.status,diagnostics:result.diagnostics}));
+    assert.equal(result.semantic,true);
+    assert.deepEqual(result.signature,[137,80,78,71,13,10,26,10]);
+    Object.assign(report,{status:"passed",pngSignature:result.signature});
   } catch(error) {
     report.message = error.message;
     throw error;

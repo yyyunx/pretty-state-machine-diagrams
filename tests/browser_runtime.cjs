@@ -130,6 +130,15 @@ async function smoke(browser) {
       if (type==="quality") assert.equal(parsed.semantic_preservation,true);
     }
   }
+  const fallbackSignature = await page.evaluate(async ()=>{
+    const nativeEncoder = HTMLCanvasElement.prototype.toBlob;
+    HTMLCanvasElement.prototype.toBlob = callback=>callback(null);
+    try {
+      const image = await pngFrom(current);
+      return Array.from(new Uint8Array(await image.slice(0,8).arrayBuffer()));
+    } finally { HTMLCanvasElement.prototype.toBlob = nativeEncoder; }
+  });
+  assert.deepEqual(fallbackSignature,[137,80,78,71,13,10,26,10]);
   await page.locator("#settings summary").click();
   const [settings] = await Promise.all([page.waitForEvent("download"),page.locator("#save-settings").click()]);
   assert.equal(settings.suggestedFilename(),"pretty-smd.settings.json");

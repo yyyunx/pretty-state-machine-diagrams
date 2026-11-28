@@ -323,6 +323,7 @@ const english = new Map(Object.entries({
   "其他節點位移":"Displacement of other nodes","已隱藏的內部節點":"Hidden internal nodes","內部轉移":"Internal transitions",
   "裝置無法保存此工作區，請下載檔案。":"This device could not save the workspace. Download it instead.",
   "無法開啟工作區。":"Could not open workspace.","工作區已載入。":"Workspace loaded.","工作區檔案超過 1 MiB。":"Workspace exceeds 1 MiB.",
+  "無法匯出 PNG。":"Could not encode the diagram as PNG.",
   "預覽操作":"Preview controls","版本比較":"Version comparison","編輯圖形":"Edit diagram",
   "可拖曳及縮放的狀態機圖":"Pannable and zoomable diagram","圖形縮圖":"Diagram minimap",
   "Benchmark · 50 節點稀疏圖":"Benchmark · 50-node sparse graph",
