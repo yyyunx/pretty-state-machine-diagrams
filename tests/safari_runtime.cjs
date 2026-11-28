@@ -85,8 +85,17 @@ async function main() {
         const signature = Array.from(new Uint8Array(await png.slice(0,8).arrayBuffer()));
         callback({...rendered,signature});
       } catch (error) {
+        let canvasEncoding;
+        if (rendered) {
+          try {
+            const probe = document.createElement("canvas");
+            probe.width = probe.height = 16;
+            probe.getContext("2d",{willReadFrequently:true}).fillRect(0,0,16,16);
+            canvasEncoding = probe.toDataURL("image/png").startsWith("data:image/png;base64,");
+          } catch { canvasEncoding = false; }
+        }
         callback({...rendered,failure:stage+": "+String(error),status:document.querySelector("#status")?.textContent,
-          diagnostics:document.querySelector("#diagnostic-list")?.textContent});
+          diagnostics:document.querySelector("#diagnostic-list")?.textContent,canvasEncoding});
       }
     };
     const result = await command("POST",prefix+"/execute/async",{script:"("+exercise.toString()+")(arguments[0]);",args:[]});
@@ -96,7 +105,8 @@ async function main() {
     }
     const screenshot = await command("GET",prefix+"/screenshot");
     await fs.writeFile(path.join(output,"safari.png"),Buffer.from(screenshot,"base64"));
-    assert(!result.failure,JSON.stringify({failure:result.failure,status:result.status,diagnostics:result.diagnostics}));
+    assert(!result.failure,JSON.stringify({failure:result.failure,status:result.status,
+      diagnostics:result.diagnostics,canvasEncoding:result.canvasEncoding}));
     assert.equal(result.semantic,true);
     assert.deepEqual(result.signature,[137,80,78,71,13,10,26,10]);
     Object.assign(report,{status:"passed",pngSignature:result.signature});

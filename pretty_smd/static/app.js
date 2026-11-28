@@ -580,7 +580,9 @@ async function pngFrom(result) {
     const output = document.createElement("canvas");
     output.width = Math.max(1,Math.ceil(width*scale));
     output.height = Math.max(1,Math.ceil(height*scale));
-    output.getContext("2d").drawImage(image,0,0,output.width,output.height);
+    const context = output.getContext("2d",{willReadFrequently:true});
+    if (!context) throw new Error(tr("無法匯出 PNG。"));
+    context.drawImage(image,0,0,output.width,output.height);
     const blob = await new Promise(resolve => output.toBlob(resolve,"image/png"));
     if (blob) return blob;
     // Some Safari sessions decline the asynchronous encoding of a detached canvas.
