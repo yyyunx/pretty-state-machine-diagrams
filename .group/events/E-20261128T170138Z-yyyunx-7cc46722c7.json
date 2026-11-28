@@ -1,0 +1,17 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261128T170138Z-yyyunx-7cc46722c7",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-28T17:01:38.800851Z",
+  "related_events": [
+    "E-20261128T155807Z-yyyunx-4fa143b32c"
+  ],
+  "summary": "Final Integration 已驗證 #5 → #6 → #7 的祖先關係。三張 PR 仍待組員審查。PR #7 提交 ae2ba4a 包含課堂快速入門、共享網站產物的跨瀏覽器驗收與 Pages 發布門檻。Windows 本機 Chromium、實際 Microsoft Edge、Firefox、WebKit 的生成／編輯／匯出與手機、平板視窗測試通過，84 項原生測試與五例通過。Pages 尚未啟用，需由有權限的成員選 GitHub Actions。正式 R/S Converter 及教材語意待外部提供。",
+  "evidence": [
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/7",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/actions/runs/46168114398",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/ae2ba4a9f191c5ebd127e9d86e5e4339d68f6d75/docs/FINAL_INTEGRATION.md"
+  ]
+}
