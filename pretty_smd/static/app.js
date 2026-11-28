@@ -17,6 +17,7 @@ const transport = window.prettySmdTransport || {
   },
 };
 const phases = {initializing:"初始化 Python Worker",runtime:"正在載入 Python 與 WebAssembly",
+  packages:"正在載入 Python 套件與驗證依賴",imports:"正在初始化驗證及排版模組",
   package:"正在載入 Pretty SMD 套件",dependencies:"正在載入 Schema 驗證依賴",ready:"Python 引擎就緒",
   validate:"驗證模型",layout:"計算排版",render:"產生 SVG",quality:"計算品質",compare:"計算 Phase 3 對照",
   elk:"載入選配 ELK 並計算平面排版"};
@@ -61,6 +62,8 @@ function formatControls() {
   el("validate").disabled = busy || unavailable;
   el("format-json").disabled = busy || unavailable;
   el("cancel").disabled = !busy;
+  for (const button of document.querySelectorAll("[data-lesson]"))
+    button.disabled = busy || !Object.hasOwn(samples,button.dataset.lesson);
   el("direction").disabled = legacy;
   for (const input of document.querySelectorAll("[data-option]")) input.disabled = legacy;
   editorControls();
@@ -127,9 +130,10 @@ function show(result) {
   el("comparison").hidden = !result.baseline;
   if (result.baseline) {
     const b = result.baseline.quality, a = result.quality;
-    el("delta").textContent = "交叉 " + b.edge_crossings + " → " + a.edge_crossings
-      + "　轉折 " + b.edge_bends + " → " + a.edge_bends
-      + "　排版時間 " + b.execution_ms + " → " + a.execution_ms + " ms";
+    el("after").textContent = a.optimization?.mode==="elk" ? "ELK" : tr("本次結果");
+    el("delta").textContent = tr("連線交叉") + " " + b.edge_crossings + " → " + a.edge_crossings
+      + "　" + tr("轉折數") + " " + b.edge_bends + " → " + a.edge_bends
+      + "　" + tr("排版時間（ms）") + " " + b.execution_ms + " → " + a.execution_ms;
   }
   tree();
   diagnostics(result.diagnostics);
@@ -171,7 +175,7 @@ function showVersion(before) {
       candidate.elapsed_ms===undefined ? null : candidate.elapsed_ms+" ms", candidate.detail].filter(Boolean).join(" · ");
     candidates.append(row);
   }
-  const runtime = result.runtime ? " · 瀏覽器 Python " + Math.round(result.runtime.engineMs) + " ms" : "";
+  const runtime = result.runtime ? " · " + tr("瀏覽器 Python") + " " + Math.round(result.runtime.engineMs) + " ms" : "";
   el("time").textContent = (result.quality.pipeline_ms===undefined ? "" : tr("完整管線") + " " +
     result.quality.pipeline_ms + " ms") + (optimization
     ? " · " + optimization.mode + " · " + optimization.candidates.length + " " + tr("個候選") : "") + runtime;
@@ -468,6 +472,13 @@ el("example").addEventListener("change", () => {
   el("format").value = sample.schemaVersion ? "smd" : "mock";
   formatControls();
 });
+for (const button of document.querySelectorAll("[data-lesson]")) {
+  button.addEventListener("click",()=>{
+    el("example").value = button.dataset.lesson;
+    el("example").dispatchEvent(new Event("change",{bubbles:true}));
+    generate();
+  });
+}
 el("file").addEventListener("change", async event => {
   const file = event.target.files[0];
   if (!file) return;

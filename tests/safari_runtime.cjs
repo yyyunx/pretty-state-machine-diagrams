@@ -1,0 +1,95 @@
+// Smoke test using Apple's SafariDriver, separate from Playwright WebKit.
+"use strict";
+
+const assert = require("node:assert/strict");
+const {spawn} = require("node:child_process");
+const fs = require("node:fs/promises");
+const http = require("node:http");
+const path = require("node:path");
+const {setTimeout: delay} = require("node:timers/promises");
+const {openServer,siteURL} = require("./browser_runtime.cjs");
+
+const output = path.resolve(process.argv[3] || "integration-output/safari");
+
+async function availablePort() {
+  const socket = http.createServer();
+  await new Promise(resolve=>socket.listen(0,"127.0.0.1",resolve));
+  const {port} = socket.address();
+  await new Promise(resolve=>socket.close(resolve));
+  return port;
+}
+
+async function main() {
+  await fs.mkdir(output,{recursive:true});
+  assert.equal(process.platform,"darwin","Apple Safari requires macOS.");
+  const port = await availablePort();
+  const base = "http://127.0.0.1:"+port;
+  const server = await openServer();
+  const driver = spawn("/usr/bin/safaridriver",["-p",String(port)],{stdio:"inherit"});
+  let session;
+  const report = {status:"failed",browser:"Apple Safari",url:siteURL()};
+  async function command(method,route,body) {
+    const response = await fetch(base+route,{method,body:body===undefined ? undefined : JSON.stringify(body),
+      headers:{"Content-Type":"application/json"},signal:AbortSignal.timeout(80000)});
+    const data = await response.json();
+    if (!response.ok || data.value?.error) throw new Error(data.value?.message || "SafariDriver HTTP "+response.status);
+    return data.value;
+  }
+  try {
+    for (let i=0;i<40;i++) {
+      try { await command("GET","/status"); break; }
+      catch (error) {
+        if (driver.exitCode!==null || i===39) throw error;
+        await delay(250);
+      }
+    }
+    session = await command("POST","/session",{capabilities:{alwaysMatch:{browserName:"safari"}}});
+    report.version = session.capabilities.browserVersion;
+    const prefix = "/session/"+session.sessionId;
+    await command("POST",prefix+"/timeouts",{script:75000,pageLoad:60000});
+    await command("POST",prefix+"/url",{url:report.url+"?lang=en"});
+    const exercise = async callback => {
+      const wait = async predicate => {
+        const stop = performance.now()+65000;
+        while (!predicate()) {
+          if (performance.now()>stop) throw new Error(document.querySelector("#status")?.textContent || "UI timeout");
+          await new Promise(resolve=>setTimeout(resolve,50));
+        }
+      };
+      try {
+        const button = document.querySelector('[data-lesson="resolvedBranch"]');
+        await wait(()=>button && !button.disabled);
+        button.click();
+        await wait(()=>document.querySelector("#drawing svg") && !document.querySelector("#generate").disabled);
+        const menu = document.querySelector("#algorithm");
+        menu.value = "hybrid";
+        menu.dispatchEvent(new Event("change",{bubbles:true}));
+        document.querySelector("#generate").click();
+        await wait(()=>!document.querySelector("#generate").disabled);
+        if (!current?.quality.optimization?.selected || !current.svg.includes("<svg"))
+          throw new Error("Hybrid did not generate an SVG.");
+        const png = await pngFrom(current);
+        const signature = Array.from(new Uint8Array(await png.slice(0,8).arrayBuffer()));
+        callback({svg:current.svg,engine:current.quality.optimization.selected,signature,
+          semantic:current.quality.semantic_preservation,userAgent:navigator.userAgent});
+      } catch (error) { callback({error:String(error)}); }
+    };
+    const result = await command("POST",prefix+"/execute/async",{script:"("+exercise.toString()+")(arguments[0]);",args:[]});
+    assert(!result.error,result.error);
+    assert.equal(result.semantic,true);
+    assert.deepEqual(result.signature,[137,80,78,71,13,10,26,10]);
+    await fs.writeFile(path.join(output,"safari.svg"),result.svg);
+    const screenshot = await command("GET",prefix+"/screenshot");
+    await fs.writeFile(path.join(output,"safari.png"),Buffer.from(screenshot,"base64"));
+    Object.assign(report,{status:"passed",engine:result.engine,userAgent:result.userAgent});
+  } catch(error) {
+    report.message = error.message;
+    throw error;
+  } finally {
+    await fs.writeFile(path.join(output,"safari.json"),JSON.stringify(report,null,2));
+    if (session) await command("DELETE","/session/"+session.sessionId).catch(()=>{});
+    driver.kill();
+    server.close();
+  }
+}
+main().catch(error=>{console.error(error);process.exitCode=1;});

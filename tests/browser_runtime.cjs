@@ -6,25 +6,31 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const http = require("node:http");
 const {spawnSync} = require("node:child_process");
-const {chromium} = require(process.env.PLAYWRIGHT_MODULE || "playwright");
+const playwright = require(process.env.PLAYWRIGHT_MODULE || "playwright");
 
 const site = path.resolve(process.argv[2] || "dist");
+let serving = site;
 const output = path.resolve(process.argv[3] || "integration-output/browser-runtime");
 const prefix = "/pretty-state-machine-diagrams/";
+const target = process.env.P57_BROWSER || "chromium";
+const delay = Number(process.env.P57_REQUEST_DELAY_MS || 0);
 const types = {".js":"text/javascript",".html":"text/html",".css":"text/css",
   ".wasm":"application/wasm",".json":"application/json",".svg":"image/svg+xml"};
 let shell;
+let originDisconnected = false;
 
 async function openServer() {
   const server = http.createServer(async (req,res) => {
+    if (originDisconnected) {res.destroy();return;}
     const url = new URL(req.url,"http://localhost");
     if (!url.pathname.startsWith(prefix) || req.method!=="GET") {res.writeHead(404).end();return;}
     const file = decodeURIComponent(url.pathname.slice(prefix.length));
-    const abs = path.resolve(site,file.endsWith("/") || !file ? file+"index.html" : file);
-    if (!abs.startsWith(site+path.sep)) {res.writeHead(404).end();return;}
+    const abs = path.resolve(serving,file.endsWith("/") || !file ? file+"index.html" : file);
+    if (!abs.startsWith(serving+path.sep)) {res.writeHead(404).end();return;}
     try {
       const body = await fs.readFile(abs);
       const mime = types[path.extname(abs)] || "application/octet-stream";
+      if (delay && /^(runtime|engine)\//.test(file)) await new Promise(resolve=>setTimeout(resolve,delay));
       res.writeHead(200,{"Content-Type":mime,"Content-Length":body.length});
       res.end(body);
     } catch {
@@ -109,14 +115,29 @@ async function smoke(browser) {
   await page.locator("#comparison").waitFor();
   await page.screenshot({path:path.join(output,"browser-app.png"),fullPage:true});
 
-  for (const [type,filename] of [["svg","diagram.svg"],["png","diagram.png"]]) {
+  for (const [type,filename] of [["svg","diagram.svg"],["png","diagram.png"],["model","diagram.model.json"],
+    ["layout","diagram.layout.json"],["quality","diagram.quality.json"]]) {
     await page.locator("#export").selectOption(type);
     const [download] = await Promise.all([page.waitForEvent("download"),page.locator("#download").click()]);
     assert.equal(download.suggestedFilename(),filename);
     const content = await fs.readFile(await download.path());
     if (type==="png") assert.equal(content.subarray(0,8).toString("hex"),"89504e470d0a1a0a");
-    else assert.match(content.toString("utf8"),/<svg/);
+    else if (type==="svg") assert.match(content.toString("utf8"),/<svg/);
+    else {
+      const parsed = JSON.parse(content.toString("utf8"));
+      if (type==="model") assert.equal(parsed.schemaVersion,"0.1.0-draft");
+      if (type==="layout") assert(Object.keys(parsed.edges).length>0);
+      if (type==="quality") assert.equal(parsed.semantic_preservation,true);
+    }
   }
+  await page.locator("#settings summary").click();
+  const [settings] = await Promise.all([page.waitForEvent("download"),page.locator("#save-settings").click()]);
+  assert.equal(settings.suggestedFilename(),"pretty-smd.settings.json");
+  const savedSettings = await fs.readFile(await settings.path());
+  assert.equal(JSON.parse(savedSettings).algorithm,"advanced");
+  await page.locator("#algorithm").selectOption("topology");
+  await page.locator("#load-settings").setInputFiles({name:"settings.json",mimeType:"application/json",buffer:savedSettings});
+  await page.waitForFunction(()=>document.querySelector("#algorithm").value==="advanced");
   const seeded = await request(page,"validate",{source:'{"id":"dup","id":"dup2"}'});
   assert.equal(seeded.status,422);
   assert.match(seeded.body.diagnostics[0].message,/Duplicate JSON/);
@@ -142,6 +163,52 @@ async function smoke(browser) {
   assert.deepEqual(errors,[]);
   await page.close();
   return boot.body.engine;
+}
+
+async function responsive(browser) {
+  for (const [name,viewport] of [["phone",{width:390,height:844}],["tablet",{width:820,height:1180}]]) {
+    const context = await browser.newContext({viewport,hasTouch:true,isMobile:target!=="firefox"});
+    try {
+      const page = await context.newPage();
+      await page.goto(shell);
+      await page.locator('[data-lesson="resolvedBranch"]').tap();
+      await page.locator("#drawing svg").waitFor({timeout:65000});
+      assert.equal(await page.locator("#example").inputValue(),"resolvedBranch");
+      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+      const before = await page.locator("#drawing").getAttribute("style");
+      await page.locator("#zoom-in").tap();
+      assert.notEqual(await page.locator("#drawing").getAttribute("style"),before);
+      await page.locator("#fit").tap();
+      await page.screenshot({path:path.join(output,name+".png"),fullPage:true});
+    } finally { await context.close(); }
+  }
+}
+
+async function profile(browser) {
+  const samples = [];
+  const baseline = process.env.P57_PROFILE_BASELINE;
+  if (baseline && process.env.P57_LIVE) throw new Error("Paired profiling requires a local test server.");
+  for (let pair=0;pair<Number(process.env.P57_PROFILE_ONLY);pair++) {
+    const order = !baseline ? ["candidate"] : pair%2 ? ["candidate","baseline"] : ["baseline","candidate"];
+    for (const variant of order) {
+      serving = variant==="baseline" ? path.resolve(baseline) : site;
+      const page = await browser.newPage();
+      try {
+        await page.goto(shell);
+        await page.waitForFunction(()=>document.querySelector("#source").value.length>10);
+        const payload = {source:await page.locator("#source").inputValue()};
+        const cold = await request(page,"generate",payload);
+        const warm = await request(page,"generate",payload);
+        assert.equal(cold.status,200,JSON.stringify(cold.body.diagnostics));
+        assert.equal(warm.status,200,JSON.stringify(warm.body.diagnostics));
+        assert.equal(cold.body.runtime.cold,true);
+        assert.equal(warm.body.runtime.cold,false);
+        samples.push({pair,variant,cold:cold.body.runtime.roundTripMs,warm:warm.body.runtime.roundTripMs,
+          init:cold.body.runtime.initMs,stages:cold.body.runtime.initStagesMs});
+      } finally { await page.close(); }
+    }
+  }
+  await fs.writeFile(path.join(output,"startup.json"),JSON.stringify({browser:browser.version(),delay,samples},null,2));
 }
 
 async function parity(browser,withStress) {
@@ -304,37 +371,64 @@ async function editor(browser) {
   exact(await page.evaluate(()=>current.layout),nested.layout);
   await page.locator("#offline-download").click();
   await page.waitForFunction(()=>!!navigator.serviceWorker.controller,{},{timeout:90000});
-  await context.setOffline(true);
-  await page.reload();
-  await page.waitForFunction(()=>document.querySelector("#source").value.length>10);
-  await page.locator("#generate").click();
-  await page.locator("#drawing svg").waitFor({timeout:60000});
-  assert.equal(await page.evaluate(()=>navigator.onLine),false);
-  await context.setOffline(false);
+  // Playwright's Windows WebKit network emulation also interrupts navigation
+  // through a controlled service worker. Cut the test origin instead.
+  const cutOrigin = target==="webkit" && !process.env.P57_LIVE;
+  const liveWebKit = target==="webkit" && Boolean(process.env.P57_LIVE);
+  if (cutOrigin) originDisconnected = true;
+  else if (!liveWebKit) await context.setOffline(true);
+  try {
+    await page.reload();
+    await page.waitForFunction(()=>document.querySelector("#source").value.length>10);
+    await page.locator("#generate").click();
+    await page.locator("#drawing svg").waitFor({timeout:60000});
+    if (!cutOrigin && !liveWebKit) assert.equal(await page.evaluate(()=>navigator.onLine),false);
+  } finally {
+    originDisconnected = false;
+    if (!cutOrigin && !liveWebKit) await context.setOffline(false);
+  }
   assert.deepEqual(errors,[]);
   await fs.writeFile(path.join(output,"incremental.json"),JSON.stringify({initial:initial.quality,edited:moved.quality,
     edit:moved.edit},null,2));
   await context.close();
 }
 
-(async () => {
+async function main() {
   await fs.mkdir(output,{recursive:true});
   const server = process.env.P57_LIVE ? null : await openServer();
   if (process.env.P57_LIVE) shell = new URL("./",process.env.P57_LIVE.replace(/\/?$/,"/")).href;
   let browser;
   try {
-    browser = await chromium.launch({headless:true,executablePath:process.env.CHROME||undefined});
+    const engine = target==="edge" ? playwright.chromium : playwright[target];
+    if (!["chromium","firefox","webkit","edge"].includes(target)) throw new Error("Unknown P57_BROWSER: "+target);
+    const launch = {headless:true};
+    if (target==="edge") launch.channel = "msedge";
+    if (target==="chromium" && process.env.CHROME) launch.executablePath = process.env.CHROME;
+    browser = await engine.launch(launch);
+    console.log("Browser",target,browser.version());
+    if (process.env.P57_PROFILE_ONLY) { await profile(browser); return; }
+    let boot = null;
     if (!process.env.P57_BENCHMARK_ONLY) {
       if (!process.env.P57_EDITOR_ONLY) {
-        const cold = await smoke(browser);
-        console.log("Runtime",JSON.stringify(cold));
+        boot = await smoke(browser);
+        console.log("Runtime",JSON.stringify(boot));
       }
       await editor(browser);
+      await responsive(browser);
       console.log("ELK, Hybrid, editor, workspace and offline passed.");
     }
     if (!process.env.P57_SMOKE_ONLY) await parity(browser,Boolean(process.env.P57_STRESS));
+    await fs.writeFile(path.join(output,"acceptance.json"),JSON.stringify({
+      target,browser:browser.version(),url:shell,boot,
+      editor:!process.env.P57_BENCHMARK_ONLY,phone:!process.env.P57_BENCHMARK_ONLY,tablet:!process.env.P57_BENCHMARK_ONLY,
+      offlineMethod:target==="webkit" ? (process.env.P57_LIVE ? "cache and online reload" : "test origin disconnected") :
+        "Playwright offline context"
+    },null,2));
   } finally {
     if (browser) await browser.close();
     if (server) server.close();
   }
-})().catch(error=>{console.error(error);process.exitCode=1;});
+}
+
+if (require.main===module) main().catch(error=>{console.error(error);process.exitCode=1;});
+module.exports = {openServer,siteURL:()=>shell};

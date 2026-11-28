@@ -30,3 +30,11 @@ Group F 目前的 Python 接縫為 `ConverterAdapter.adapt(source) -> Model`，�
 | 狀態屬性與邊界 | `(["Work", defer[e], invariant[g]]: entry(i1: do(i2: exit(i3: ◉))))`；`pseudo(entryP: i1 . C)`、`pseudo(exitP: i2 . C)` | 狀態、Region 與單純分組如何區分？屬性的歸屬與重複規則、邊界點的 owner 及跨層連線如何表示？ |
 
 收到答案後，請附一份可重跑的資料和期望輸出，再將對應行為納入驗收。
+
+## 正式接入與驗收
+
+1. 取得 R、S 組可執行的版本、呼叫方式、Grammar 版本及固定測試輸入。先用線性互動、帶 guard 的分支、雙層正交區域三個案例，比對階層、符號及預期轉移。
+2. 若 Converter 只能在原生執行，實作薄 Adapter 的 `adapt(source)`，以 `generate(source, input_format="pa", adapter=adapter)` 驗證產出。將通過驗證的 `result.model` 序列化成 SMD JSON，再交給靜態編輯器。保留未解析構造的診斷與來源位置。
+3. 若正式版本及依賴能在 Pyodide 執行，從可信且固定版本的主程式透過 `execute_json(..., adapter=adapter)` 接入同一條管線。驗收時以同一輸入比對原生和瀏覽器的模型、Layout 與 SVG。瀏覽器目前開放 SMD JSON 及已解析 Mock JSON。
+
+目前還需要 R、S 組提供可重跑的發布版、能保留欄位及階層的樣本，以及教師對上表未決 Grammar 構造的預期行為。

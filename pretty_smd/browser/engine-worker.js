@@ -18,12 +18,17 @@ async function initialize(id) {
   report(id,"runtime");
   importScripts(new URL("pyodide.js",indexURL).href);
   const python = await loadPyodide({indexURL});
-  report(id,"dependencies");
-  await python.loadPackage("jsonschema");
-  report(id,"package");
-  await python.loadPackage(new URL(config.wheel,workerRoot).href);
+  const runtimeReady = performance.now();
+  report(id,"packages");
+  // Resolve the pinned dependency tree and project wheel in one load so
+  // the same-origin wheel can transfer while the dependencies are loading.
+  await python.loadPackage(["jsonschema",new URL(config.wheel,workerRoot).href]);
+  const packagesReady = performance.now();
+  report(id,"imports");
   python.runPython("from pretty_smd.bridge import execute_json");
-  loaded = {initMs:performance.now()-start,...config};
+  const imported = performance.now();
+  loaded = {initMs:imported-start,initStagesMs:{runtime:runtimeReady-start,
+    packages:packagesReady-runtimeReady,imports:imported-packagesReady},...config};
   return python;
 }
 

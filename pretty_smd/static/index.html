@@ -19,6 +19,16 @@
 <main class="workspace">
   <section class="editor panel" aria-labelledby="input-title">
     <h2 id="input-title">輸入與排版</h2>
+    <details id="quickstart" open>
+      <summary>課堂快速入門</summary>
+      <p>選一個案例生成圖形。點選狀態或轉移可檢查看到的語意與原始資訊。</p>
+      <div class="actions">
+        <button type="button" data-lesson="linear" disabled>線性序列</button>
+        <button type="button" data-lesson="resolvedBranch" disabled>守衛分支</button>
+        <button type="button" data-lesson="orthogonal" disabled>正交區域</button>
+      </div>
+      <p>切換到 Auto／Hybrid 並生成後，可展開「排版品質」比較候選，或下載圖形與 JSON。</p>
+    </details>
     <label for="example">內建案例</label>
     <select id="example"><option value="">選擇案例</option></select>
     <div class="paired">
