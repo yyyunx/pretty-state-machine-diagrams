@@ -59,6 +59,11 @@
       </div>
     </details>
     <button id="generate" class="primary" type="button">生成狀態機圖</button>
+    <div class="actions input-actions">
+      <button id="validate" type="button">驗證</button><button id="format-json" type="button">格式化 JSON</button>
+      <button id="cancel" type="button" hidden>取消運算</button>
+    </div>
+    <p id="runtime-note" class="runtime-note" aria-live="polite" hidden></p>
     <p id="status" role="status" aria-live="polite"></p>
     <details id="diagnostics"><summary>驗證與診斷</summary><ul id="diagnostic-list"></ul></details>
   </section>
@@ -90,7 +95,7 @@
     </details>
     <div class="viewer-bottom">
       <div class="actions"><label for="export">匯出</label><select id="export">
-        <option value="svg">SVG</option><option value="model">SMD JSON</option>
+        <option value="svg">SVG</option><option value="png">PNG</option><option value="model">SMD JSON</option>
         <option value="layout">Layout JSON</option><option value="quality">品質報告 JSON</option>
       </select><button id="download" type="button" disabled>下載</button></div>
       <p id="time"></p>

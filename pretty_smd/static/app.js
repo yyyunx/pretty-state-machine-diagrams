@@ -3,6 +3,22 @@
 const el = id => document.getElementById(id);
 const canvas = el("canvas");
 const drawing = el("drawing");
+const inBrowser = Boolean(window.prettySmdTransport);
+const transport = window.prettySmdTransport || {
+  async examples() {
+    const response = await fetch("/api/examples");
+    if (!response.ok) throw new Error("無法載入內建案例。");
+    return response.json();
+  },
+  async request(action,payload) {
+    const response = await fetch("/api/"+action,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)});
+    return {ok:response.ok,status:response.status,body:await response.json()};
+  },
+};
+const phases = {initializing:"初始化 Python Worker",runtime:"正在載入 Python 與 WebAssembly",
+  package:"正在載入 Pretty SMD 套件",dependencies:"正在載入 Schema 驗證依賴",ready:"Python 引擎就緒",
+  validate:"驗證模型",layout:"計算排版",render:"產生 SVG",quality:"計算品質",compare:"計算 Phase 3 對照"};
 const reportNames = {
   node_overlaps: "節點重疊", label_collisions: "標籤碰撞", edge_crossings: "連線交叉",
   edge_node_intersections: "連線穿過非端點節點", edge_overlap_length: "共線長度",
@@ -27,6 +43,7 @@ let drag = null;
 let busy = false;
 let displayed = null;
 let focused = null;
+let inputEpoch = 0;
 const ns = "http://www.w3.org/2000/svg";
 
 function status(message) {
@@ -39,6 +56,9 @@ function formatControls() {
   el("advanced-options").hidden = el("algorithm").value !== "advanced";
   el("pa-note").hidden = !unavailable;
   el("generate").disabled = busy || unavailable;
+  el("validate").disabled = busy || unavailable;
+  el("format-json").disabled = busy || unavailable;
+  el("cancel").disabled = !busy;
   el("direction").disabled = legacy;
   for (const input of document.querySelectorAll("[data-option]")) input.disabled = legacy;
 }
@@ -86,10 +106,12 @@ function zoom(factor, x = canvas.clientWidth/2, y = canvas.clientHeight/2) {
 
 function mount(svg) {
   const parsed = new DOMParser().parseFromString(svg, "image/svg+xml");
-  if (parsed.documentElement.localName !== "svg" ||
+  if (parsed.doctype || parsed.documentElement.localName !== "svg" ||
       Array.from(parsed.querySelectorAll("*")).some(item =>
-        !allowedSvg.has(item.localName) ||
-        Array.from(item.attributes).some(attr => /^on/i.test(attr.name) || /href$/i.test(attr.name)))) {
+        item.namespaceURI!==ns || !allowedSvg.has(item.localName) ||
+        Array.from(item.attributes).some(attr => /^on/i.test(attr.name) || /href$|^style$/i.test(attr.name)
+          || (/^(fill|stroke|marker-|filter|mask)/i.test(attr.name) && /url\s*\(/i.test(attr.value)
+            && attr.value!=="url(#arrow)")))) {
     throw new Error("收到無法顯示的 SVG。");
   }
   drawing.replaceChildren(document.importNode(parsed.documentElement, true));
@@ -124,8 +146,9 @@ function showVersion(before) {
   el("download").disabled = false;
   if (!focused) el("item").textContent = "點選狀態或轉移查看資料。";
   const optimization = result.quality.optimization;
+  const runtime = result.runtime ? " · 瀏覽器 Python " + Math.round(result.runtime.engineMs) + " ms" : "";
   el("time").textContent = "完整管線 " + result.quality.pipeline_ms + " ms" + (optimization
-    ? " · " + optimization.mode + " · " + optimization.candidates.length + " 個候選" : "");
+    ? " · " + optimization.mode + " · " + optimization.candidates.length + " 個候選" : "") + runtime;
   const list = el("quality-list");
   list.replaceChildren();
   for (const [key, label] of Object.entries(reportNames)) {
@@ -141,7 +164,8 @@ function showVersion(before) {
   fit();
 }
 
-async function generate() {
+async function generate(action="generate") {
+  if (typeof action!=="string") action = "generate";
   const source = el("source").value.trim();
   if (!source || busy || el("format").value === "pa") {
     if (!source) status("請先輸入 JSON。");
@@ -157,19 +181,30 @@ async function generate() {
   }
   busy = true;
   formatControls();
-  status("正在驗證及生成圖形…");
+  const epoch = inputEpoch;
+  status(action==="generate" ? "正在驗證及生成圖形…" : "正在處理輸入…");
   try {
-    const response = await fetch("/api/generate", {method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({source, format: el("format").value, algorithm: el("algorithm").value, options,
-        mode:el("mode").value, allowRotate:el("rotate").checked, compare:el("compare").checked})});
-    const result = await response.json();
+    const response = await transport.request(action,{source,format:el("format").value,algorithm:el("algorithm").value,
+      options,mode:el("mode").value,allowRotate:el("rotate").checked,compare:el("compare").checked});
+    if (epoch!==inputEpoch) return;
+    const result = response.body;
     if (!response.ok) {
       diagnostics(result.diagnostics || []);
-      status(current ? "這次生成失敗。預覽保留上一份圖形。" : "生成失敗，請查看診斷。");
+      status(response.status===499 ? "已取消運算。" : current ?
+        "這次操作失敗。預覽保留上一份圖形。" : "操作失敗，請查看診斷。");
       return;
     }
-    show(result);
-    status("狀態機圖已生成。");
+    if (action==="format") {
+      el("source").value = result.formatted;
+      diagnostics([]);
+      status("JSON 已格式化。");
+    } else if (action==="validate") {
+      diagnostics(result.diagnostics);
+      status("Semantic Model 驗證完成。");
+    } else {
+      show(result);
+      status("狀態機圖已生成。");
+    }
   } catch (error) {
     status(String(error.message || error));
   } finally {
@@ -301,6 +336,31 @@ function minimap() {
 }
 
 el("generate").addEventListener("click", generate);
+el("validate").addEventListener("click",()=>generate("validate"));
+el("format-json").addEventListener("click",()=>generate("format"));
+el("cancel").hidden = !inBrowser;
+el("cancel").addEventListener("click",()=>transport.cancel?.());
+function invalidateInput() {
+  inputEpoch++;
+  if (busy && transport.cancel) {
+    transport.cancel();
+    status("輸入已變更，請重新生成。");
+  }
+}
+el("source").addEventListener("input",invalidateInput);
+document.querySelector(".editor").addEventListener("change",event => {
+  if (event.target.matches("#example,#format,#file,#algorithm,#mode,#rotate,#direction,[data-option]")) invalidateInput();
+});
+if (inBrowser) {
+  const runtime = el("runtime-note");
+  runtime.hidden = false;
+  let text = "Python 引擎會在第一次操作時載入。";
+  const update = () => {runtime.textContent = (navigator.onLine ? "線上" : "離線") + " · " + text;};
+  transport.listen(phase => { text = phases[phase] || phase; update(); });
+  window.addEventListener("online",update);
+  window.addEventListener("offline",update);
+  update();
+}
 el("format").addEventListener("change", formatControls);
 el("algorithm").addEventListener("change", formatControls);
 el("before").addEventListener("click",() => showVersion(true));
@@ -435,21 +495,45 @@ canvas.addEventListener("pointercancel", () => { drag = null; canvas.classList.r
 canvas.addEventListener("keydown", event => {
   if (event.key === "Enter" || event.key === " ") { event.preventDefault(); inspect(event.target); }
 });
-el("download").addEventListener("click", () => {
+async function pngFrom(result) {
+  const {width,height} = result.layout.viewport;
+  const scale = Math.min(2,4096/width,4096/height,Math.sqrt(12_000_000/(width*height)));
+  const image = new Image();
+  const url = URL.createObjectURL(new Blob([result.svg],{type:"image/svg+xml"}));
+  try {
+    image.src = url;
+    await image.decode();
+    const output = document.createElement("canvas");
+    output.width = Math.max(1,Math.ceil(width*scale));
+    output.height = Math.max(1,Math.ceil(height*scale));
+    output.getContext("2d").drawImage(image,0,0,output.width,output.height);
+    const blob = await new Promise(resolve => output.toBlob(resolve,"image/png"));
+    if (!blob) throw new Error("無法匯出 PNG。");
+    return blob;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+el("download").addEventListener("click", async () => {
   if (!displayed) return;
   const kind = el("export").value;
+  if (kind==="png") {
+    try { saveFile(await pngFrom(displayed),"image/png","diagram.png"); }
+    catch (error) { status(error.message); }
+    return;
+  }
   const svg = kind === "svg";
   const contents = svg ? displayed.svg : JSON.stringify(kind==="model" ? current.model : displayed[kind],null,2) + "\n";
   saveFile(contents,svg ? "image/svg+xml" : "application/json",svg ? "diagram.svg" : "diagram." + kind + ".json");
 });
 
-fetch("/api/examples").then(response => {
-  if (!response.ok) throw new Error("無法載入內建案例。");
-  return response.json();
-}).then(data => {
+transport.examples().then(data => {
   samples = data;
   for (const [key,label] of Object.entries(caseNames)) el("example").add(new Option(label,key));
-  el("example").value = "orthogonal";
+  const requested = new URLSearchParams(location.search).get("case");
+  const sample = requested && Object.hasOwn(samples,requested) ? requested : "orthogonal";
+  if (!Object.hasOwn(caseNames,sample)) el("example").add(new Option(samples[sample].displayName || sample,sample));
+  el("example").value = sample;
   el("example").dispatchEvent(new Event("change"));
-  return generate();
+  if (!inBrowser) return generate();
 }).catch(error => status(error.message));

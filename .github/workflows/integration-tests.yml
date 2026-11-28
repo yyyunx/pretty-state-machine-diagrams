@@ -3,7 +3,7 @@ on:
   push:
     branches: ['integration/group-f', main]
   pull_request:
-    branches: [main, 'feature/project-optimization']
+    branches: [main, 'feature/project-optimization', 'feature/advanced-optimization']
   workflow_dispatch:
 jobs:
   integration:

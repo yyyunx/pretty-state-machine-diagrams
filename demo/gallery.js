@@ -12,6 +12,8 @@ element("curve").append(graph);
 
 function show() {
   const selected = element("case").value;
+  const editor = element("edit-case");
+  if (editor) editor.href = "../?case=gallery-"+encodeURIComponent(selected);
   for (const figure of document.querySelectorAll("figure[data-engine]")) {
     const engine = figure.dataset.engine;
     const asset = folder + engine + "/" + selected + ".svg";

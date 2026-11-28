@@ -1,17 +1,15 @@
 """Local HTTP app serving the same Python pipeline as the CLI."""
 
-from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib.resources import files
 import json
 from threading import BoundedSemaphore
-
-from src.layout.budget import BudgetExceeded
-from src.layout.engine import LayoutOptions
-from src.model import ModelError
+from socket import SHUT_WR
+from time import monotonic
 
 from .benchmark import resource
-from .pipeline import InputError, MAX_INPUT_BYTES, generate, load_json
+from .bridge import error_response, request_action
+from .pipeline import InputError, MAX_INPUT_BYTES, load_json
 from .stress import generated_case
 
 ASSETS = {
@@ -44,6 +42,15 @@ class AppServer(ThreadingHTTPServer):
                 request.sendall(b"HTTP/1.0 503 Service Unavailable\r\nContent-Type: application/json\r\n"
                                 b"Retry-After: 1\r\nConnection: close\r\nContent-Length: "
                                 + str(len(body)).encode() + b"\r\n\r\n" + body)
+                request.shutdown(SHUT_WR)
+                # Close gracefully even when Windows still has unread request bytes.
+                deadline, remaining = monotonic() + .035, 16384
+                while remaining > 0 and (wait := deadline-monotonic()) > 0:
+                    request.settimeout(wait)
+                    chunk = request.recv(min(4096,remaining))
+                    if not chunk:
+                        break
+                    remaining -= len(chunk)
             except OSError:
                 pass
             finally:
@@ -114,7 +121,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self._local():
             return
-        if self.path != "/api/generate":
+        action = self.path.removeprefix("/api/")
+        if action not in ("generate","format","validate") or not self.path.startswith("/api/"):
             self._error(404, "Resource not found.")
             return
         if self.headers.get_content_type() != "application/json" or self.headers.get("Transfer-Encoding"):
@@ -126,44 +134,12 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             request = load_json(self.rfile.read(int(length)))
-            if not isinstance(request, dict) or not isinstance(request.get("source"), str):
-                raise InputError("The request needs a JSON source string.")
-            input_format = request.get("format", "auto")
-            if input_format == "pa":
-                raise InputError("Raw Process Algebra requires a confirmed R/S Converter.")
-            config = request.get("options", {})
-            if not isinstance(config, dict) or set(config) - set(vars(LayoutOptions())):
-                raise InputError("Unknown or invalid layout settings.")
-            algorithm, mode = request.get("algorithm","topology"), request.get("mode","balanced")
-            compare, rotate = request.get("compare",False),request.get("allowRotate",False)
-            if (algorithm not in ("topology","legacy","advanced") or mode not in ("fast","balanced","quality")
-                    or type(compare) is not bool or type(rotate) is not bool):
-                raise InputError("Unknown layout algorithm, mode or comparison setting.")
-            options = LayoutOptions(**config)
-            vertices, edges = (48,96) if algorithm=="legacy" else (120,300)
-            result = generate(load_json(request["source"]), input_format=input_format,options=options,
-                              algorithm=algorithm,mode=mode,allow_rotate=rotate,timeout=self.server.layout_timeout,
-                              max_vertices=vertices,max_edges=edges)
-            response = {"svg":result.svg,"model":result.model,"layout":result.layout,
-                        "quality":result.quality,"diagnostics":[asdict(item) for item in result.warnings]}
-            if compare and algorithm=="advanced":
-                try:
-                    baseline = generate(result.model,input_format="smd",options=options,algorithm="topology",
-                                        timeout=self.server.layout_timeout,max_vertices=vertices,max_edges=edges)
-                    response["baseline"] = {"svg":baseline.svg,"layout":baseline.layout,"quality":baseline.quality}
-                except ValueError as error:
-                    response["diagnostics"].append({"severity":"warning","code":"baseline-failed",
-                                                    "path":"","message":str(error)})
-            self._json(200,response)
-        except ModelError as error:
-            self._json(422, {"diagnostics": [asdict(item) for item in error.diagnostics]})
-        except BudgetExceeded as error:
-            code = "layout-timeout" if "time limit" in str(error) else "layout-work-limit"
-            self._error(504 if code=="layout-timeout" else 422,str(error),code=code)
+            result = request_action(action,request,timeout=self.server.layout_timeout,max_vertices=120,max_edges=300)
+            self._json(200,result)
         except TimeoutError:
             self._error(408, "Request timed out.")
         except (ValueError, UnicodeError, RecursionError) as error:
-            self._error(422, str(error))
+            self._json(*error_response(error))
 
 
 def serve(port=8000):

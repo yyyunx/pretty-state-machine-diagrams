@@ -125,14 +125,19 @@ class GenerationResult:
 
 
 def generate(document, *, input_format="auto", case=None, adapter=None, options=None, algorithm="topology",
-             uml=True, max_vertices=500, max_edges=2400, mode="balanced", timeout=None, allow_rotate=False):
+             uml=True, max_vertices=500, max_edges=2400, mode="balanced", timeout=None, allow_rotate=False,
+             progress=None):
     """Generate SVG, SMD, Layout Data and a quality report from the same model."""
     start = perf_counter()
+    if progress is not None:
+        progress("validate")
     model, warnings = prepare_model(
         document, input_format=input_format, case=case, adapter=adapter, uml=uml,
         max_vertices=max_vertices, max_edges=max_edges,
     )
     original_model = deepcopy(model)
+    if progress is not None:
+        progress("layout")
     started_layout = perf_counter()
     optimization = None
     if algorithm == "advanced":
@@ -142,8 +147,12 @@ def generate(document, *, input_format="auto", case=None, adapter=None, options=
         geometry = layout(model,options,algorithm=algorithm,timeout=timeout)
     layout_ms = 1000 * (perf_counter() - started_layout)
     started_render = perf_counter()
+    if progress is not None:
+        progress("render")
     svg = render(model, geometry)
     render_ms = 1000 * (perf_counter() - started_render)
+    if progress is not None:
+        progress("quality")
     quality = (dict(optimization.metrics) if optimization is not None
                else evaluate(model,geometry,original_model=original_model))
     quality["execution_ms"] = round(layout_ms,3)

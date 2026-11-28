@@ -32,6 +32,9 @@ button:disabled { opacity:.5;cursor:not-allowed; }
   border-radius:8px;padding:.75rem;font: .89rem/1.5 ui-monospace,Consolas,monospace; }
 .paired,.parameters {display:grid;grid-template-columns:1fr 1fr;gap:.55rem;}
 .primary {width:100%;margin-top:.85rem;background:var(--accent);color:var(--accent-fg);font-weight:700;}
+.input-actions {margin-top:.45rem;}
+.runtime-note {font-size:.85rem;color:var(--sub);margin:.55rem 0 0;}
+.header-link {color:var(--accent);margin-left:auto;}
 details { border-top:1px solid var(--line);padding:.65rem 0 .1rem;margin-top:.75rem; }
 .viewer-head,.viewer-bottom {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.35rem;}
 .viewer-head h2 {margin:0;}
