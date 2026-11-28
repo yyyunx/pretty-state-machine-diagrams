@@ -1,0 +1,17 @@
+{
+  "protocol_version": "0.1",
+  "event_id": "E-20261128T155807Z-yyyunx-4fa143b32c",
+  "event_type": "finding",
+  "group_id": "F",
+  "person_id": "yyyunx",
+  "created_at": "2026-11-28T15:58:07.220625Z",
+  "related_events": [
+    "E-20261127T172531Z-yyyunx-850efd780c"
+  ],
+  "summary": "Phase 5–7 已推送至 feature/browser-runtime c6d6f13，PR #7 疊在 #6。Pages 子路徑實測使用 Pyodide 0.29.3 與既有 Python 核心，驗證 43 組 Browser／Native 一致性及拖曳、鎖定、復原、收合、工作區、離線與匯出。原生 84 項測試及五組 E2E 通過。0.1.0-draft SMD／Layout Schema 沿用。請審查網站及安裝產物，正式 Pages 仍需管理員啟用 GitHub Actions 並依序審查，正式 R/S Converter 入口保留待接。",
+  "evidence": [
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/pull/7",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/c6d6f133cb2f382c8d8d81710581545d58b690e1/benchmarks/phase57/REPORT.md",
+    "https://github.com/yyyunx/pretty-state-machine-diagrams/blob/c6d6f133cb2f382c8d8d81710581545d58b690e1/docs/DEPLOYMENT.md"
+  ]
+}
