@@ -16,6 +16,12 @@
 
 裝置驗收使用桌面視窗、390 × 844 的手機尺寸和 820 × 1180 的平板尺寸，並以觸控模擬檢查案例選擇、縮放及適應畫面。Edge 案例使用 Microsoft Edge。如果 macOS runner 允許 Apple SafariDriver，原生 Safari job 驗證案例生成、Hybrid 切換、SVG 及 PNG 內容。iOS Safari 真機留待實機驗收。
 
+靜態產物測試會切斷原站，確認未快取請求確實失敗，再重載網站並生成圖形。公開站的 Chromium 和 Firefox 驗收使用離線情境。公開站的 WebKit 驗收以快取安裝與線上重載為範圍。
+
+## 冷啟動
+
+在 Windows Chrome 158、同一份 wheel 及每項 Runtime 資源 75 ms 測試延遲下，交錯執行五對冷啟動。把兩次套件載入合併後，首張 SVG 中位數從 6,200 ms 降到 6,025 ms，套件階段從 628 ms 降到 508 ms。WebAssembly 與 Python Runtime 初始化約 3,741 ms，仍是最大部分。固定版本與離線快取策略沿用。 [原始資料](../benchmarks/final/startup.json)
+
 ## 交付物
 
 [課堂快速入門](TEACHER_QUICKSTART.md) · [Experimental 發行草稿](RELEASE-0.3.0.md) · [Converter 交接](../src/model/CONVERTER_HANDOFF.md) · [部署指令](DEPLOYMENT.md)

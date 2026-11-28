@@ -17,6 +17,7 @@ const transport = window.prettySmdTransport || {
   },
 };
 const phases = {initializing:"初始化 Python Worker",runtime:"正在載入 Python 與 WebAssembly",
+  idle:"Python 引擎會在第一次操作時載入。",
   packages:"正在載入 Python 套件與驗證依賴",imports:"正在初始化驗證及排版模組",
   package:"正在載入 Pretty SMD 套件",dependencies:"正在載入 Schema 驗證依賴",ready:"Python 引擎就緒",
   validate:"驗證模型",layout:"計算排版",render:"產生 SVG",quality:"計算品質",compare:"計算 Phase 3 對照",

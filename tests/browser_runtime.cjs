@@ -371,18 +371,26 @@ async function editor(browser) {
   exact(await page.evaluate(()=>current.layout),nested.layout);
   await page.locator("#offline-download").click();
   await page.waitForFunction(()=>!!navigator.serviceWorker.controller,{},{timeout:90000});
-  // Playwright's Windows WebKit network emulation also interrupts navigation
-  // through a controlled service worker. Cut the test origin instead.
-  const cutOrigin = target==="webkit" && !process.env.P57_LIVE;
+  // Disconnect the test origin itself. This is independent of how the
+  // browser reports navigator.onLine and still exercises the service worker.
+  const cutOrigin = !process.env.P57_LIVE;
   const liveWebKit = target==="webkit" && Boolean(process.env.P57_LIVE);
   if (cutOrigin) originDisconnected = true;
   else if (!liveWebKit) await context.setOffline(true);
   try {
+    if (!liveWebKit) {
+      const disconnected = await page.evaluate(async ()=>{
+        try {
+          await fetch("./offline-origin-check-"+Date.now(),{cache:"no-store"});
+          return false;
+        } catch { return true; }
+      });
+      assert(disconnected,"An uncached request must fail while the origin is disconnected.");
+    }
     await page.reload();
     await page.waitForFunction(()=>document.querySelector("#source").value.length>10);
     await page.locator("#generate").click();
     await page.locator("#drawing svg").waitFor({timeout:60000});
-    if (!cutOrigin && !liveWebKit) assert.equal(await page.evaluate(()=>navigator.onLine),false);
   } finally {
     originDisconnected = false;
     if (!cutOrigin && !liveWebKit) await context.setOffline(false);
@@ -421,8 +429,8 @@ async function main() {
     await fs.writeFile(path.join(output,"acceptance.json"),JSON.stringify({
       target,browser:browser.version(),url:shell,boot,
       editor:!process.env.P57_BENCHMARK_ONLY,phone:!process.env.P57_BENCHMARK_ONLY,tablet:!process.env.P57_BENCHMARK_ONLY,
-      offlineMethod:target==="webkit" ? (process.env.P57_LIVE ? "cache and online reload" : "test origin disconnected") :
-        "Playwright offline context"
+      offlineMethod:!process.env.P57_LIVE ? "test origin disconnected" :
+        target==="webkit" ? "cache and online reload" : "Playwright offline context"
     },null,2));
   } finally {
     if (browser) await browser.close();

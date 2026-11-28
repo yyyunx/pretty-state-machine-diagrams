@@ -15,6 +15,7 @@
     if (worker) worker.terminate();
     worker = null;
     ready = false;
+    observer("idle");
   }
   function finish(result) {
     if (!pending) return;
@@ -41,6 +42,7 @@
       } else if (data.type==="result") {
         if (data.body.runtime) data.body.runtime.roundTripMs = performance.now()-pending.started;
         finish({ok:data.status===200,status:data.status,body:data.body});
+        if (ready) observer("ready");
       }
     };
     worker.onerror = () => {
